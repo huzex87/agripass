@@ -74,7 +74,7 @@ const NavbarMUI = () => {
             <Button
               variant="outlined"
               component={Link}
-              to={"/signup"}
+              to={"/create_deployment"}
               sx={{
                 borderColor: "#ff9900",
                 color: "white",

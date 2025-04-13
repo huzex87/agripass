@@ -6,8 +6,9 @@ import ForgotPasswordPage from "./pages/ForgotPassword";
 import OtpPage from "./pages/OtpPage";
 import BeneficiarySignup from "./pages/BeneficiarySignup";
 import BeneficiaryLogin from "./pages/BeneficiaryLogin";
-import Dashboard from "./pages/Dashboard"; // ✅ Import Organisation Dashboard
+import Dashboard from "./pages/Dashboard";
 import Sidebar2 from "./pages/components/Sidebar2";
+import SignupStakeholder from "./pages/Forms/SignupStakeholder";
 import "./App.css";
 import AuthProvider from "./Utilis/Auth";
 
@@ -22,7 +23,7 @@ function App() {
       <Router>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" index element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
@@ -30,8 +31,9 @@ function App() {
             <Route path="/beneficiarysignup" element={<BeneficiarySignup />} />
             <Route path="/beneficiarylogin" element={<BeneficiaryLogin />} />
             <Route path="/dashboard" element={<Dashboard />} />{" "}
-            {/*Organisation Dashboard Route */}
+            {/*Organisation Route */}
             <Route path="/dashboard_org" element={<Sidebar2 />} />
+            <Route path="/create_deployment" element={<SignupStakeholder />} />
           </Routes>
         </AuthProvider>
       </Router>
