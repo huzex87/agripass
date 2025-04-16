@@ -11,6 +11,7 @@ import Sidebar2 from "./pages/components/Sidebar2";
 import SignupStakeholder from "./pages/Forms/SignupStakeholder";
 import "./App.css";
 import AuthProvider from "./Utilis/Auth";
+import LoginStakeholder from "./pages/Forms/LoginStakeholder";
 
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -32,6 +33,7 @@ function App() {
             <Route path="/beneficiarylogin" element={<BeneficiaryLogin />} />
             <Route path="/dashboard" element={<Dashboard />} />{" "}
             {/*Organisation Route */}
+            <Route path="/signin" element={<LoginStakeholder />} />
             <Route path="/dashboard_org" element={<Sidebar2 />} />
             <Route path="/create_deployment" element={<SignupStakeholder />} />
           </Routes>

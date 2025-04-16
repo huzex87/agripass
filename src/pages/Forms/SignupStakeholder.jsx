@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../Forms/SignupStakeholder.css";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signupSchema } from "../../Utilis/ValidationSchema";
@@ -13,6 +15,7 @@ import {
   InputAdornment,
   Checkbox,
   FormControlLabel,
+  Alert,
 } from "@mui/material";
 import navlogo from "../../assets/navlogo.jpg";
 import StoreIcon from "@mui/icons-material/Store";
@@ -28,6 +31,12 @@ const SignupStakeholder = () => {
   } = useForm({ resolver: yupResolver(signupSchema) });
 
   const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -44,11 +53,29 @@ const SignupStakeholder = () => {
       );
 
       console.log("Response:", response);
-      if (response.status === 200) {
-        alert("Signup successful! Please check your email for verification.");
-      }
+      setAlert({
+        open: true,
+        message: `Sign up successful! Your subdomain is ${response.data.subdomain}`,
+        severity: "success",
+      });
+      setTimeout(() => {
+        setAlert({ ...alert, open: false });
+      });
+      navigate("/signin");
     } catch (error) {
       console.error("Error during signup:", error);
+      let errorMessage = "An error occurred. Please try again later.";
+      if (error && error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      }
+      setAlert({
+        open: true,
+        message: errorMessage,
+        severity: "error",
+      });
+      setTimeout(() => {
+        setAlert({ ...alert, open: false });
+      }, 5000);
     } finally {
       setLoading(false);
     }
@@ -72,6 +99,7 @@ const SignupStakeholder = () => {
         <Grid container spacing={3} justifyContent="center" alignItems="center">
           <Grid item xs={12} lg={6}>
             <Box
+              className="signupStakeholder"
               component="form"
               noValidate
               autoComplete="off"
@@ -280,6 +308,21 @@ const SignupStakeholder = () => {
               </Grid>
             </Box>
           </Grid>
+          {alert.open && (
+            <Alert
+              severity={alert.severity}
+              onClose={() => setAlert({ ...alert, open: false })}
+              sx={{
+                position: "fixed",
+                top: 60,
+                left: "50%",
+                transform: "translateX(-50%)",
+                zIndex: 1000,
+              }}
+            >
+              {alert.message}
+            </Alert>
+          )}
         </Grid>
       </Container>
     </>
