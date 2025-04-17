@@ -11,7 +11,6 @@ import {
   TextField,
   Typography,
   Container,
-  Grid,
   InputAdornment,
   Checkbox,
   FormControlLabel,
@@ -60,7 +59,7 @@ const SignupStakeholder = () => {
       });
       setTimeout(() => {
         setAlert({ ...alert, open: false });
-      });
+      }, 6000);
       navigate("/signin");
     } catch (error) {
       console.error("Error during signup:", error);
@@ -83,248 +82,223 @@ const SignupStakeholder = () => {
 
   return (
     <>
-      <Container
-        maxWidth={false}
-        disableGutters
+      <Box
         sx={{
           display: "flex",
-          // flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
           backgroundColor: "#002E5D",
-          gap: 10,
         }}
       >
-        <Grid container spacing={3} justifyContent="center" alignItems="center">
-          <Grid item xs={12} lg={6}>
+        <Container maxWidth="sm">
+          <Box
+            sx={{
+              backgroundColor: "#FFFFFF",
+              padding: (theme) => theme.spacing(4),
+              borderRadius: 4,
+              boxShadow: 3,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            {/* Company Logo */}
+            <Box textAlign="center">
+              <img
+                src={navlogo}
+                alt="company logo"
+                style={{ maxWidth: "150px" }}
+              />
+            </Box>
+            <Typography variant="h5" gutterBottom>
+              Create Deployment
+            </Typography>
+
+            {/* Form Section */}
             <Box
               className="signupStakeholder"
               component="form"
               noValidate
               autoComplete="off"
               onSubmit={handleSubmit(onSubmit)}
-              sx={{
-                width: "100%",
-                maxWidth: 600,
-                backgroundColor: "#FFFFFF",
-                borderRadius: 4,
-                boxShadow: 3,
-                p: 4,
-                mx: "auto",
-              }}
+              sx={{ width: "100%" }}
             >
-              {/* Company Logo */}
-              <Box textAlign="center">
-                <img src={navlogo} alt="company logo" />
-              </Box>
+              {/* Domain Name */}
+              <TextField
+                required
+                {...register("orgName")}
+                name="orgName"
+                type="text"
+                label="Create Domain"
+                placeholder="Name should be in lowercase"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                error={!!errors.orgName}
+                helperText={errors.orgName?.message}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <StoreIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                  inputLabel: {
+                    sx: { fontSize: "1.2rem", fontWeight: "bold" },
+                  },
+                }}
+              />
 
-              {/* Form Section */}
-              <Box textAlign="center" mb={4}>
-                <Typography variant="h5" gutterBottom>
-                  Stakeholder Signup
+              {/* Email Field */}
+              <TextField
+                required
+                {...register("email")}
+                name="email"
+                type="email"
+                id="input-with-icon-textfield"
+                label="Email"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                error={!!errors.email}
+                helperText={errors.email?.message}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AlternateEmailIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                  inputLabel: {
+                    sx: { fontSize: "1.2rem", fontWeight: "bold" },
+                  },
+                }}
+              />
+
+              {/* Phone Number Field */}
+              <TextField
+                required
+                {...register("phone")}
+                name="phone"
+                type="number"
+                label="Phone"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                error={!!errors.phone}
+                helperText={errors.phone?.message}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PhoneIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                  inputLabel: {
+                    sx: { fontSize: "1.2rem", fontWeight: "bold" },
+                  },
+                }}
+              />
+
+              {/* Password Field */}
+              <TextField
+                required
+                {...register("password")}
+                name="password"
+                type="password"
+                label="Password"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                error={!!errors.password}
+                helperText={errors.password?.message}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockOpenIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                  inputLabel: {
+                    sx: { fontSize: "1.2rem", fontWeight: "bold" },
+                  },
+                }}
+              />
+
+              {/* Confirm Password */}
+              <TextField
+                required
+                {...register("confirmPassword")}
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockOpenIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                  inputLabel: {
+                    sx: { fontSize: "1.2rem", fontWeight: "bold" },
+                  },
+                }}
+              />
+
+              {/* TERMS AND CONDITIONS */}
+              <FormControlLabel
+                required
+                control={<Checkbox {...register("agreeToTerms")} />}
+                label="I agree to the terms and conditions"
+                error={!!errors.agreeToTerms}
+              />
+              {errors.agreeToTerms && (
+                <Typography color="error">
+                  {errors.agreeToTerms.message}
                 </Typography>
-              </Box>
+              )}
 
-              <Grid container spacing={3}>
-                {/* ORGANIZATION NAME  */}
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    required
-                    {...register("orgName")}
-                    name="orgName"
-                    type="text"
-                    label="Organization Name"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <StoreIcon />
-                          </InputAdornment>
-                        ),
-                      },
-                      inputLabel: {
-                        sx: { fontSize: "1.2rem", fontWeight: "bold" },
-                      },
-                    }}
-                  />
-                  {errors.orgName && (
-                    <Typography color="error">
-                      {errors.orgName.message}
-                    </Typography>
-                  )}
-                </Grid>
-
-                {/* ORGANIZATION EMAIL */}
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    required
-                    {...register("email")}
-                    name="email"
-                    type="email"
-                    id="input-with-icon-textfield"
-                    label="Email"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <AlternateEmailIcon />
-                          </InputAdornment>
-                        ),
-                      },
-                      inputLabel: {
-                        sx: { fontSize: "1.2rem", fontWeight: "bold" },
-                      },
-                    }}
-                  />
-                  {errors.email && (
-                    <Typography color="error">
-                      {errors.email.message}
-                    </Typography>
-                  )}
-                </Grid>
-
-                {/* ORGANIZAtion PHONE */}
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    required
-                    {...register("phone")}
-                    name="phone"
-                    type="number"
-                    label="Phone"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PhoneIcon />
-                          </InputAdornment>
-                        ),
-                      },
-                      inputLabel: {
-                        sx: { fontSize: "1.2rem", fontWeight: "bold" },
-                      },
-                    }}
-                  />
-                  {errors.phone && (
-                    <Typography color="error">
-                      {errors.phone.message}
-                    </Typography>
-                  )}
-                </Grid>
-
-                {/* passsword */}
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    reequired
-                    {...register("password")}
-                    name="password"
-                    type="password"
-                    label="Password"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockOpenIcon />
-                          </InputAdornment>
-                        ),
-                      },
-                      inputLabel: {
-                        sx: { fontSize: "1.2rem", fontWeight: "bold" },
-                      },
-                    }}
-                  />
-                  {errors.password && (
-                    <Typography color="error">
-                      {errors.password.message}
-                    </Typography>
-                  )}
-                </Grid>
-
-                {/* CONFIRM PASSWORD */}
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    required
-                    {...register("confirmPassword")}
-                    name="confirmPassword"
-                    label="Confirm Password"
-                    type="password"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockOpenIcon />
-                          </InputAdornment>
-                        ),
-                      },
-                      inputLabel: {
-                        sx: { fontSize: "1.2rem", fontWeight: "bold" },
-                      },
-                    }}
-                  />
-                  {errors.confirmPassword && (
-                    <Typography color="error">
-                      {errors.confirmPassword.message}
-                    </Typography>
-                  )}
-                </Grid>
-
-                {/* TERMS AND CONDITIONS */}
-                <FormControlLabel
-                  required
-                  control={<Checkbox {...register("agreeToTerms")} />}
-                  label="I agree to the terms and conditions"
-                />
-                {errors.agreeToTerms && (
-                  <Typography color="error">
-                    {errors.agreeToTerms.message}
-                  </Typography>
-                )}
-
-                {/* SUBMIT BUTTON */}
-                <Button
-                  variant="contained"
-                  type="submit"
-                  fullWidth
-                  sx={{ mt: 3, backgroundColor: "#002E5D" }}
-                  loading={loading}
-                >
-                  Sign Up
-                </Button>
-              </Grid>
+              {/* SUBMIT BUTTON */}
+              <Button
+                variant="contained"
+                type="submit"
+                fullWidth
+                sx={{ mt: 3, backgroundColor: "#002E5D" }}
+                loading={loading}
+              >
+                Sign Up
+              </Button>
             </Box>
-          </Grid>
-          {alert.open && (
-            <Alert
-              severity={alert.severity}
-              onClose={() => setAlert({ ...alert, open: false })}
-              sx={{
-                position: "fixed",
-                top: 60,
-                left: "50%",
-                transform: "translateX(-50%)",
-                zIndex: 1000,
-              }}
-            >
-              {alert.message}
-            </Alert>
-          )}
-        </Grid>
-      </Container>
+
+            {alert.open && (
+              <Alert
+                severity={alert.severity}
+                onClose={() => setAlert({ ...alert, open: false })}
+                sx={{
+                  position: "fixed",
+                  top: 60,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  zIndex: 1000,
+                }}
+              >
+                {alert.message}
+              </Alert>
+            )}
+          </Box>
+        </Container>
+      </Box>
     </>
   );
 };

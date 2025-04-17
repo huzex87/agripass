@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../Forms/loginStakeholder.css";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -13,11 +13,7 @@ import {
   TextField,
   Typography,
   Container,
-  Grid,
   InputAdornment,
-  Checkbox,
-  FormControlLabel,
-  FormControl,
   IconButton,
   Alert,
 } from "@mui/material";
@@ -68,8 +64,8 @@ const LoginStakeholder = () => {
         { subdomain: data.subdomain, password: data.password },
         { headers: { "Content-Type": "application/json" } }
       );
-      login(response.data.token);
-      navigate("/dashboard_org");
+      login(response.data.token, data.subdomain);
+      navigate(`/${data.subdomain}/dashboard`);
       setAlert({
         open: true,
         message: response?.data?.message || "Login succeessful",
@@ -77,10 +73,10 @@ const LoginStakeholder = () => {
       });
       setTimeout(() => {
         setAlert({ ...alert, open: false });
-      }, 3000);
+      }, 5000);
     } catch (error) {
       console.log(error);
-      let errorMessage = "Something went wrong";
+      let errorMessage = "Something went wrong, server not responding";
       if (error && error.response?.data?.error) {
         errorMessage = error.response.data.error;
       }
@@ -184,6 +180,15 @@ const LoginStakeholder = () => {
               >
                 Sign In
               </Button>
+            </Box>
+
+            {/* Forgot Password */}
+            <Box>
+              <Typography variant="body2" color="textSecondary">
+                <Button component={Link} to={"/forgotpassword"}>
+                  Forgot Password
+                </Button>
+              </Typography>
             </Box>
           </Box>
         </Container>

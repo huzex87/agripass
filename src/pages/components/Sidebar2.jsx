@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   Box,
   Drawer,
@@ -15,12 +16,14 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
+import Modal from "../components/Modal";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import GradingIcon from "@mui/icons-material/Grading";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import { useAuthentication } from "../../Utilis/Auth";
 
 // Set a drawer width
 const drawerWidth = 240;
@@ -30,7 +33,15 @@ export default function ResponsiveSidebar() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { logout, user } = useAuthentication();
+  const { subdomain } = useParams();
 
+  const orgName = user?.subdomain || subdomain || "Disbursify";
+
+  const handleLogout = () => {
+    logout();
+  };
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -39,7 +50,7 @@ export default function ResponsiveSidebar() {
     <div>
       <Toolbar>
         <Typography variant="h6" noWrap component="div" color="primary">
-          Disbursify
+          {orgName}
         </Typography>
       </Toolbar>
       <Divider />
@@ -90,7 +101,7 @@ export default function ResponsiveSidebar() {
             <ListItemIcon>
               <LogoutIcon color="secondary" />
             </ListItemIcon>
-            <ListItemText primary="Log Out" />
+            <ListItemText primary="Log Out" onClick={() => setOpen(true)} />
           </ListItemButton>
         </ListItem>
       </List>
@@ -175,6 +186,16 @@ export default function ResponsiveSidebar() {
         {/* Main content goes here */}
         <Typography>Your dashboard content here...</Typography>
       </Box>
+
+      <Modal
+        title="Confirm Log Out"
+        content="Are you sure you want to logout?"
+        open={open}
+        onClose={() => setOpen(false)}
+        onConfirm={handleLogout}
+        confirmText="Yes"
+        cancelText="No"
+      />
     </Box>
   );
 }

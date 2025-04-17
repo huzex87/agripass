@@ -1,49 +1,60 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const checkAuth = () => {
     const token = localStorage.getItem("token");
+    const subdomain = localStorage.getItem("subdomain");
+
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
 
         if (decodedToken.exp * 1000 < Date.now()) {
           localStorage.removeItem("token");
+          localStorage.removeItem("subdomain");
           logout();
           setUser(null);
+          setLoading(false);
           return;
         }
         setUser({
           isAuthenticated: true,
           userId: decodedToken.userId,
           email: decodedToken.email,
+          subdomain: subdomain,
         });
+        setLoading(false);
       } catch (error) {
         localStorage.removeItem("token");
+        localStorage.removeItem("subdomain");
         logout();
         setUser(null);
+        setLoading(false);
         return;
       }
     } else {
       setUser(null);
+      setLoading(false);
     }
   };
 
-  const login = (token) => {
+  const login = (token, subdomain) => {
     localStorage.setItem("token", token);
+    if (subdomain) {
+      localStorage.setItem("subdomain", subdomain);
+    }
     checkAuth();
   };
 
   const logout = () => {
     localStorage.removeItem("token");
-    navigate("/beneficiarylogin");
+    localStorage.removeItem("subdomain");
     setUser(null);
   };
 
@@ -56,6 +67,8 @@ const AuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated: !!user?.isAuthenticated,
+    loading,
+    subdomain: user?.subdomain,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
