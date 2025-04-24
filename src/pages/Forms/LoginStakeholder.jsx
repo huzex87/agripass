@@ -7,17 +7,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useAuthentication } from "../../Utilis/Auth";
 import navLogo from "../../assets/navlogo.jpg";
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Container,
-  InputAdornment,
-  IconButton,
-  Alert,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const LoginStakeholder = () => {
   const loginSchema = yup.object().shape({
@@ -88,130 +77,7 @@ const LoginStakeholder = () => {
       setLoading(false);
     }
   };
-  return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-          backgroundColor: "#002E5D",
-          padding: (theme) => theme.spacing(3), // Add some padding
-        }}
-      >
-        <Container className="loginStakeholder" maxWidth="sm">
-          <Box
-            sx={{
-              backgroundColor: "#FFFFFF",
-              padding: (theme) => theme.spacing(4),
-              borderRadius: 4,
-              boxShadow: 3,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {/* Company Logo */}
-            <Box>
-              <img
-                src={navLogo}
-                alt="Company Logo"
-                style={{ maxWidth: "150px" }}
-              />
-            </Box>
-            {/* Form Title */}
-            <Typography variant="h5" component="h2">
-              Stakeholder Sign In
-            </Typography>
-
-            {/* login Form */}
-            <Box
-              component="form"
-              onSubmit={handleSubmit(onSubmit)}
-              noValidate
-              sx={{ width: "100%" }}
-            >
-              {/* Subdomain */}
-              <TextField
-                fullWidth
-                margin="normal"
-                label="Subdomain"
-                variant="outlined"
-                {...register("subdomain")}
-                error={!!errors.subdomain}
-                helperText={errors.subdomain?.message}
-              />
-
-              {/* Password */}
-              <TextField
-                fullWidth
-                margin="normal"
-                label="Password"
-                variant="outlined"
-                type={showPassword ? "text" : "password"}
-                {...register("password")}
-                error={!!errors.password}
-                helperText={errors.password?.message}
-                slotProps={{
-                  InputProps: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, backgroundColor: "#002E5D" }}
-                disabled={loading}
-                loading={loading}
-              >
-                Sign In
-              </Button>
-            </Box>
-
-            {/* Forgot Password */}
-            <Box>
-              <Typography variant="body2" color="textSecondary">
-                <Button component={Link} to={"/forgotpassword"}>
-                  Forgot Password
-                </Button>
-              </Typography>
-            </Box>
-          </Box>
-        </Container>
-      </Box>
-      {/* Alert Message */}
-      {alert.open && (
-        <Alert
-          severity={alert.severity}
-          onClose={handleCloseAlert}
-          sx={{
-            position: "fixed",
-            top: 60,
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 1000,
-          }}
-        >
-          {" "}
-          {alert.message}{" "}
-        </Alert>
-      )}
-    </>
-  );
+  return <></>;
 };
 
 export default LoginStakeholder;

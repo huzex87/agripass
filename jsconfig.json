@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "baseUrl": "./src", // This is important for paths to work correctly
+      "paths": {
+        "@/components/*": ["components/*"],
+        "@/lib/*": ["lib/*"]
+        // You might have other paths defined, add these two
+      }
+    },
+    // Add includes and excludes as needed for your project structure
+    "include": ["src", "postcss.config.js", "tailwind.config.js"],
+    "exclude": ["node_modules"]
+  }

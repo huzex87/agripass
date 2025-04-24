@@ -13,7 +13,6 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import "../styles/dashboard.css";
-import Sidebar2 from "./components/Sidebar2";
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

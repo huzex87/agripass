@@ -16,15 +16,12 @@ import {
 } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import "../styles/LandingPage.css";
-import NavbarMUI from "./Navbar/NavbarMUI";
-import { Button, Box } from "@mui/material";
-import Button1 from "./components/Button1";
+import { SiteHeader } from "./toolkits/Site-header";
 
 const LandingPage = () => {
   return (
     <div className="landing-page">
-      <NavbarMUI />
-
+      {/* <SiteHeader /> */}
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
@@ -33,33 +30,7 @@ const LandingPage = () => {
             Secure, data-driven solutions for equitable allocation and
             disbursements of funds and resources.
           </p>
-          <div className="hero-buttons">
-            <Button
-              variant="outlined"
-              component={Link}
-              to={"/beneficiarySignup"}
-              sx={{
-                borderColor: "#ff9900",
-                marginRight: 2,
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "#ff9900",
-                  color: "white",
-                },
-              }}
-            >
-              <FaUserPlus className="button-icon" /> Sign Up
-            </Button>
-            <Button1
-              component={Link}
-              to={"/beneficiaryLogin"}
-              label={"Sign In"}
-              sx={{
-                backgroundColor: "#FD8A2E",
-                color: "black",
-              }}
-            />
-          </div>
+          <div className="hero-buttons"></div>
         </div>
       </section>
 
