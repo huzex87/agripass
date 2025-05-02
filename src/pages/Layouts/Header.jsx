@@ -1,4 +1,4 @@
-import { useTheme } from "../../hooks/Usetheme";
+import { useTheme } from "../../context/Theme-context";
 import { Bell, ChevronsLeft, Moon, Search, Sun } from "lucide-react";
 import PropTypes from "prop-types";
 
@@ -28,7 +28,10 @@ export const Header = ({ collapsed, setCollapsed }) => {
       <div className="flex items-center gap-x-3">
         <button
           className="btn-ghost size-10"
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+          onClick={() => {
+            console.log(("toggling theme from", theme));
+            setTheme(theme === "light" ? "dark" : "light");
+          }}
         >
           <Sun size={20} className="dark:hidden" />
           <Moon size={20} className="hidden dark:block" />
@@ -38,7 +41,7 @@ export const Header = ({ collapsed, setCollapsed }) => {
         </button>
         <button className="size-10 overflow-hidden rounded-full">
           <img
-            src={profileImg}
+            // src={profileImg}
             alt="profile image"
             className="size-full object-cover"
           />

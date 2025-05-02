@@ -1,34 +1,79 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import ForgotPasswordPage from "./pages/ForgotPassword";
 import OtpPage from "./pages/OtpPage";
 import BeneficiarySignup from "./pages/BeneficiarySignup";
 import BeneficiaryLogin from "./pages/BeneficiaryLogin";
-import Dashboard from "./pages/Dashboard";
 import SignupStakeholder from "./pages/Forms/SignupStakeholder";
 import "./App.css";
 import AuthProvider from "./Utilis/Auth";
 import LoginStakeholder from "./pages/Forms/LoginStakeholder";
 import ProtectedROutes from "./Utilis/ProtectedROutes";
 import Organization from "./pages/Dashboard/Organization";
+import { ThemeProvider } from "./context/Theme-context";
+import Layout from "./pages/Dashboard/Layout";
+import { dashboardLoader } from "./Utilis/LoaderFunction";
+import { Toaster } from "sonner";
 
 function App() {
+  const router = createBrowserRouter([
+    // Public Routes
+    {
+      path: "/",
+      element: <LandingPage />,
+    },
+    {
+      path: "/forgot-password",
+      element: <ForgotPasswordPage />,
+    },
+    {
+      path: "/otp",
+      element: <OtpPage />,
+    },
+    {
+      path: "/beneficiary-signup",
+      element: <BeneficiarySignup />,
+    },
+    {
+      path: "/beneficiary-login",
+      element: <BeneficiaryLogin />,
+    },
+    {
+      path: "/create_deployment",
+      element: <SignupStakeholder />,
+    },
+    {
+      path: "/signin",
+      element: <LoginStakeholder />,
+    },
+
+    // Protected Routes
+    {
+      path: "/:subdomain",
+      element: <ProtectedROutes />,
+      children: [
+        {
+          path: "",
+          element: <Layout />,
+          children: [
+            {
+              path: "dashboard",
+              element: <Organization />,
+              loader: dashboardLoader,
+            },
+          ],
+        },
+      ],
+    },
+  ]);
+
   return (
-    <Router>
+    <ThemeProvider>
       <AuthProvider>
-        <Routes>
-          <Route path="/" index element={<LandingPage />} />
-          {/*Organisation Route */}
-          {/* <Route path="/create_deployment" element={<SignupStakeholder />} />
-          <Route path="/signin" element={<LoginStakeholder />} />
-          <Route
-            path="/:subdomain/dashboard"
-            element={<ProtectedROutes></ProtectedROutes>}
-          /> */}
-          <Route path="/org" element={<Organization />} />
-        </Routes>
+        <Toaster position="top-center" richColors closeButton expand={true} />
+        <RouterProvider router={router} />
       </AuthProvider>
-    </Router>
+    </ThemeProvider>
   );
 }
 

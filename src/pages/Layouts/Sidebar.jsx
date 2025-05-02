@@ -1,9 +1,8 @@
 import { forwardRef } from "react";
 import { NavLink } from "react-router-dom";
-import { navbarLinks } from "../constants/index";
-import { useTheme } from "../hooks/Usetheme";
-
-import { navlogo } from "../../assets/navlogo.jpg";
+import { navbarLinks } from "../../constants/index";
+import { useTheme } from "../../context/Theme-context";
+import navlogo from "../../assets/navlogo.jpg";
 import cn from "../../Utilis/cn";
 import PropTypes from "prop-types";
 

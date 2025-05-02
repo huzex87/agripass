@@ -16,12 +16,10 @@ import {
 } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import "../styles/LandingPage.css";
-import { SiteHeader } from "./toolkits/Site-header";
 
 const LandingPage = () => {
   return (
     <div className="landing-page">
-      {/* <SiteHeader /> */}
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">

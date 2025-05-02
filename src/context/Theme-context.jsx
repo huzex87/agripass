@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
 import PropTypes from "prop-types";
 
 const initialState = {
@@ -20,6 +20,7 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
+    console.log("Applying theme:", theme);
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
@@ -28,18 +29,18 @@ export function ThemeProvider({
         ? "dark"
         : "light";
 
-      root.classList.add(systemTheme);
-      return;
+      return root.classList.add(systemTheme);
     }
 
     root.classList.add(theme);
+    console.log("Current theme", theme);
   }, [theme]);
 
   const value = {
     theme,
-    setTheme: (theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+    setTheme: (newTheme) => {
+      localStorage.setItem(storageKey, newTheme);
+      setTheme(newTheme);
     },
   };
 
@@ -49,6 +50,14 @@ export function ThemeProvider({
     </ThemeProviderContext.Provider>
   );
 }
+
+export const useTheme = () => {
+  const context = useContext(ThemeProviderContext);
+  if (!context) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
+  return context;
+};
 
 ThemeProvider.propTypes = {
   children: PropTypes.node,

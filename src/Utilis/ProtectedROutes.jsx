@@ -1,8 +1,8 @@
 import React from "react";
-import { useLocation, Navigate, useParams } from "react-router-dom";
+import { useLocation, Navigate, useParams, Outlet } from "react-router-dom";
 import { useAuthentication } from "./Auth";
 
-const ProtectedOrgRoute = ({ children }) => {
+const ProtectedOrgRoute = () => {
   const { subdomain } = useParams();
   const { isAuthenticated, user } = useAuthentication();
   const location = useLocation();
@@ -17,7 +17,7 @@ const ProtectedOrgRoute = ({ children }) => {
     return <Navigate to={`/${user.subdomain}/dashboard`} replace />;
   }
 
-  return children;
+  return <Outlet />;
 };
 
 export default ProtectedOrgRoute;

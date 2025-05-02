@@ -1,6 +1,4 @@
-@import "@tailwindcss/postcss/base";
-@import "@tailwindcss/postcss/components";
-@import "@tailwindcss/postcss/utilities";
+@import "tailwindcss";
 
 @layer base {
     body {
