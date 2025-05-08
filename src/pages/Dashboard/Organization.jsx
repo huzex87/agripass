@@ -1,6 +1,13 @@
 import React from "react";
 import { useLoaderData, useNavigation } from "react-router-dom";
-import { Users, TrendingUp, TrendingDown } from "lucide-react";
+import {
+  Users,
+  TrendingUp,
+  TrendingDown,
+  Loader2,
+  CircleCheck,
+  SquarePen,
+} from "lucide-react";
 import cn from "../../Utilis/cn";
 
 const Organization = () => {
@@ -26,7 +33,13 @@ const Organization = () => {
   if (isLoading) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <div className="loader">Loading dashboard...</div>
+        <Loader2
+          className="animate-spin text-blue-500 dark:text-white"
+          size={24}
+        />
+        <span className="ml-2 text-blue-500 dark:text-white">
+          Loading dashboard...
+        </span>
       </div>
     );
   }
@@ -56,11 +69,11 @@ const Organization = () => {
               <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
                 <Users />
               </div>
-              <h2 className="text-lg font-semibold">Total Users</h2>
+              <h2 className="text-lg font-semibold">Active Projects</h2>
             </div>
             <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">{data.totalUsers || 0}</p>
-              {data.totalUsers > 0 ? (
+              <p className="text-3xl font-bold">{data.totalActive || 0}</p>
+              {/* {data.totalUsers > 0 ? (
                 <div className="border-l-4 border-green-500 pl-2 text-green-500">
                   <TrendingUp className="text-green-500" />
                 </div>
@@ -68,11 +81,53 @@ const Organization = () => {
                 <div className="border-l-4 border-red-500 pl-2 text-red-500">
                   <TrendingDown className="text-red-500" />
                 </div>
-              )}
+              )} */}
             </div>
           </div>
 
-          {/* Add more dashboard cards/components as needed */}
+          {/* Total completed projects */}
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+            <div className="flex gap-x-4 items-center mb-4">
+              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+                <CircleCheck />
+              </div>
+              <h2 className="text-lg font-semibold">Completed Projects</h2>
+            </div>
+            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
+              <p className="text-3xl font-bold">{data.totalCompleted || 0}</p>
+              {/* {data.totalCompleted > 0 ? (
+                <div className="border-l-4 border-green-500 pl-2 text-green-500">
+                  <TrendingUp className="text-green-500" />
+                </div>
+              ) : (
+                <div className="border-l-4 border-red-500 pl-2 text-red-500">
+                  <TrendingDown className="text-red-500" />
+                </div>
+              )} */}
+            </div>
+          </div>
+          {/* Total draft projects */}
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+            <div className="flex gap-x-4 items-center mb-4">
+              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+                <SquarePen />
+              </div>
+              <h2 className="text-lg font-semibold">Drafts</h2>
+            </div>
+            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
+              <p className="text-3xl font-bold">{data.totalDraft || 0}</p>
+              {/* {data.totalDraft > 0 ? (
+                <div className="border-l-4 border-green-500 pl-2 text-green-500">
+                  <TrendingUp className="text-green-500" />
+                </div>
+              ) : (
+                <div className="border-l-4 border-red-500 pl-2 text-red-500">
+                  <TrendingDown className="text-red-500" />
+                </div>
+              )} */}
+            </div>
+          </div>
+          {/* Test dark mode */}
         </div>
       </div>
     </>

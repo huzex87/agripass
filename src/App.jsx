@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import HomePage from "./pages/LandingPage/HomePage";
 import LandingPage from "./pages/LandingPage";
 import ForgotPasswordPage from "./pages/ForgotPassword";
 import OtpPage from "./pages/OtpPage";
@@ -10,7 +11,7 @@ import AuthProvider from "./Utilis/Auth";
 import LoginStakeholder from "./pages/Forms/LoginStakeholder";
 import ProtectedROutes from "./Utilis/ProtectedROutes";
 import Organization from "./pages/Dashboard/Organization";
-import { ThemeProvider } from "./context/Theme-context";
+import { ThemeProvider } from "./context/NewThemeContext";
 import Layout from "./pages/Dashboard/Layout";
 import { dashboardLoader } from "./Utilis/LoaderFunction";
 import { Toaster } from "sonner";
@@ -20,7 +21,8 @@ function App() {
     // Public Routes
     {
       path: "/",
-      element: <LandingPage />,
+      element: <HomePage />,
+      // element: <LandingPage />,
     },
     {
       path: "/forgot-password",

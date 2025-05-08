@@ -1,12 +1,14 @@
 import { forwardRef } from "react";
 import { NavLink } from "react-router-dom";
 import { navbarLinks } from "../../constants/index";
-import { useTheme } from "../../context/Theme-context";
 import navlogo from "../../assets/navlogo.jpg";
 import cn from "../../Utilis/cn";
 import PropTypes from "prop-types";
+import { useAuthentication } from "../../Utilis/Auth";
 
 export const Sidebar = forwardRef(({ collapsed }, ref) => {
+  const { logout } = useAuthentication();
+
   return (
     <aside
       ref={ref}
@@ -16,14 +18,7 @@ export const Sidebar = forwardRef(({ collapsed }, ref) => {
         collapsed ? "max-md:-left-full" : "max-md:left-0"
       )}
     >
-      <div className="flex gap-x-3 p-3">
-        <img src={navlogo} alt="brandLogo" className="dark:hidden" />
-        {!collapsed && (
-          <p className="text-lg font-medium text-slate-900 transition-colors dark:text-slate-50">
-            brandLogo
-          </p>
-        )}
-      </div>
+      {/* <img src={navlogo} alt="Brand Logo" className=" scale-50" /> */}
       <div className="flex w-full flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-3 [scrollbar-width:_thin]">
         {navbarLinks.map((navbarLink) => (
           <nav

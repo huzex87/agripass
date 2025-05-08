@@ -20,55 +20,65 @@ export const navbarLinks = [
         icon: Home,
         path: "/",
       },
-      {
-        label: "Analytics",
-        icon: ChartColumn,
-        path: "/analytics",
-      },
-      {
-        label: "Reports",
-        icon: NotepadText,
-        path: "/reports",
-      },
+      // {
+      //   label: "Analytics",
+      //   icon: ChartColumn,
+      //   path: "/analytics",
+      // },
+      // {
+      //   label: "Reports",
+      //   icon: NotepadText,
+      //   path: "/reports",
+      // },
     ],
   },
   {
-    title: "Customers",
+    title: "Manage Resource",
     links: [
       {
-        label: "Customers",
+        label: "Create New Resources",
         icon: Users,
         path: "/customers",
       },
       {
-        label: "New customer",
+        label: "Delete Resources",
         icon: UserPlus,
         path: "/new-customer",
       },
-      {
-        label: "Verified customers",
-        icon: UserCheck,
-        path: "/verified-customers",
-      },
+      // {
+      //   label: "Verified customers",
+      //   icon: UserCheck,
+      //   path: "/verified-customers",
+      // },
     ],
   },
   {
-    title: "Products",
+    title: "Manage Applications",
     links: [
       {
-        label: "Products",
+        label: "Review Applications",
         icon: Package,
         path: "/products",
       },
       {
-        label: "New product",
-        icon: PackagePlus,
-        path: "/new-product",
-      },
-      {
-        label: "Inventory",
+        label: "Delete/Reject Applications",
         icon: ShoppingBag,
         path: "/inventory",
+      },
+    ],
+  },
+  {
+    title: "Track Resources",
+    links: [
+      {
+        label: "Funds Disbursed",
+        icon: Package,
+        path: "/products",
+      },
+      {
+        label: "Goods Disbursed",
+        icon: PackagePlus,
+        path: "/new-product",
       },
     ],
   },
