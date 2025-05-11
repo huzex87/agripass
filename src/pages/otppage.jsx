@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "../styles/otppage.css"; // Import external CSS
 
 const OtpPage = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);

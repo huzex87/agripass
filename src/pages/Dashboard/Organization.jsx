@@ -73,15 +73,6 @@ const Organization = () => {
             </div>
             <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
               <p className="text-3xl font-bold">{data.totalActive || 0}</p>
-              {/* {data.totalUsers > 0 ? (
-                <div className="border-l-4 border-green-500 pl-2 text-green-500">
-                  <TrendingUp className="text-green-500" />
-                </div>
-              ) : (
-                <div className="border-l-4 border-red-500 pl-2 text-red-500">
-                  <TrendingDown className="text-red-500" />
-                </div>
-              )} */}
             </div>
           </div>
 
@@ -95,17 +86,9 @@ const Organization = () => {
             </div>
             <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
               <p className="text-3xl font-bold">{data.totalCompleted || 0}</p>
-              {/* {data.totalCompleted > 0 ? (
-                <div className="border-l-4 border-green-500 pl-2 text-green-500">
-                  <TrendingUp className="text-green-500" />
-                </div>
-              ) : (
-                <div className="border-l-4 border-red-500 pl-2 text-red-500">
-                  <TrendingDown className="text-red-500" />
-                </div>
-              )} */}
             </div>
           </div>
+
           {/* Total draft projects */}
           <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
             <div className="flex gap-x-4 items-center mb-4">
@@ -116,18 +99,49 @@ const Organization = () => {
             </div>
             <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
               <p className="text-3xl font-bold">{data.totalDraft || 0}</p>
-              {/* {data.totalDraft > 0 ? (
-                <div className="border-l-4 border-green-500 pl-2 text-green-500">
-                  <TrendingUp className="text-green-500" />
-                </div>
-              ) : (
-                <div className="border-l-4 border-red-500 pl-2 text-red-500">
-                  <TrendingDown className="text-red-500" />
-                </div>
-              )} */}
             </div>
           </div>
-          {/* Test dark mode */}
+
+          {/* Total draft projects */}
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+            <div className="flex gap-x-4 items-center mb-4">
+              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+                <SquarePen />
+              </div>
+              <h2 className="text-lg font-semibold">Drafts</h2>
+            </div>
+            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
+              <p className="text-3xl font-bold">{data.totalDraft || 0}</p>
+            </div>
+          </div>
+
+          {/* Total draft projects */}
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+            <div className="flex gap-x-4 items-center mb-4">
+              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+                <SquarePen />
+              </div>
+              <h2 className="text-lg font-semibold">Drafts</h2>
+            </div>
+            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
+              <p className="text-3xl font-bold">{data.totalDraft || 0}</p>
+            </div>
+          </div>
+
+          {/* Total draft projects */}
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+            <div className="flex gap-x-4 items-center mb-4">
+              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+                <SquarePen />
+              </div>
+              <h2 className="text-lg font-semibold">Drafts</h2>
+            </div>
+            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
+              <p className="text-3xl font-bold">{data.totalDraft || 0}</p>
+            </div>
+          </div>
+
+          {/* Beneficiary */}
         </div>
       </div>
     </>

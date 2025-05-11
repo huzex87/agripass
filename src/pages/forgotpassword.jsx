@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
-import "../styles/ForgotPassword.css"; // Import CSS
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -21,7 +20,9 @@ const ForgotPassword = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label htmlFor="email" className="input-label">Email Address</label>
+            <label htmlFor="email" className="input-label">
+              Email Address
+            </label>
             <input
               type="email"
               id="email"
@@ -33,7 +34,9 @@ const ForgotPassword = () => {
             />
           </div>
 
-          <button type="submit" className="reset-btn">Send Reset Link</button>
+          <button type="submit" className="reset-btn">
+            Send Reset Link
+          </button>
         </form>
 
         <p className="back-to-login">

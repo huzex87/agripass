@@ -5,6 +5,7 @@ import navlogo from "../../assets/navlogo.jpg";
 import cn from "../../Utilis/cn";
 import PropTypes from "prop-types";
 import { useAuthentication } from "../../Utilis/Auth";
+import { LogOut } from "lucide-react";
 
 export const Sidebar = forwardRef(({ collapsed }, ref) => {
   const { logout } = useAuthentication();
@@ -44,6 +45,16 @@ export const Sidebar = forwardRef(({ collapsed }, ref) => {
             ))}
           </nav>
         ))}
+        <div className="flex items-center gap-2">
+          <LogOut
+            size={22}
+            className="ml-2 flex-shrink-0 text-red-600 cursor-pointer"
+            onClick={logout}
+          />
+          <button className="text-red-500 cursor-pointer" onClick={logout}>
+            Log Out
+          </button>
+        </div>
       </div>
     </aside>
   );

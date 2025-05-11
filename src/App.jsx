@@ -1,10 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/LandingPage/HomePage";
-import LandingPage from "./pages/LandingPage";
 import ForgotPasswordPage from "./pages/ForgotPassword";
 import OtpPage from "./pages/OtpPage";
-import BeneficiarySignup from "./pages/BeneficiarySignup";
-import BeneficiaryLogin from "./pages/BeneficiaryLogin";
 import SignupStakeholder from "./pages/Forms/SignupStakeholder";
 import "./App.css";
 import AuthProvider from "./Utilis/Auth";
@@ -15,30 +12,14 @@ import { ThemeProvider } from "./context/NewThemeContext";
 import Layout from "./pages/Dashboard/Layout";
 import { dashboardLoader } from "./Utilis/LoaderFunction";
 import { Toaster } from "sonner";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
-  const router = createBrowserRouter([
-    // Public Routes
+  const publicRoutes = [
     {
+      index: true,
       path: "/",
       element: <HomePage />,
-      // element: <LandingPage />,
-    },
-    {
-      path: "/forgot-password",
-      element: <ForgotPasswordPage />,
-    },
-    {
-      path: "/otp",
-      element: <OtpPage />,
-    },
-    {
-      path: "/beneficiary-signup",
-      element: <BeneficiarySignup />,
-    },
-    {
-      path: "/beneficiary-login",
-      element: <BeneficiaryLogin />,
     },
     {
       path: "/create_deployment",
@@ -48,8 +29,9 @@ function App() {
       path: "/signin",
       element: <LoginStakeholder />,
     },
+  ];
 
-    // Protected Routes
+  const protectedRoutes = [
     {
       path: "/:subdomain",
       element: <ProtectedROutes />,
@@ -66,6 +48,15 @@ function App() {
           ],
         },
       ],
+    },
+  ];
+
+  const router = createBrowserRouter([
+    ...publicRoutes,
+    ...protectedRoutes,
+    {
+      path: "/*",
+      element: <NotFoundPage />,
     },
   ]);
 

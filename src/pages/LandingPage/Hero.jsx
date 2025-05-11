@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fadeIn, textVariant } from "../../constants/motion";
-import heroImage from "../../assets/heroImage.png";
+import image from "../../assets/image.png";
+import { ArrowBigRight } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -51,6 +52,17 @@ const Hero = () => {
           whileInView="show"
           className="flex gap-3 max-w-md"
         >
+          <motion.div
+            variants={fadeIn("up", 0.5)}
+            initial="hidden"
+            whileInView="show"
+            className="flex items-center gap-2"
+          >
+            <motion.p variants={textVariant(0.3)} className="text-blue-600">
+              As Beneficiary
+            </motion.p>
+            <ArrowBigRight className="text-blue-600" />
+          </motion.div>
           <motion.button className=" bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100">
             <Link to="#">Sign up</Link>
           </motion.button>
@@ -69,7 +81,7 @@ const Hero = () => {
       >
         <div className="relative">
           <img
-            src={heroImage}
+            src={image}
             alt="Team meeting"
             className="rounded-lg relative z-10 hover:scale-[1.02] transition-transform duration-300"
           />

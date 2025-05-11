@@ -2,8 +2,11 @@ import * as yup from "yup";
 
 export const signupSchema = yup.object().shape({
   orgName: yup.string().required("Organization Name is required"),
+  // subdomain: yup
+  //   .string()
+  //   .matches(/^[a-zA-Z0-9]+$/, "Subdomain must be alphanumeric")
+  //   .required("Subdomain is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
-  phone: yup.string().required("Phone is required"),
   password: yup
     .string()
     .min(6, "Password must be at least 6 characters")

@@ -81,7 +81,7 @@ const Navbar = () => {
           whileTap={{ scale: 0.95 }}
           className="hidden md:block bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
         >
-          <Link to="/signin">Create Deployment</Link>
+          <Link to="/create_deployment">Create Deployment</Link>
         </motion.button>
 
         {/* Login to dashboard */}
@@ -130,7 +130,7 @@ const Navbar = () => {
               whileTap={{ scale: 0.95 }}
               className="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
             >
-              <Link>Create Deployment</Link>
+              <Link to="/create_deployment">Create Deployment</Link>
             </motion.button>
             {/* Login to dashboard */}
             <motion.button
