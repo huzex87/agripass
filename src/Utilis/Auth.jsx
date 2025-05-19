@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { set } from "react-hook-form";
 
 const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [baseDomain, setBaseDomain] = useState(null);
 
   const checkAuth = () => {
     const token = localStorage.getItem("token");
@@ -29,6 +31,7 @@ const AuthProvider = ({ children }) => {
           email: decodedToken.email,
           subdomain: subdomain,
         });
+        setBaseDomain("localhost:3001");
         setLoading(false);
       } catch (error) {
         localStorage.removeItem("token");
@@ -36,6 +39,7 @@ const AuthProvider = ({ children }) => {
         logout();
         setUser(null);
         setLoading(false);
+        setBaseDomain(null);
         return;
       }
     } else {
@@ -55,6 +59,7 @@ const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("subdomain");
+    localStorage.removeItem("theme");
     setUser(null);
   };
 
@@ -69,6 +74,7 @@ const AuthProvider = ({ children }) => {
     isAuthenticated: !!user?.isAuthenticated,
     loading,
     subdomain: user?.subdomain,
+    baseDomain,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

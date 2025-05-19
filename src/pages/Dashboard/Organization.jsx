@@ -1,17 +1,22 @@
 import React from "react";
 import { useLoaderData, useNavigation } from "react-router-dom";
-import {
-  Users,
-  TrendingUp,
-  TrendingDown,
-  Loader2,
-  CircleCheck,
-  SquarePen,
-} from "lucide-react";
+import { Users, Loader2, CircleCheck, SquarePen } from "lucide-react";
 import cn from "../../Utilis/cn";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { getStatusBadge } from "../../Utilis/Status";
 
 const Organization = () => {
-  const { data, status, error, subdomain } = useLoaderData();
+  const { projects, disbursements, status, error, subdomain, beneficiaries } =
+    useLoaderData();
 
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
@@ -72,7 +77,7 @@ const Organization = () => {
               <h2 className="text-lg font-semibold">Active Projects</h2>
             </div>
             <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">{data.totalActive || 0}</p>
+              <p className="text-3xl font-bold">{projects.totalActive || 0}</p>
             </div>
           </div>
 
@@ -85,7 +90,9 @@ const Organization = () => {
               <h2 className="text-lg font-semibold">Completed Projects</h2>
             </div>
             <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">{data.totalCompleted || 0}</p>
+              <p className="text-3xl font-bold">
+                {projects.totalCompleted || 0}
+              </p>
             </div>
           </div>
 
@@ -98,50 +105,113 @@ const Organization = () => {
               <h2 className="text-lg font-semibold">Drafts</h2>
             </div>
             <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">{data.totalDraft || 0}</p>
+              <p className="text-3xl font-bold">{projects.totalDraft || 0}</p>
             </div>
           </div>
 
-          {/* Total draft projects */}
+          {/* Total pending disbursements */}
           <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
             <div className="flex gap-x-4 items-center mb-4">
               <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
                 <SquarePen />
               </div>
-              <h2 className="text-lg font-semibold">Drafts</h2>
+              <h2 className="text-lg font-semibold">Pending Disbursement</h2>
             </div>
             <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">{data.totalDraft || 0}</p>
+              <p className="text-3xl font-bold">
+                {disbursements.totalPending || 0}
+              </p>
             </div>
           </div>
 
-          {/* Total draft projects */}
+          {/* Total draft approved disbursement */}
           <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
             <div className="flex gap-x-4 items-center mb-4">
               <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
                 <SquarePen />
               </div>
-              <h2 className="text-lg font-semibold">Drafts</h2>
+              <h2 className="text-lg font-semibold">Approved Disbursement</h2>
             </div>
             <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">{data.totalDraft || 0}</p>
+              <p className="text-3xl font-bold">
+                {disbursements.totalApproved || 0}
+              </p>
             </div>
           </div>
 
-          {/* Total draft projects */}
+          {/* Total completed disbursement */}
           <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
             <div className="flex gap-x-4 items-center mb-4">
               <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
                 <SquarePen />
               </div>
-              <h2 className="text-lg font-semibold">Drafts</h2>
+              <h2 className="text-lg font-semibold">Total Disbursed</h2>
             </div>
             <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">{data.totalDraft || 0}</p>
+              <p className="text-3xl font-bold">
+                {disbursements.totalCompleted || 0}
+              </p>
             </div>
           </div>
+        </div>
 
-          {/* Beneficiary */}
+        {/* Beneficiary */}
+        <div className="grid grid-cols-1 lg:grid-cols-7 rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+          {/* Table */}
+          <div className="col-span-1 lg:col-span-4">
+            <h2 className="text-xl font-semibold mb-4 dark:text-white">
+              Recent Beneficiaries
+            </h2>
+            {beneficiaries && beneficiaries.length > 0 ? (
+              <Table className="table table-zebra w-full">
+                <TableHeader className={"bg-gray-100 dark:bg-gray-800"}>
+                  <TableRow>
+                    <TableHead>First Name</TableHead>
+                    <TableHead>Last Name</TableHead>
+                    <TableHead> Gender</TableHead>
+                    <TableHead> Email Address</TableHead>
+                    <TableHead> Date</TableHead>
+                    <TableHead> Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {beneficiaries.map((beneficiary) => (
+                    <TableRow key={beneficiary._id}>
+                      <TableCell>
+                        {beneficiary.beneficiaryId.personalDetails.firstName ||
+                          "N/A"}{" "}
+                      </TableCell>
+                      <TableCell>
+                        {beneficiary.beneficiaryId.personalDetails.lastName ||
+                          "N/A"}{" "}
+                      </TableCell>
+                      <TableCell>
+                        {beneficiary.beneficiaryId.personalDetails.gender ||
+                          "N/A"}{" "}
+                      </TableCell>
+                      <TableCell>
+                        {beneficiary.beneficiaryId.personalDetails.email ||
+                          "N/A"}{" "}
+                      </TableCell>
+                      <TableCell>
+                        {beneficiary.createdAt
+                          ? new Date(beneficiary.createdAt).toLocaleDateString()
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        {getStatusBadge(beneficiary.beneficiaryId.status) ||
+                          "N/A"}{" "}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <p className="text-gray-950 dark:text-gray-400">
+                No recent beneficiaries sign up
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </>

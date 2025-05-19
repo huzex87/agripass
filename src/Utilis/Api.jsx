@@ -7,7 +7,11 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    if (token) {
+    const subdomain = localStorage.getItem("subdomain");
+    const baseDomain = "localhost:3001";
+
+    if (token && subdomain) {
+      config.baseURL = `http://${subdomain}.${baseDomain}`;
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

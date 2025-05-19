@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { navbarLinks } from "../../constants/index";
 import navlogo from "../../assets/navlogo.jpg";
@@ -6,57 +6,75 @@ import cn from "../../Utilis/cn";
 import PropTypes from "prop-types";
 import { useAuthentication } from "../../Utilis/Auth";
 import { LogOut } from "lucide-react";
+import Dialogue from "../Elements/Dialogue";
 
 export const Sidebar = forwardRef(({ collapsed }, ref) => {
   const { logout } = useAuthentication();
+  const [open, setIsopen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsopen(() => document.getElementById("my_modal_1").showModal());
+  };
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
-    <aside
-      ref={ref}
-      className={cn(
-        "fixed z-[100] flex h-full w-[240px] flex-col overflow-x-hidden border-r border-slate-300 bg-white [transition:_width_300ms_cubic-bezier(0.4,_0,_0.2,_1),_left_300ms_cubic-bezier(0.4,_0,_0.2,_1),_background-color_150ms_cubic-bezier(0.4,_0,_0.2,_1),_border_150ms_cubic-bezier(0.4,_0,_0.2,_1)] dark:border-slate-700 dark:bg-slate-900",
-        collapsed ? "md:w-[70px] md:items-center" : "md:w-[240px]",
-        collapsed ? "max-md:-left-full" : "max-md:left-0"
-      )}
-    >
-      {/* <img src={navlogo} alt="Brand Logo" className=" scale-50" /> */}
-      <div className="flex w-full flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-3 [scrollbar-width:_thin]">
-        {navbarLinks.map((navbarLink) => (
-          <nav
-            key={navbarLink.title}
-            className={cn("sidebar-group", collapsed && "md:items-center")}
-          >
-            <p
-              className={cn("sidebar-group-title", collapsed && "md:w-[45px]")}
+    <>
+      <aside
+        ref={ref}
+        className={cn(
+          "fixed z-[100] flex h-full w-[240px] flex-col overflow-x-hidden border-r border-slate-300 bg-white [transition:_width_300ms_cubic-bezier(0.4,_0,_0.2,_1),_left_300ms_cubic-bezier(0.4,_0,_0.2,_1),_background-color_150ms_cubic-bezier(0.4,_0,_0.2,_1),_border_150ms_cubic-bezier(0.4,_0,_0.2,_1)] dark:border-slate-700 dark:bg-slate-900",
+          collapsed ? "md:w-[70px] md:items-center" : "md:w-[240px]",
+          collapsed ? "max-md:-left-full" : "max-md:left-0"
+        )}
+      >
+        {/* <img src={navlogo} alt="Brand Logo" className=" scale-50" /> */}
+        <div className="flex w-full flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-3 [scrollbar-width:_thin]">
+          {navbarLinks.map((navbarLink) => (
+            <nav
+              key={navbarLink.title}
+              className={cn("sidebar-group", collapsed && "md:items-center")}
             >
-              {navbarLink.title}
-            </p>
-            {navbarLink.links.map((link) => (
-              <NavLink
-                key={link.label}
-                to={link.path}
-                className={cn("sidebar-item", collapsed && "md:w-[45px]")}
-              >
-                <link.icon size={22} className="flex-shrink-0" />
-                {!collapsed && (
-                  <p className="whitespace-nowrap">{link.label}</p>
+              <p
+                className={cn(
+                  "sidebar-group-title",
+                  collapsed && "md:w-[45px]"
                 )}
-              </NavLink>
-            ))}
-          </nav>
-        ))}
-        <div className="flex items-center gap-2">
-          <LogOut
-            size={22}
-            className="ml-2 flex-shrink-0 text-red-600 cursor-pointer"
-            onClick={logout}
-          />
-          <button className="text-red-500 cursor-pointer" onClick={logout}>
-            Log Out
-          </button>
+              >
+                {navbarLink.title}
+              </p>
+              {navbarLink.links.map((link) => (
+                <NavLink
+                  key={link.label}
+                  to={link.path}
+                  className={cn("sidebar-item", collapsed && "md:w-[45px]")}
+                >
+                  <link.icon size={22} className="flex-shrink-0" />
+                  {!collapsed && (
+                    <p className="whitespace-nowrap">{link.label}</p>
+                  )}
+                </NavLink>
+              ))}
+            </nav>
+          ))}
+          <div className="flex items-center gap-2">
+            <LogOut
+              size={22}
+              className="ml-2 flex-shrink-0 text-red-600 cursor-pointer"
+              onClick={handleOpenModal}
+            />
+            <button
+              className="text-red-500 cursor-pointer"
+              onClick={handleOpenModal}
+            >
+              Log Out
+            </button>
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+      <Dialogue Logout={handleLogout} OpenModal={handleOpenModal} />
+    </>
   );
 });
 

@@ -32,7 +32,7 @@ const LoginStakeholder = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuthentication();
+  const { login, baseDomain } = useAuthentication();
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
@@ -48,7 +48,7 @@ const LoginStakeholder = () => {
         description: `Welcome back to ${data.subdomain}`,
       });
       login(response.data.token, data.subdomain);
-      navigate(`/${data.subdomain}/dashboard`);
+      navigate(`/${data.subdomain}.${baseDomain}/dashboard`);
     } catch (error) {
       console.log(error);
       let errorMessage = "Something went wrong, server not responding";
@@ -66,7 +66,7 @@ const LoginStakeholder = () => {
   return (
     <>
       <motion.div
-        className="relative min-h-svh bg-blue-950"
+        className="relative min-h-svh bg-gray-950"
         variants={fadeIn("right", 0.2)}
         initial="hidden"
         whileInView="show"
