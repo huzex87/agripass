@@ -1,3 +1,4 @@
+import stat from "daisyui/components/stat";
 import api from "../Utilis/Api";
 
 export async function dashboardLoader({ params }) {
@@ -7,10 +8,6 @@ export async function dashboardLoader({ params }) {
       api.get("/disbursify/disbursements"),
       api.get("/disbursify/beneficiaries"),
     ]);
-
-    console.log(projectsData);
-    console.log(resources);
-    console.log(beneficiary);
 
     return {
       status: "success",
@@ -29,6 +26,31 @@ export async function dashboardLoader({ params }) {
       error: error.response?.data?.error || "Failed to load organization data",
       projects: {},
       disbursements: {},
+    };
+  }
+}
+
+export async function activeprojects() {
+  try {
+    const projects = await api.get("/disbursify/resources");
+    return {
+      status: "success",
+      data: projects?.data?.projects || [],
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      error: error.response?.data?.error || "Failed to load active projects",
+    };
+  }
+}
+
+export async function projectLoader() {
+  try {
+  } catch (error) {
+    return {
+      status: "error",
+      error: error.response?.data?.error || "Failed to load project data",
     };
   }
 }

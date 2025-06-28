@@ -1,3 +1,5 @@
+import React, { Suspense } from "react";
+import { Loader2 } from "lucide-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/LandingPage/HomePage";
 import ForgotPasswordPage from "./pages/ForgotPassword";
@@ -7,12 +9,17 @@ import "./App.css";
 import AuthProvider from "./Utilis/Auth";
 import LoginStakeholder from "./pages/Forms/LoginStakeholder";
 import ProtectedROutes from "./Utilis/ProtectedROutes";
-import Organization from "./pages/Dashboard/Organization";
+import Organization from "./pages/Dashboard/Organization/Organization";
 import { ThemeProvider } from "./context/NewThemeContext";
 import Layout from "./pages/Dashboard/Layout";
-import { dashboardLoader } from "./Utilis/LoaderFunction";
+import { dashboardLoader, activeprojects } from "./Utilis/LoaderFunction";
 import { Toaster } from "sonner";
 import NotFoundPage from "./pages/NotFoundPage";
+import CreateProject from "./pages/Routes/Organization/CreateProject";
+import Projects from "./pages/Routes/Organization/Projects";
+import BeneficiaryLogin from "./pages/Forms/BeneficiaryLogin";
+import Beneficiary from "./pages/Dashboard/Beneficiary/Header";
+import ProtectedRoutesII from "./Utilis/ProtectedRoutesII";
 
 function App() {
   const publicRoutes = [
@@ -29,9 +36,27 @@ function App() {
       path: "/signin",
       element: <LoginStakeholder />,
     },
+    {
+      path: "/login/beneficiary",
+      element: <BeneficiaryLogin />,
+    },
+    {
+      path: "/signup/beneficiary",
+    },
   ];
 
   const protectedRoutes = [
+    {
+      path: "/beneficiary",
+      element: <ProtectedRoutesII />,
+      children: [
+        {
+          path: "dashboard",
+          element: <Beneficiary />,
+        },
+      ],
+    },
+
     {
       path: "/:subdomain",
       element: <ProtectedROutes />,
@@ -45,6 +70,15 @@ function App() {
               element: <Organization />,
               loader: dashboardLoader,
             },
+            {
+              path: "project",
+              element: <Projects />,
+              loader: activeprojects,
+            },
+            {
+              path: "create_project",
+              element: <Projects />,
+            },
           ],
         },
       ],
@@ -55,7 +89,7 @@ function App() {
     ...publicRoutes,
     ...protectedRoutes,
     {
-      path: "/*",
+      path: "*",
       element: <NotFoundPage />,
     },
   ]);

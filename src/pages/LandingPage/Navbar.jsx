@@ -2,9 +2,16 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { fadeIn } from "../../constants/motion";
 import { X } from "lucide-react";
-import { Menu } from "lucide-react";
+import { Menu, User } from "lucide-react";
 import navlogo from "../../assets/navlogo.jpg";
 import { Link } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -64,7 +71,7 @@ const Navbar = () => {
               onClick={() => setActiveLink(path)}
               className={`text-sm font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-blue-600 after:transition-all ${
                 activeLink === path
-                  ? "text-blue-600 after:w-full  "
+                  ? "text-blue-600 after:w-full"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -75,14 +82,24 @@ const Navbar = () => {
         </motion.div>
 
         {/* CTA Button */}
-        <motion.button
+        <motion.div
           variants={fadeIn("left", 0.3)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="hidden md:block bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
+          className=" hidden md:block px-6 py-2.5 transition-all"
         >
-          <Link to="/create_deployment">Create Deployment</Link>
-        </motion.button>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-2">
+              <Button className="flex items-center gap-2 bg-white hover:bg-gray-100">
+                <User className="h-4 w-4" />
+                Account
+              </Button>
+            </DropdownMenuTrigger> 
+            <DropdownMenuContent>
+              <Link to="/create_deployment">Create Deployment</Link>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </motion.div>
 
         {/* Login to dashboard */}
         <motion.button

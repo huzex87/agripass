@@ -68,7 +68,7 @@ const SignupStakeholder = () => {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md text-primary-foreground">
               <img src={logo} alt="" className="" />
             </div>
             Disbursify
@@ -91,11 +91,11 @@ const SignupStakeholder = () => {
               <div className="grid gap-6">
                 {/* Company Name */}
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Organization Name</Label>
+                  <Label htmlFor="name">Organization </Label>
                   <Input
                     id="name"
                     type="name"
-                    placeholder="Company Name"
+                    placeholder="Your Company Name"
                     {...register("orgName")}
                     className={errors.orgName ? "border-red-500" : ""}
                   />

@@ -7,7 +7,7 @@ import { ArrowBigRight } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="flex flex-col md:flex-row justify-between items-center px-4 sm:px-6 lg:px-8 pt-44 pb-16 container mx-auto">
+    <section className="container mx-auto flex flex-col md:flex-row justify-between items-center px-4 sm:px-6 lg:px-8 pt-44 pb-16 ">
       {/* Left column */}
       <div className="w-full md:w-1/2 space-y-8">
         <motion.div
@@ -67,7 +67,7 @@ const Hero = () => {
             <Link to="#">Sign up</Link>
           </motion.button>
           <motion.button className="outline-blue-700 outline-2 text-black px-6 py-2.5 rounded-lg hover:bg-blue-700 hover:text-white text-sm font-medium transition-all duration-500 ease-in-out hover:shadow-lg hover:shadow-blue-100">
-            <Link to="#">Sign in</Link>
+            <Link to="/login/beneficiary">Sign in</Link>
           </motion.button>
         </motion.div>
       </div>

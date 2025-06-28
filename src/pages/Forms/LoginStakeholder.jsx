@@ -48,7 +48,7 @@ const LoginStakeholder = () => {
         description: `Welcome back to ${data.subdomain}`,
       });
       login(response.data.token, data.subdomain);
-      navigate(`/${data.subdomain}.${baseDomain}/dashboard`);
+      navigate(`/${data.subdomain}/dashboard`);
     } catch (error) {
       console.log(error);
       let errorMessage = "Something went wrong, server not responding";
@@ -83,7 +83,7 @@ const LoginStakeholder = () => {
         >
           <div className="w-full max-w-sm md:max-w-3xl">
             <div className="flex flex-col gap-6">
-              <Card className="overflow-hidden bg-white">
+              <Card className="overflow-hidden bg-white dark:bg-gray-800 shadow-lg">
                 <CardContent className="grid p-0 md:grid-cols-2">
                   <form
                     action=""
@@ -92,10 +92,18 @@ const LoginStakeholder = () => {
                   >
                     <div className="flex flex-col gap-6">
                       <div className="flex flex-col items-center text-center">
-                        <h1 className="text-2xl font-bold">Welcome back</h1>
-                        <p className="text-balance text-muted-foreground">
+                        <motion.h1
+                          className="text-2xl font-bold"
+                          variants={textVariant(0.5)}
+                        >
+                          Welcome back
+                        </motion.h1>
+                        <motion.p
+                          className="text-balance text-muted-foreground"
+                          variants={textVariant(0.5)}
+                        >
                           Login to your account
-                        </p>
+                        </motion.p>
                       </div>
                       <div className="grid gap-2">
                         <Label htmlFor="name">Subdomain</Label>
@@ -135,21 +143,32 @@ const LoginStakeholder = () => {
                           </p>
                         )}
                       </div>
-                      <Button
-                        className="w-full bg-blue-950 text-white hover:bg-blue-500"
-                        type="submit"
-                        disabled={loading}
+                      <motion.div
+                        variants={fadeIn("up", 0.5)}
+                        initial="hidden"
+                        whileInView="show"
                       >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Authenticating...
-                          </>
-                        ) : (
-                          "Login"
-                        )}
-                      </Button>
-                      <div className="text-center text-sm">
+                        <Button
+                          className="w-full bg-blue-950 text-white hover:bg-blue-500"
+                          type="submit"
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Authenticating...
+                            </>
+                          ) : (
+                            "Login"
+                          )}
+                        </Button>
+                      </motion.div>
+                      <motion.div
+                        className="text-center text-sm"
+                        variants={fadeIn("up", 0.5)}
+                        initial="hidden"
+                        whileInView="show"
+                      >
                         Don&apos;t have an account?{" "}
                         {/* <a href="#" className="underline underline-offset-4">
                           Sign up
@@ -160,7 +179,7 @@ const LoginStakeholder = () => {
                         >
                           Sign up
                         </Link>
-                      </div>
+                      </motion.div>
                     </div>
                   </form>
                   {/* Image */}

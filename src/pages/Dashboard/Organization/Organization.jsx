@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLoaderData, useNavigation } from "react-router-dom";
 import { Users, Loader2, CircleCheck, SquarePen } from "lucide-react";
-import cn from "../../Utilis/cn";
+import cn from "../../../Utilis/cn";
 import {
   Table,
   TableBody,
@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getStatusBadge } from "../../Utilis/Status";
+import { getStatusBadge } from "../../../Utilis/Status";
 
 const Organization = () => {
   const { projects, disbursements, status, error, subdomain, beneficiaries } =
@@ -22,8 +22,19 @@ const Organization = () => {
   const isLoading = navigation.state === "loading";
   const isError = status === "error";
 
-  const orgName = subdomain || "Administrator";
+  const [initialLoading, setInitialLoading] = useState(true);
 
+  useEffect(() => {
+    if (
+      projects !== undefined &&
+      disbursements !== undefined &&
+      beneficiaries !== undefined
+    ) {
+      setInitialLoading(false);
+    }
+  }, [projects, disbursements, beneficiaries]);
+
+  const orgName = subdomain || "Administrator";
   const greeting = () => {
     const currentHour = new Date().getHours();
     if (currentHour < 12) {
@@ -35,7 +46,7 @@ const Organization = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || initialLoading) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <Loader2
@@ -53,7 +64,7 @@ const Organization = () => {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <div className="error-message dark:text-white">
-          Error: {error.message || "Error loading dashboard"}
+          Error: {error?.message || "Error loading dashboard"}
         </div>
       </div>
     );

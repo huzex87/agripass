@@ -33,15 +33,15 @@ export const navbarLinks = [
     ],
   },
   {
-    title: "Manage Resource",
+    title: "Resource",
     links: [
       {
-        label: "Create New Resources",
+        label: "Projects",
         icon: Users,
-        path: "/customers",
+        path: "create_project",
       },
       {
-        label: "Delete Resources",
+        label: "Manage Projects",
         icon: UserPlus,
         path: "/new-customer",
       },
@@ -53,7 +53,7 @@ export const navbarLinks = [
     ],
   },
   {
-    title: "Manage Applications",
+    title: "Applications",
     links: [
       {
         label: "Review Applications",
@@ -61,7 +61,7 @@ export const navbarLinks = [
         path: "/products",
       },
       {
-        label: "Delete/Reject Applications",
+        label: "Manage Applications",
         icon: ShoppingBag,
         path: "/inventory",
       },
