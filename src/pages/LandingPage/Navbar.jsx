@@ -58,7 +58,7 @@ const Navbar = () => {
           )}
         </motion.button>
 
-        {/* Navigation Links - Destop */}
+        {/* Navigation Links - Desktop */}
         <motion.div
           variants={fadeIn("down", 0.3)}
           className="hidden md:flex items-center gap-10"
@@ -75,44 +75,54 @@ const Navbar = () => {
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              {" "}
-              {label}{" "}
+              {label}
             </MotionLink>
           ))}
         </motion.div>
 
-        {/* CTA Button */}
+        {/* Account Dropdown */}
         <motion.div
           variants={fadeIn("left", 0.3)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className=" hidden md:block px-6 py-2.5 transition-all"
+          className="hidden md:block"
         >
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2">
-              <Button className="flex items-center gap-2 bg-white hover:bg-gray-100">
+            <DropdownMenuTrigger asChild>
+              <Button className="flex items-center gap-2 bg-white hover:bg-gray-100 border border-gray-200">
                 <User className="h-4 w-4" />
                 Account
               </Button>
-            </DropdownMenuTrigger> 
-            <DropdownMenuContent>
-              <Link to="/create_deployment">Create Deployment</Link>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-48" align="end">
+              <DropdownMenuItem
+                asChild
+                className="hover:bg-gray-100 focus:bg-gray-100"
+              >
+                <Link
+                  to="/create_deployment"
+                  className="flex items-center w-full px-2 py-1.5 text-sm cursor-pointer hover:bg-gray-300"
+                >
+                  Create Deployment
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                asChild
+                className="hover:bg-gray-100 focus:bg-gray-100"
+              >
+                <Link
+                  to="/go_to_domain"
+                  className="flex items-center w-full px-2 py-1.5 text-sm cursor-pointer hover:bg-gray-100"
+                >
+                  Go to Domain
+                </Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </motion.div>
-
-        {/* Login to dashboard */}
-        <motion.button
-          variants={fadeIn("left", 0.3)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="hidden md:block outline-blue-700 outline-2 text-black px-6 py-2.5 rounded-lg hover:bg-blue-700 hover:text-white text-sm font-medium transition-all duration-200 hover:shadow-lg hover:shadow-blue-100"
-        >
-          <Link to="/signin">Deployment</Link>
-        </motion.button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* MOBILE MENU VIEW */}
       {isMenuOpen && (
         <motion.div
           variants={fadeIn("down", 0.2)}
@@ -132,32 +142,34 @@ const Navbar = () => {
                 onClick={() => setActiveLink(path)}
                 className={`block text-sm font-medium py-2 ${
                   activeLink === path
-                    ? "text-blue-600 after:w-full  "
+                    ? "text-blue-600 after:w-full"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
-                {" "}
                 {label}
               </MotionLink>
             ))}
-            {/* CTA Button */}
-            <motion.button
-              variants={fadeIn("left", 0.3)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
-            >
-              <Link to="/create_deployment">Create Deployment</Link>
-            </motion.button>
-            {/* Login to dashboard */}
-            <motion.button
-              variants={fadeIn("left", 0.3)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full outline-blue-700 outline-2 text-black px-6 py-2.5 rounded-lg hover:bg-blue-700 hover:text-white text-sm font-medium transition-all duration-200 hover:shadow-lg hover:shadow-blue-100"
-            >
-              <Link>Deployment</Link>
-            </motion.button>
+
+            {/* Mobile Account Options */}
+            <div className="space-y-2 pt-2 border-t border-gray-200">
+              <motion.button
+                variants={fadeIn("left", 0.3)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
+              >
+                <Link to="/create_deployment">Create Deployment</Link>
+              </motion.button>
+
+              <motion.button
+                variants={fadeIn("left", 0.3)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full bg-gray-100 text-gray-700 px-6 py-2.5 rounded-lg hover:bg-gray-200 text-sm font-medium transition-all"
+              >
+                <Link to="/go_to_domain">Go to Deployment</Link>
+              </motion.button>
+            </div>
           </motion.div>
         </motion.div>
       )}
