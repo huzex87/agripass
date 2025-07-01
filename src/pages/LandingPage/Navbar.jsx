@@ -94,7 +94,7 @@ const Navbar = () => {
                 Account
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-48" align="end">
+            <DropdownMenuContent className="w-48 bg-white" align="end">
               <DropdownMenuItem
                 asChild
                 className="hover:bg-gray-100 focus:bg-gray-100"

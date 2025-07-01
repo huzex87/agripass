@@ -20,6 +20,7 @@ import Projects from "./pages/Routes/Organization/Projects";
 import BeneficiaryLogin from "./pages/Forms/BeneficiaryLogin";
 import Beneficiary from "./pages/Dashboard/Beneficiary/Header";
 import ProtectedRoutesII from "./Utilis/ProtectedRoutesII";
+import ProjectDetails from "./pages/Routes/Organization/ProjectDetails";
 
 function App() {
   const publicRoutes = [
@@ -70,10 +71,14 @@ function App() {
               element: <Organization />,
               loader: dashboardLoader,
             },
+            // {
+            //   path: "project",
+            //   element: <Projects />,
+            //   loader: activeprojects,
+            // },
             {
-              path: "project",
-              element: <Projects />,
-              loader: activeprojects,
+              path: "project/:projectId",
+              element: <ProjectDetails />,
             },
             {
               path: "create_project",
