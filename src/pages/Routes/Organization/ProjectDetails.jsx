@@ -3,11 +3,32 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../../../Utilis/Api";
 import { toast } from "sonner";
 import { getStatusBadge } from "../../../Utilis/Status";
-import { MoveLeft } from "lucide-react";
+import { MoveLeft, CircleEllipsis, Ellipsis } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import NewModal from "../../Elements/NewModal";
 
 const ProjectDetails = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [projectStatus, setProjectStatus] = useState("");
   const [error, setError] = useState(null);
 
   const { projectId } = useParams();
@@ -21,6 +42,7 @@ const ProjectDetails = () => {
           `/disbursify/project_details/${projectId}`
         );
         setProject(response.data.project);
+        setProjectStatus(response.data.project.status);
         setLoading(false);
       } catch (error) {
         toast.error("Failed to fetch project details", {
@@ -31,7 +53,7 @@ const ProjectDetails = () => {
       }
     };
     fetchProjectDetails();
-  }, [projectId, navigate]);
+  }, [projectId, navigate, projectStatus]);
 
   if (loading) {
     return (
@@ -41,15 +63,145 @@ const ProjectDetails = () => {
     );
   }
 
+  const handleDeleteProject = async () => {
+    try {
+      const response = await api.delete(
+        `/disbursify/delete_project/${projectId}`
+      );
+      if (response.status === 200) {
+        toast.success("Project deleted successfully");
+        navigate(-1); // Navigate back to the previous page
+      }
+    } catch (error) {
+      toast.error("Failed to delete project", {
+        description: error.response?.data?.error || "Server not responding",
+      });
+    }
+  };
+
+  const suspendProject = async () => {
+    try {
+      const response = await api.put(
+        `/disbursify/suspend_project/${projectId}`
+      );
+      if (response.status === 200) {
+        toast.success("Project suspended successfully");
+      }
+      navigate(-1);
+    } catch (error) {
+      toast.error("Failed to suspend project", {
+        description: error.response?.data?.error || "Server not responding",
+      });
+    }
+  };
+
+  const completeProject = async () => {
+    try {
+      const response = await api.put(
+        `/disbursify/complete_project/${projectId}`
+      );
+      if (response.status === 200) {
+        toast.success("Project marked as completed successfully");
+      }
+      navigate(-1);
+    } catch (error) {
+      toast.error("Failed to mark as completed", {
+        description: error.response?.data?.error || "Server not responding",
+      });
+    }
+  };
+  const activateProject = async () => {
+    try {
+      const response = await api.put(
+        `/disbursify/activate_project/${projectId}`
+      );
+      if (response.status === 200) {
+        toast.success("Project activated successfully");
+      }
+      navigate(-1);
+    } catch (error) {
+      toast.error("Failed to activate project", {
+        description: error.response?.data?.error || "Server not responding",
+      });
+    }
+  };
+
+  const handleOpenModal = () => {
+    document.getElementById("deleteProjectModal").showModal();
+  };
+  const handleOpenSuspendModal = () => {
+    document.getElementById("suspendProjectModal").showModal();
+  };
+  const handleOpenDeactivateModal = () => {
+    document.getElementById("completeProject").showModal();
+  };
+  const handleOpenActivateModal = () => {
+    document.getElementById("activateProjectModal").showModal();
+  };
+
   return (
     <>
       <div className="container mx-auto p-6">
-        <button
-          onClick={() => navigate(-1)} // Go back to the previous page in history
-          className="flex gap-4 mb-4 px-4 py-2 cursor-pointer hover:text-blue-800"
-        >
-          <MoveLeft /> Back to Projects
-        </button>
+        <div className="flex items-center justify-between gap-4 mb-10">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex gap-4 mb-4 px-4 py-2 cursor-pointer hover:text-blue-800 dark:hover:text-white"
+          >
+            <MoveLeft /> Back to Projects
+          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Tooltip>
+                <TooltipTrigger className="cursor-pointer">
+                  <CircleEllipsis className="w-8 h-10 text-gray-500 dark:text-gray-200" />
+                </TooltipTrigger>
+                <TooltipContent className="text-white">
+                  Manage Project
+                </TooltipContent>
+              </Tooltip>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className={"bg-white dark:bg-gray-800"}>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                className={" focus:bg-gray-100 dark:focus:bg-gray-700"}
+                onClick={handleOpenModal}
+              >
+                Delete Project
+              </DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger
+                  className={" focus:bg-gray-100 dark:focus:bg-gray-700"}
+                >
+                  Manage Status
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent
+                    className={"bg-white dark:bg-gray-800"}
+                  >
+                    <DropdownMenuItem
+                      className={" focus:bg-gray-200 dark:focus:bg-gray-700"}
+                      onClick={handleOpenActivateModal}
+                    >
+                      Activate Project
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className={" focus:bg-gray-200 dark:focus:bg-gray-700"}
+                      onClick={handleOpenDeactivateModal}
+                    >
+                      Mark As Completed
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className={" focus:bg-gray-200 dark:focus:bg-gray-700"}
+                      onClick={handleOpenSuspendModal}
+                    >
+                      Suspend Project
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         {/* Project DIsplay */}
         <div className="bg-white shadow-md rounded-lg p-6 dark:bg-base-100 dark:text-gray-200">
@@ -61,7 +213,7 @@ const ProjectDetails = () => {
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-3xl font-bold">{project.name}</h1>
             <div>
-              <span>Project Status:</span> {getStatusBadge(project.status)}
+              <span>Project Status:</span> {getStatusBadge(projectStatus)}
             </div>
           </div>
           <p className="mb-4">{project.description}</p>
@@ -84,6 +236,38 @@ const ProjectDetails = () => {
           </div>
         </div>
       </div>
+      <NewModal
+        title="Delete Project"
+        description="Are you sure you want to proceed with deleting this project? This action cannot be undone."
+        modalId="deleteProjectModal"
+        onConfirm={handleDeleteProject}
+        isDangerous={true}
+        confirmButtonText="Delete Project"
+      />
+      <NewModal
+        title="Suspend Project"
+        description="Are you sure you want to suspend this project? This action can be reversed."
+        modalId="suspendProjectModal"
+        onConfirm={suspendProject}
+        isDangerous={false}
+        confirmButtonText="Suspend Project"
+      />
+      <NewModal
+        title="Complete Project"
+        description="Project will be marked as completed and will not be active anymore. Are you sure you want to proceed?"
+        modalId="completeProject"
+        onConfirm={completeProject}
+        isDangerous={false}
+        confirmButtonText="Complete Project"
+      />
+      <NewModal
+        title="Activate Project"
+        description="Are you sure you want to activate this project? This action can be reversed."
+        modalId="activateProjectModal"
+        onConfirm={activateProject}
+        isDangerous={false}
+        confirmButtonText="Activate Project"
+      />
     </>
   );
 };

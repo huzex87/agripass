@@ -81,7 +81,7 @@ function App() {
               element: <ProjectDetails />,
             },
             {
-              path: "create_project",
+              path: "projects",
               element: <Projects />,
             },
           ],

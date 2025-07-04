@@ -8,7 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const Projects = () => {
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("active");
+  const [status, setStatus] = useState("");
   const [projectData, setProjectData] = useState([]);
 
   const [totalPages, setTotalPages] = useState(1);
@@ -49,7 +49,7 @@ const Projects = () => {
     // Initial check for online status
     setOffline(!navigator.onLine);
     if (!navigator.onLine) {
-      toast.error("Internet Error", {
+      toast.error("Internet Connection Error", {
         description:
           "You are currently offline. Please check your internet connection.",
       });
@@ -224,17 +224,17 @@ const Projects = () => {
                     </figure>
                     <div className="card-body">
                       <div className="flex items-center gap-4 justify-between">
-                        <h2 className="card-title">
+                        <h2 className="card-title text-3xl">
                           {project.name || `Project ${index + 1}`}
                         </h2>
                         {getStatusBadge(project.status)}
                       </div>
-                      <p>{project.description || "No description available"}</p>
-                      <div className="mt-3 ">
-                        <span className="font-medium">Start Date:</span>{" "}
-                        <h4> {formatDate(project.startDate)}</h4>
-                        <span className="font-medium">End Date:</span>{" "}
-                        <h4> {formatDate(project.endDate)}</h4>
+                      <p className="line-clamp-2">
+                        {project.description || "No description available"}
+                      </p>
+                      <div className="mt-3 flex gap-2 ">
+                        <span className="font-medium">Created On:</span>{" "}
+                        <h4> {formatDate(project.createdAt)}</h4>
                       </div>
                     </div>
                   </div>

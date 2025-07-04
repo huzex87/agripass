@@ -38,13 +38,13 @@ export const navbarLinks = [
       {
         label: "Projects",
         icon: Users,
-        path: "create_project",
+        path: "projects",
       },
-      {
-        label: "Manage Projects",
-        icon: UserPlus,
-        path: "/new-customer",
-      },
+      // {
+      //   label: "Manage Projects",
+      //   icon: UserPlus,
+      //   path: "/new-customer",
+      // },
       // {
       //   label: "Verified customers",
       //   icon: UserCheck,

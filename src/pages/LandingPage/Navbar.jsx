@@ -114,7 +114,7 @@ const Navbar = () => {
                   to="/go_to_domain"
                   className="flex items-center w-full px-2 py-1.5 text-sm cursor-pointer hover:bg-gray-100"
                 >
-                  Go to Domain
+                  Go to Deployment
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
