@@ -206,7 +206,7 @@ const ProjectDetails = () => {
         {/* Project DIsplay */}
         <div className="bg-white shadow-md rounded-lg p-6 dark:bg-base-100 dark:text-gray-200">
           <img
-            src="https://cdn.punchng.com/wp-content/uploads/2024/08/18200218/SM-1200x630.jpg"
+            src={project.imageURL || "https://via.placeholder.com/600x400"}
             alt="image"
             className="mb-4 rounded-lg shadow-md w-full h-95 object-cover"
           />

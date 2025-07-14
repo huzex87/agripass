@@ -4,7 +4,8 @@ import api from "../../../Utilis/Api";
 import { getStatusBadge } from "../../../Utilis/Status";
 import { toast } from "sonner";
 import { formatDate } from "../../../Utilis/DateFormatter";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Plus } from "lucide-react";
 
 const Projects = () => {
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ const Projects = () => {
   const navigate = useNavigate();
   const subdomain = useParams().subdomain;
 
-  // New state for offline status and error message
+  // New state for offline status
   const [offline, setOffline] = useState(false);
 
   // User Offline Check
@@ -176,7 +177,7 @@ const Projects = () => {
       <div className="text-2xl font-bold">Active Projects</div>
 
       {/* Status Filter */}
-      <div className="mb-4 mt-5 flex items-center gap-2">
+      <div className="mb-4 mt-5 flex items-center gap-2 ">
         <h2>Filter By:</h2>
         <select
           className="select select-bordered w-full max-w-xs"
@@ -192,6 +193,14 @@ const Projects = () => {
           {/* <option value="draft">Pending</option> */}
           <option value="">All Status</option>
         </select>
+
+        {/* Create New Project Button */}
+        <div className="ml-auto">
+          <Link to={`/${subdomain}/newProject`} className="btn">
+            {" "}
+            <Plus /> New Project
+          </Link>
+        </div>
       </div>
 
       {/* Loading State */}
@@ -206,7 +215,7 @@ const Projects = () => {
         <div className="container mx-auto p-6 mb-6">
           {projectData.length > 0 ? (
             <div>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-gray-600 mb-4 dark:text-gray-300">
                 Showing {projectData.length} of {total} projects
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -214,20 +223,21 @@ const Projects = () => {
                   <div
                     key={project.id || index}
                     onClick={() => handleProjectClick(project._id)}
-                    className="card bg-base-100 w-96 shadow-sm cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                    className="card bg-none shadow-sm cursor-pointer hover:shadow-lg transition-shadow duration-200"
                   >
                     <figure>
                       <img
-                        src="https://cdn.punchng.com/wp-content/uploads/2024/08/18200218/SM-1200x630.jpg"
-                        alt="Shoes"
+                        src={project.imageURL}
+                        alt="image"
+                        className="h-70 object-cover w-full"
                       />
                     </figure>
                     <div className="card-body">
                       <div className="flex items-center gap-4 justify-between">
-                        <h2 className="card-title text-3xl">
+                        <h2 className="card-title lg:text-3xl">
                           {project.name || `Project ${index + 1}`}
                         </h2>
-                        {getStatusBadge(project.status)}
+                        {/* {getStatusBadge(project.status)} */}
                       </div>
                       <p className="line-clamp-2">
                         {project.description || "No description available"}

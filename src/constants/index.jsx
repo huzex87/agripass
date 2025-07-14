@@ -55,15 +55,15 @@ export const navbarLinks = [
   {
     title: "Applications",
     links: [
-      {
-        label: "Review Applications",
-        icon: Package,
-        path: "/products",
-      },
+      // {
+      //   label: "Review Applications",
+      //   icon: Package,
+      //   path: "/products",
+      // },
       {
         label: "Manage Applications",
         icon: ShoppingBag,
-        path: "/inventory",
+        path: "applications",
       },
     ],
   },

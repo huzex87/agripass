@@ -21,7 +21,8 @@ import BeneficiaryLogin from "./pages/Forms/BeneficiaryLogin";
 import Beneficiary from "./pages/Dashboard/Beneficiary/Header";
 import ProtectedRoutesII from "./Utilis/ProtectedRoutesII";
 import ProjectDetails from "./pages/Routes/Organization/ProjectDetails";
-
+import CreateNewProject from "./pages/Routes/Organization/CreateNewProject";
+import Applications from "./pages/Routes/Organization/Applications";
 function App() {
   const publicRoutes = [
     {
@@ -83,6 +84,14 @@ function App() {
             {
               path: "projects",
               element: <Projects />,
+            },
+            {
+              path: "newProject",
+              element: <CreateNewProject />,
+            },
+            {
+              path: "applications",
+              element: <Applications />,
             },
           ],
         },

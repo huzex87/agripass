@@ -12,3 +12,17 @@ export const getStatusBadge = (status) => {
   };
   return <span className={colors[status]}>{status} </span>;
 };
+
+export const getStatus = (status) => {
+  const statusMap = {
+    active: "status status-success",
+    inactive: "status status-neutral",
+    suspended: "status status-warning",
+    failed: "status status-error",
+    completed: "status status-accent",
+    pending: "status status-warning",
+    approved: "status status-success",
+    rejected: "status status-error",
+  };
+  return <span className={`${statusMap[status]} status-lg`}></span>;
+};
