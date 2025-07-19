@@ -23,6 +23,8 @@ import ProtectedRoutesII from "./Utilis/ProtectedRoutesII";
 import ProjectDetails from "./pages/Routes/Organization/ProjectDetails";
 import CreateNewProject from "./pages/Routes/Organization/CreateNewProject";
 import Applications from "./pages/Routes/Organization/Applications";
+import ApplicationForm from "./pages/Routes/Organization/ApplicationForm";
+
 function App() {
   const publicRoutes = [
     {
@@ -92,6 +94,10 @@ function App() {
             {
               path: "applications",
               element: <Applications />,
+            },
+            { 
+              path: "projects/:projectId/application-form",
+              element: <ApplicationForm />,
             },
           ],
         },

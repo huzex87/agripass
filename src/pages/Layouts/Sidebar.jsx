@@ -4,21 +4,8 @@ import { navbarLinks } from "../../constants/index";
 import navlogo from "../../assets/navlogo.jpg";
 import cn from "../../Utilis/cn";
 import PropTypes from "prop-types";
-import { useAuthentication } from "../../Utilis/Auth";
-import { LogOut } from "lucide-react";
-import Dialogue from "../Elements/Dialogue";
 
 export const Sidebar = forwardRef(({ collapsed }, ref) => {
-  const { logout } = useAuthentication();
-  const [open, setIsopen] = useState(false);
-
-  const handleOpenModal = () => {
-    setIsopen(() => document.getElementById("my_modal_1").showModal());
-  };
-  const handleLogout = () => {
-    logout();
-  };
-
   return (
     <>
       <aside
@@ -58,22 +45,8 @@ export const Sidebar = forwardRef(({ collapsed }, ref) => {
               ))}
             </nav>
           ))}
-          <div className="flex items-center gap-2">
-            <LogOut
-              size={22}
-              className="ml-2 flex-shrink-0 text-red-600 cursor-pointer"
-              onClick={handleOpenModal}
-            />
-            <button
-              className="text-red-500 cursor-pointer"
-              onClick={handleOpenModal}
-            >
-              Log Out
-            </button>
-          </div>
         </div>
       </aside>
-      <Dialogue Logout={handleLogout} OpenModal={handleOpenModal} />
     </>
   );
 });

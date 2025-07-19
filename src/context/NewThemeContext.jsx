@@ -7,19 +7,28 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
+    console.log("1. Saved theme from localStorage:", savedTheme);
 
     if (savedTheme) {
+      console.log("2. Using saved theme:", savedTheme);
       setTheme(savedTheme);
     } else {
       const isSystemDark = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
-      setTheme(isSystemDark ? "dark" : "light");
+      console.log("3. System prefers dark:", isSystemDark);
+      const systemTheme = isSystemDark ? "dark" : "light";
+      console.log("4. Setting system theme to:", systemTheme);
+      setTheme(systemTheme);
     }
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e) => {
       if (!localStorage.getItem("theme")) {
+        console.log(
+          "5. System theme changed to:",
+          e.matches ? "dark" : "light"
+        );
         setTheme(e.matches ? "dark" : "light");
       }
     };
@@ -31,8 +40,12 @@ export function ThemeProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    console.log("6. Applying theme to DOM:", theme);
     document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
+    if (theme !== "light" || localStorage.getItem("theme")) {
+      localStorage.setItem("theme", theme);
+      console.log("7. Saved theme to localStorage:", theme);
+    }
   }, [theme]);
 
   const toggleTheme = () => {

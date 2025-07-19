@@ -17,6 +17,8 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    if (error.response?.status === 401) {
+    }
     return Promise.reject(error);
   }
 );
@@ -29,6 +31,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("subdomain");
+      toast.error("Session expired. Please login again.");
       window.location.href = "/login";
     }
     return Promise.reject(error);

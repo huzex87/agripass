@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import { newProjectSchema } from "../../../Utilis/NewProjectSchema";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import api from "../../../Utilis/Api";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const CreateNewProject = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [hasCustomForm, setHasCustomForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const subdomain = useParams().subdomain;
   const {
     register,
     handleSubmit,
@@ -16,9 +21,6 @@ const CreateNewProject = () => {
     setError,
     clearErrors,
   } = useForm({ resolver: yupResolver(newProjectSchema) });
-
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -33,10 +35,10 @@ const CreateNewProject = () => {
         return;
       }
 
-      if (file.size > 10 * 1024 * 1024) {
+      if (file.size > 5 * 1024 * 1024) {
         setError("image", {
           type: "manual",
-          message: "Image size must be less than 10MB.",
+          message: "Image size must be less than 5MB.",
         });
         setSelectedImage(null);
         setImagePreview(null);
@@ -67,6 +69,7 @@ const CreateNewProject = () => {
       formData.append("type", data.type);
       formData.append("startDate", data.startDate);
       formData.append("endDate", data.endDate);
+      formData.append("hasCustomForm", hasCustomForm);
 
       if (data.budget) {
         formData.append("amount", data.budget);
@@ -82,7 +85,13 @@ const CreateNewProject = () => {
       });
       if (response.status === 200) {
         toast.success("Project created successfully!");
-        // navigate(`/disbursify/project_details/${response.data.projectId}`);
+        if (hasCustomForm) {
+          navigate(
+            `/${subdomain}/projects/${response.data.projectId}/application-form`
+          );
+        } else {
+          navigate(-1);
+        }
       }
     } catch (error) {
       console.error("Error during project creation:", error);
@@ -97,6 +106,7 @@ const CreateNewProject = () => {
       setLoading(false);
     }
   };
+
   return (
     <>
       <div className="container mx-auto">
@@ -246,9 +256,57 @@ const CreateNewProject = () => {
                       {errors.endDate.message}
                     </p>
                   )}
+
+                  {/* CUSTOM APPLICATION FORM TOGGLE - NEW SECTION */}
+                  <fieldset className="fieldset mt-6">
+                    <legend className="fieldset-legend text-lg">
+                      Application Requirements
+                    </legend>
+                    <div className="form-control">
+                      <label className="label cursor-pointer justify-start">
+                        <input
+                          type="checkbox"
+                          className="checkbox checkbox-primary mr-3"
+                          checked={hasCustomForm}
+                          onChange={(e) => setHasCustomForm(e.target.checked)}
+                        />
+                        <span className="label-text text-base">
+                          Add custom application form for beneficiaries
+                        </span>
+                      </label>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Enable this to create a custom form with specific
+                        questions and requirements for applicants
+                      </p>
+                    </div>
+
+                    {hasCustomForm && (
+                      <div className="alert alert-info mt-3">
+                        <div className="flex items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            className="stroke-current shrink-0 w-6 h-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            ></path>
+                          </svg>
+                          <span className="ml-2">
+                            After creating this project, you'll be redirected to
+                            build your custom application form.
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </fieldset>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap">
                 <button
                   type="submit"
                   disabled={loading}

@@ -58,6 +58,7 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("subdomain");
     localStorage.removeItem("theme");
     setUser(null);
+    window.location.reload();
   };
 
   useEffect(() => {

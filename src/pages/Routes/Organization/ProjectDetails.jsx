@@ -204,7 +204,7 @@ const ProjectDetails = () => {
         </div>
 
         {/* Project DIsplay */}
-        <div className="bg-white shadow-md rounded-lg p-6 dark:bg-base-100 dark:text-gray-200">
+        <div className="bg-none shadow-md rounded-lg p-6 dark:text-gray-200">
           <img
             src={project.imageURL || "https://via.placeholder.com/600x400"}
             alt="image"
