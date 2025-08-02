@@ -1,18 +1,21 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3001",
+  baseURL: "https://disbursify.vercel.app",
 });
 
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     const subdomain = localStorage.getItem("subdomain");
-    const baseDomain = "localhost:3001";
+    const baseDomain = "disbursify.vercel.app";
 
-    if (token && subdomain) {
-      config.baseURL = `http://${subdomain}.${baseDomain}`;
+    if (token) {
+      config.baseURL = `https://${baseDomain}`;
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (subdomain) {
+      config.headers["x-subdomain"] = subdomain;
     }
     return config;
   },

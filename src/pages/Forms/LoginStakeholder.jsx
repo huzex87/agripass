@@ -149,7 +149,7 @@ const LoginStakeholder = () => {
                         whileInView="show"
                       >
                         <Button
-                          className="w-full bg-blue-950 text-white hover:bg-blue-500"
+                          className="w-full bg-blue-950 dark:bg-gray-600 text-slate-50 hover:bg-blue-500 dark:hover:bg-gray-700 cursor-pointer transition-colors"
                           type="submit"
                           disabled={loading}
                         >

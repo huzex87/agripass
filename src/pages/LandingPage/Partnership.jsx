@@ -9,9 +9,9 @@ const Partnership = () => {
   const logos = [slack, amazon, woocommerce, meundies, sitepoint];
   return (
     <div className="w-full container mx-auto py-20 overflow-hidden flex  flex-col sm:flex-row sm:items-center items-start ">
-      <div className="w-[300px] shrink-0 px-8 text-gray-600 border-l-4 border-blue-500 bg-white py-2 z-10 sm:text-base text-xl font-semibold sm:text-left  mb-8 sm:mb-0">
+      <div className="w-[300px] shrink-0 px-8 border-l-4 bg-gray-100 border-blue-500 dark:bg-blue-900 dark:text-white py-2 z-10 sm:text-base text-xl font-semibold sm:text-left  mb-8 sm:mb-0">
         Proud partner at <br />{" "}
-        <span className="text-blue-700">Disbursify</span>
+        <span className="text-blue-700 dark:text-gray-300">Disbursify</span>
       </div>
       <div className="flex animate-marquee whitespace-nowrap">
         {logos.map((logo, index) => (

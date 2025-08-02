@@ -1,22 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut } from "lucide-react";
+import { useAuthentication } from "../../../Utilis/Auth";
+import Dialogue from "../../Elements/Dialogue";
 
 export default function ResponsiveHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const [open, setIsopen] = useState(false);
+
+  const { logout } = useAuthentication();
+
+  const handleOpenModal = () => {
+    setIsopen(() => document.getElementById("my_modal_1").showModal());
+  };
+  const handleLogout = () => {
+    logout();
+  };
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-slate-50 shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -30,7 +39,7 @@ export default function ResponsiveHeader() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-8 items-center">
             <a
               href="#"
               className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200"
@@ -45,39 +54,25 @@ export default function ResponsiveHeader() {
             </a>
 
             {/* Dropdown Menu */}
-            <div className="relative">
-              <button
-                onClick={toggleDropdown}
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center"
+            <div className="dropdown dropdown-hover">
+              <div
+                tabIndex={0}
+                role="button"
+                className=" cursor-pointer text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200"
               >
-                Services
-                <ChevronDown className="ml-1 h-4 w-4" />
-              </button>
-
-              {isDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
-                  <div className="py-1">
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-                    >
-                      Web Development
-                    </a>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-                    >
-                      Mobile Apps
-                    </a>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-                    >
-                      Consulting
-                    </a>
-                  </div>
-                </div>
-              )}
+                Hover
+              </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+              >
+                <li>
+                  <a>Item 1</a>
+                </li>
+                <li>
+                  <a>Item 2</a>
+                </li>
+              </ul>
             </div>
 
             <a
@@ -90,9 +85,45 @@ export default function ResponsiveHeader() {
 
           {/* Desktop CTA Button */}
           <div className="hidden md:flex items-center space-x-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
-              Get Started
-            </button>
+            <div className="dropdown dropdown-end">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost rounded-field"
+              >
+                <div className="size-10 overflow-hidden rounded-full">
+                  <img
+                    // src={profileImg}
+                    alt="profile image"
+                    className="size-full object-cover"
+                  />
+                </div>
+              </div>
+              <ul
+                tabIndex={0}
+                className="menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 shadow-sm"
+              >
+                <li>
+                  <a>Item 2</a>
+                </li>
+
+                <li>
+                  <div className="flex items-center gap-2">
+                    <LogOut
+                      size={15}
+                      className=" flex-shrink-0 text-red-600 cursor-pointer"
+                      onClick={handleOpenModal}
+                    />
+                    <button
+                      className="text-red-500 cursor-pointer"
+                      onClick={handleOpenModal}
+                    >
+                      Log Out
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Mobile menu button */}

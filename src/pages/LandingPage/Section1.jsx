@@ -6,7 +6,7 @@ import illustration from "../../assets/illustration.png"; // Adjust the path as 
 
 const Section1 = () => {
   return (
-    <section className="w-full bg-gray-50 py-16 px-4 md:px-8">
+    <section className="w-full bg-gray-50 dark:bg-gray-800 py-16 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
           variants={fadeIn("right", 0.2)}

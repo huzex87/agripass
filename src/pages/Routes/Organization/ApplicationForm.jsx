@@ -43,7 +43,6 @@ const ApplicationForm = () => {
           `/disbursify/project_details/${projectId}`
         );
         setProject(response.data.project);
-        console.log(response.data);
 
         // Load existing form data if available
         if (response.data.project?.customForm) {

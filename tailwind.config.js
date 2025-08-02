@@ -1,7 +1,9 @@
-// tailwind.config.js
+import daisyui from "daisyui";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: "class", // Use 'dark' class on <html> for dark mode
   theme: {
     extend: {
       colors: {
@@ -14,4 +16,9 @@ export default {
     },
   },
   plugins: [],
+  daisyui: {
+    themes: false,
+    darkTheme: "dark",
+    base: true,
+  },
 };

@@ -74,103 +74,79 @@ const Organization = () => {
     <>
       <div className="space-y-6">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold dark:text-white">{greeting()}</h1>
-          <h4 className="dark:text-white">Welcome back {orgName}</h4>
+          <h1 className="text-2xl font-bold text-black dark:text-white">
+            {greeting()}
+          </h1>
+          <h4 className="text-black dark:text-white">Welcome back {orgName}</h4>
         </div>
 
         {/* Display your data */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="rounded-lg bg-lime-100 p-6 shadow-md dark:bg-gray-900">
             <div className="flex gap-x-4 items-center mb-4">
-              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+              <div className="w-fit rounded-lg bg-lime-200 p-2 text-green-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
                 <Users />
               </div>
-              <h2 className="text-lg font-semibold">Active Projects</h2>
+              <h2 className="text-lg font-semibold text-black dark:text-white">
+                Active Projects
+              </h2>
             </div>
-            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">{projects.totalActive || 0}</p>
-            </div>
+            <p className="text-3xl font-bold text-black dark:text-white">
+              {projects.totalActive || 0}
+            </p>
           </div>
 
           {/* Total completed projects */}
-          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+          <div className="rounded-lg bg-emerald-50 p-6 shadow-md dark:bg-gray-900 dark:text-white">
             <div className="flex gap-x-4 items-center mb-4">
-              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+              <div className="w-fit rounded-lg bg-emerald-300/20 p-2 text-emerald-400 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
                 <CircleCheck />
               </div>
-              <h2 className="text-lg font-semibold">Completed Projects</h2>
+              <h2 className="text-lg font-semibold text-black dark:text-white">
+                Completed Projects
+              </h2>
             </div>
-            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">
-                {projects.totalCompleted || 0}
-              </p>
-            </div>
-          </div>
-
-          {/* Total draft projects */}
-          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
-            <div className="flex gap-x-4 items-center mb-4">
-              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
-                <SquarePen />
-              </div>
-              <h2 className="text-lg font-semibold">Drafts</h2>
-            </div>
-            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">{projects.totalDraft || 0}</p>
-            </div>
-          </div>
-
-          {/* Total pending disbursements */}
-          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
-            <div className="flex gap-x-4 items-center mb-4">
-              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
-                <SquarePen />
-              </div>
-              <h2 className="text-lg font-semibold">Pending Disbursement</h2>
-            </div>
-            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">
-                {disbursements.totalPending || 0}
-              </p>
-            </div>
+            <p className="text-3xl font-bold text-black dark:text-white">
+              {projects.totalCompleted || 0}
+            </p>
           </div>
 
           {/* Total draft approved disbursement */}
-          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+          <div className="rounded-lg bg-green-100 p-6 shadow-md dark:bg-gray-900 dark:text-white">
             <div className="flex gap-x-4 items-center mb-4">
-              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+              <div className="w-fit rounded-lg bg-green-400/20 p-2 text-green-600 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
                 <SquarePen />
               </div>
-              <h2 className="text-lg font-semibold">Approved Disbursement</h2>
+              <h2 className="text-lg font-semibold text-black dark:text-white">
+                Approved Disbursement
+              </h2>
             </div>
-            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">
-                {disbursements.totalApproved || 0}
-              </p>
-            </div>
+            <p className="text-3xl font-bold text-black dark:text-white">
+              {disbursements.totalApproved || 0}
+            </p>
           </div>
 
           {/* Total completed disbursement */}
-          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+          <div className="rounded-lg bg-amber-100 p-6 shadow-md dark:bg-gray-900 dark:text-white">
             <div className="flex gap-x-4 items-center mb-4">
-              <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+              <div className="w-fit rounded-lg bg-amber-300 p-2 text-amber-600 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
                 <SquarePen />
               </div>
-              <h2 className="text-lg font-semibold">Total Disbursed</h2>
+              <h2 className="text-lg font-semibold text-black dark:text-white">
+                Total Disbursed
+              </h2>
             </div>
-            <div className="flex flex-col bg-white transition-colors dark:bg-blue-950 dark:text-white">
-              <p className="text-3xl font-bold">
-                {disbursements.totalCompleted || 0}
-              </p>
-            </div>
+            <p className="text-3xl font-bold text-black dark:text-white">
+              {disbursements.totalCompleted || 0}
+            </p>
           </div>
         </div>
 
         {/* Beneficiary */}
-        <div className="grid grid-cols-1 lg:grid-cols-7 rounded-lg bg-white p-6 shadow-md dark:bg-gray-900 dark:text-white">
+        <div className="grid grid-cols-1 lg:grid-cols-7 rounded-lg bg-blue-50 p-6 shadow-md dark:bg-gray-900 dark:text-white">
           {/* Table */}
           <div className="col-span-1 lg:col-span-4">
-            <h2 className="text-xl font-semibold mb-4 dark:text-white">
+            <h2 className="text-xl font-semibold mb-4 dark:text-white text-black">
               Recent Beneficiaries
             </h2>
             {beneficiaries && beneficiaries.length > 0 ? (

@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState } from "react";
 import { useTheme } from "../../context/NewThemeContext";
 import { Bell, ChevronsLeft, Moon, Search, Sun, LogOut } from "lucide-react";
 import PropTypes from "prop-types";
@@ -17,6 +17,7 @@ export const Header = ({ collapsed, setCollapsed }) => {
   const handleLogout = () => {
     logout();
   };
+
   return (
     <header className="relative z-10 flex h-[60px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900">
       <div className="flex items-center gap-x-3">
@@ -72,7 +73,7 @@ export const Header = ({ collapsed, setCollapsed }) => {
                   onClick={handleOpenModal}
                 />
                 <button
-                  className="text-red-500 cursor-pointer"
+                  className="text-red-500 dark:text-white cursor-pointer"
                   onClick={handleOpenModal}
                 >
                   Log Out

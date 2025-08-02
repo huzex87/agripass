@@ -1,43 +1,54 @@
 @import "tailwindcss";
 @plugin "daisyui";
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@custom-variant dark (&:where(.dark, .dark *));
+
 
 @layer base {
-    html{
-        @apply transition-colors duration-300;
-    }
-    body {
-        @apply [scrollbar-color:_#cbd5e1_transparent] dark:[scrollbar-color:_#334155_transparent];
-    }
+   /* Light mode (default) */
+  :root {
+    --color-bg: #ffffff;         /* white */
+    --color-text: #1e293b;       /* slate-800 */
+    --color-primary: #181F48;    /* Your brand color */
+  }
 
+  /* Dark mode */
+  .dark {
+    --color-bg: #0f172a;         /* slate-900 */
+    --color-text: #f8fafc;       /* slate-50 */
+    --color-primary: #e2e8f0;    /* Lightened brand color */
+  }
+  html {
+    @apply transition-colors duration-200;
+  }
+  
+   /* Apply to body */
+  body {
+    @apply bg-[var(--color-bg)] text-[var(--color-text)] transition-colors duration-200;
+    scrollbar-color: #cbd5e1 transparent; /* Light mode scrollbar */
+  }
+
+  .dark body {
+    scrollbar-color: #334155 transparent; /* Dark mode scrollbar */
+  }
 }
-
 
 @layer components {
-    .sidebar-group {
+ .sidebar-group {
         @apply flex w-full flex-col gap-y-2;
     }
-
-    .sidebar-group-title {
-        @apply overflow-hidden text-ellipsis text-sm font-medium text-slate-600 dark:text-slate-400;
+  .sidebar-group-title {
+        @apply overflow-hidden text-ellipsis text-sm font-medium text-slate-200 transition-colors;
     }
-
-    .sidebar-item {
-        @apply flex h-[40px] w-full flex-shrink-0 items-center gap-x-3 rounded-lg p-3 text-base font-medium text-slate-900 transition-colors hover:bg-blue-50 dark:text-slate-50 dark:hover:bg-blue-950;
+  .sidebar-item {
+        @apply flex h-[40px] w-full flex-shrink-0 items-center gap-x-3 rounded-lg p-3 text-base font-medium text-slate-50 transition-colors hover:bg-gray-50/20 dark:text-slate-50 dark:hover:bg-blue-950;
         &.active {
-            @apply bg-blue-500 text-white dark:bg-blue-600;
+            @apply bg-blue-500 text-slate-50 dark:bg-blue-600;
         }
     }
-
-    .title {
+   .title {
         @apply text-3xl font-semibold text-slate-900 transition-colors dark:text-slate-50;
     }
-
-    .btn-ghost {
-        @apply flex h-10 flex-shrink-0 items-center justify-center gap-x-2 rounded-lg p-2 text-slate-400 transition-colors hover:bg-blue-50 hover:text-slate-500 dark:hover:bg-blue-950 dark:hover:text-slate-300;
-    }
-
+  .btn-ghost {
+    @apply flex h-10 flex-shrink-0 items-center justify-center gap-x-2 rounded-lg p-2 text-slate-400 transition-colors hover:bg-blue-50 hover:text-slate-500 dark:hover:bg-blue-950 dark:hover:text-slate-300;
+  }
 }
-
-
-

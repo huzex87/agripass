@@ -71,7 +71,7 @@ const FeatureSection = () => {
     },
   ];
   return (
-    <section>
+    <section className=" dark:bg-gray-800">
       <motion.div
         variants={fadeIn("up", 0.2)}
         initial="hidden"
@@ -103,7 +103,7 @@ const FeatureSection = () => {
               {/* Icon */}
               <motion.div
                 variants={fadeIn("down", 0.4 * (index + 1))}
-                className="w-24 h-24 rounded-full mb-6 flex items-center justify-center bg-fuchsia-100 animate-pulse"
+                className="w-24 h-24 rounded-full mb-6 flex items-center justify-center bg-fuchsia-100 dark:bg-base-300 animate-pulse"
               >
                 <motion.div
                   variants={fadeIn("up", 0.5 * (index + 1))}
@@ -123,7 +123,7 @@ const FeatureSection = () => {
               {/* description */}
               <motion.p
                 variants={fadeIn("up", 0.6 * (index + 1))}
-                className="text-gray-500 text-center"
+                className="text-gray-500 dark:text-white text-center"
               >
                 {" "}
                 {feature.description}{" "}

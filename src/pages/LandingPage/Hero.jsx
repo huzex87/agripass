@@ -16,8 +16,8 @@ const Hero = () => {
           whileInView="show"
         >
           {/* Star badge */}
-          <div className="flex items-center gap-2 bg-gray-50 w-fit px-4 py-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer group">
-            <span className="text-blue-600 group-hover:scale-110 transition-transform">
+          <div className="flex items-center bg-blue-800 text-white gap-2 w-fit px-4 py-2 rounded-full transition-colors cursor-pointer group">
+            <span className="text-white group-hover:scale-110 transition-transform">
               ★
             </span>
             <span className="text-sm font-medium">Jump start your growth</span>
@@ -39,7 +39,7 @@ const Hero = () => {
           variants={fadeIn("up", 0.4)}
           initial="hidden"
           whileInView="show"
-          className="text-gray-600 text-lg md:text-xl max-w-xl"
+          className=" text-lg md:text-xl max-w-xl"
         >
           It's designed to streamline data collection, verification, and
           disbursement of resources for government and non-governmental
@@ -58,7 +58,7 @@ const Hero = () => {
             whileInView="show"
             className="flex items-center gap-2"
           >
-            <motion.p variants={textVariant(0.3)} className="text-blue-600">
+            <motion.p variants={textVariant(0.3)} className="">
               As Beneficiary
             </motion.p>
             <ArrowBigRight className="text-blue-600" />
@@ -66,7 +66,7 @@ const Hero = () => {
           <motion.button className=" bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100">
             <Link to="#">Sign up</Link>
           </motion.button>
-          <motion.button className="outline-blue-700 outline-2 text-black px-6 py-2.5 rounded-lg hover:bg-blue-700 hover:text-white text-sm font-medium transition-all duration-500 ease-in-out hover:shadow-lg hover:shadow-blue-100">
+          <motion.button className="outline-blue-700 dark:outline-blue-300 outline-2 px-6 py-2.5 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-500 hover:text-white text-sm font-medium transition-all duration-500 ease-in-out hover:shadow-lg hover:shadow-blue-100 dark:hover:shadow-blue-900">
             <Link to="/login/beneficiary">Sign in</Link>
           </motion.button>
         </motion.div>

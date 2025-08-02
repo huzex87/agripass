@@ -1,0 +1,28 @@
+3.
+So yeah you recommend this and and i think this flow is good and it actually describe the whole point of the logic.
+Recommended Implementation Flow:
+1. Organization creates project → Gets option to "Add Custom Application Form"
+2. Form builder interface → Drag-and-drop or simple form to add fields
+3. Form gets saved → Associated with that specific project
+4. Beneficiary applies → Sees the custom form as part of their application
+5. Organization reviews → Can see all responses in a structured table format
+
+So let start but please take it one at a time. should we start?
+
+
+2.
+So im working on a disbursement platform where organizations or any body come to create a 
+project maybe a palliative or funds disbursement, goods disbursement etc. And beneficiary 
+will apply for to benefit. So i got a question on something new to add actually.
+
+1.
+my next mission is that we want organization that posted a project maybe a palliative or 
+goods disbursement to be able to kinda set a criteria for beneficiary that want to apply so 
+someone suggest that we should integrate a kinda feature where maybe an optional form for 
+beneficiary to fill in the data based on what they set it to on a project. Like google form works. 
+So i dont really know how to go about it or any other suggestion from you please? And is it 
+possible to integrate a google form to the system where organization create the form then each 
+data submitted can be viewed on the platform not on google email or whatever? 
+I have doing some thinking but i havent really get an answer or solution to this. Though 
+the flow is beneficiary will have to sign up and login to be able to view active projects which 
+they can apply for. So yeah.

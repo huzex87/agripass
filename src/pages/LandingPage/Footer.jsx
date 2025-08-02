@@ -35,7 +35,7 @@ const Footer = () => {
       variants={fadeIn("up", 0.2)}
       initial="hidden"
       whileInView="show"
-      className="bg-gray-50"
+      className=" bg-gray-50 dark:bg-gray-950"
     >
       <div className="max-w-7xl mx-auto px-4 py-16">
         <motion.div
@@ -51,12 +51,15 @@ const Footer = () => {
               <img src="" alt="Company Logo" />
               <motion.h1
                 variants={textVariant(0.2)}
-                className="text-2xl font-bold text-gray-800"
+                className="text-2xl font-bold text-gray-800 dark:text-white"
               >
                 Disbursify
               </motion.h1>
             </motion.div>
-            <motion.p variants={fadeIn("up", 0.6)}>
+            <motion.p
+              variants={fadeIn("up", 0.6)}
+              className="text-gray-600 dark:text-gray-300"
+            >
               An innovative, comprehensive platform designed to streamline data
               collection, verification, and disbursement of resources for
               government and non-governmental organisations (NGOs).
@@ -68,28 +71,28 @@ const Footer = () => {
               <motion.a
                 whileHover={{ scale: 1.1 }}
                 href="#"
-                className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition-colors"
+                className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-blue-600 hover:text-white transition-colors"
               >
                 <Facebook className="w-5 h-5" />
               </motion.a>
               <motion.a
                 whileHover={{ scale: 1.1 }}
                 href="#"
-                className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-pink-600 hover:text-white transition-colors"
+                className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-pink-600 hover:text-white transition-colors"
               >
                 <Instagram className="w-5 h-5" />
               </motion.a>
               <motion.a
                 whileHover={{ scale: 1.1 }}
                 href="#"
-                className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-blue-400 hover:text-white transition-colors"
+                className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-blue-400 hover:text-white transition-colors"
               >
                 <Twitter className="w-5 h-5" />
               </motion.a>
               <motion.a
                 whileHover={{ scale: 1.1 }}
                 href="#"
-                className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition-colors"
+                className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-blue-600 hover:text-white transition-colors"
               >
                 <Linkedin className="w-5 h-5" />
               </motion.a>
@@ -105,7 +108,10 @@ const Footer = () => {
                     key={category}
                     variants={fadeIn("up", 0.3 * (index + 1))}
                   >
-                    <motion.h3 variants={textVariant(0.2)}>
+                    <motion.h3
+                      variants={textVariant(0.2)}
+                      className="font-semibold text-gray-800 dark:text-white mb-4"
+                    >
                       {category.charAt(0).toUpperCase() + category.slice(1)}
                     </motion.h3>
                     <motion.ul className="mt-4 space-y-2">
@@ -114,7 +120,12 @@ const Footer = () => {
                           key={index}
                           variants={fadeIn("up", 0.1 * (index + 1))}
                         >
-                          <motionLink to={item.to}> {item.name} </motionLink>
+                          <motionLink
+                            to={item.to}
+                            className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors"
+                          >
+                            {item.name}
+                          </motionLink>
                         </motion.li>
                       ))}
                     </motion.ul>
@@ -128,7 +139,7 @@ const Footer = () => {
         {/* Copyright */}
         <motion.div
           variants={fadeIn("up", 0.8)}
-          className="border-t border-gray-200 mt-12 pt-8"
+          className="border-t border-gray-200 dark:border-gray-700 mt-12 pt-8"
         >
           <motion.div
             variants={fadeIn("up", 0.9)}
@@ -136,13 +147,13 @@ const Footer = () => {
           >
             <motion.p
               variants={fadeIn("right", 1.0)}
-              className="text-gray-600 text-sm"
+              className="text-gray-600 dark:text-gray-300 text-sm"
             >
               Copyright © {new Date().getFullYear()} disbursify.com.ng
             </motion.p>
             <motion.p
               variants={fadeIn("left", 1.0)}
-              className="text-gray-600 text-sm"
+              className="text-gray-600 dark:text-gray-300 text-sm"
             >
               <span className="font-semibold">Powered By</span> Kirkira
               Innovation Hub

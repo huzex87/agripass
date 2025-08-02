@@ -174,7 +174,7 @@ const Projects = () => {
 
   return (
     <>
-      <div className="text-2xl font-bold">Active Projects</div>
+      <div className="text-2xl font-bold">Projects</div>
 
       {/* Status Filter */}
       <div className="mb-4 mt-5 flex items-center gap-2 ">

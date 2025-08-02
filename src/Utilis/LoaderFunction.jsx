@@ -1,4 +1,4 @@
-import stat from "daisyui/components/stat";
+// import stat from "daisyui/components/stat";
 import api from "../Utilis/Api";
 
 export async function dashboardLoader({ params }) {
@@ -45,12 +45,12 @@ export async function activeprojects() {
   }
 }
 
-export async function projectLoader() {
-  try {
-  } catch (error) {
-    return {
-      status: "error",
-      error: error.response?.data?.error || "Failed to load project data",
-    };
-  }
-}
+// export async function projectLoader() {
+//   try {
+//   } catch (error) {
+//     return {
+//       status: "error",
+//       error: error.response?.data?.error || "Failed to load project data",
+//     };
+//   }
+// }

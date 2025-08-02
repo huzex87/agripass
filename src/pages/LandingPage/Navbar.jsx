@@ -12,10 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "../../context/NewThemeContext";
+import { Sun, Moon } from "lucide-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("#home");
+  const { theme, toggleTheme } = useTheme();
 
   const MotionLink = motion(Link);
 
@@ -32,7 +35,7 @@ const Navbar = () => {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true }}
-      className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm z-50 border-b border-gray-100 shadow-sm"
+      className="fixed top-0 left-0 right-0 bg-slate-100/90 dark:bg-gray-900/90 backdrop-blur-sm z-50 border-b border-slate-100 shadow-sm"
     >
       <div className="w-full flex justify-between items-center container mx-auto px-4 sm:px-6 lg:px-8 md:h-20 h-16">
         <motion.div
@@ -72,12 +75,18 @@ const Navbar = () => {
               className={`text-sm font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-blue-600 after:transition-all ${
                 activeLink === path
                   ? "text-blue-600 after:w-full"
-                  : "text-gray-600 hover:text-gray-900"
+                  : " hover:text-gray-900 dark:hover:text-white"
               }`}
             >
               {label}
             </MotionLink>
           ))}
+        </motion.div>
+
+        <motion.div variants={fadeIn("left", 0.3)}>
+          <button className="btn-ghost size-10" onClick={toggleTheme}>
+            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
         </motion.div>
 
         {/* Account Dropdown */}
@@ -89,15 +98,15 @@ const Navbar = () => {
         >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="flex items-center gap-2 bg-white hover:bg-gray-100 border border-gray-200">
+              <Button className="flex items-center gap-2 bg-base-100 hover:bg-base-200 border border-gray-200">
                 <User className="h-4 w-4" />
                 Account
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-48 bg-white" align="end">
+            <DropdownMenuContent className="w-48 bg-base-100" align="end">
               <DropdownMenuItem
                 asChild
-                className="hover:bg-gray-100 focus:bg-gray-100"
+                className="hover:bg-base-200 focus:bg-base-300"
               >
                 <Link
                   to="/create_deployment"
@@ -108,7 +117,7 @@ const Navbar = () => {
               </DropdownMenuItem>
               <DropdownMenuItem
                 asChild
-                className="hover:bg-gray-100 focus:bg-gray-100"
+                className="hover:bg-base-200 focus:bg-base-300"
               >
                 <Link
                   to="/go_to_domain"
@@ -128,7 +137,7 @@ const Navbar = () => {
           variants={fadeIn("down", 0.2)}
           initial="hidden"
           animate="show"
-          className="md:hidden bg-white border-t border-gray-100 py-4"
+          className="md:hidden bg-slate-50 dark:bg-gray-900 border-t border-gray-100 py-4"
         >
           <motion.div
             variants={fadeIn("down", 0.3)}
@@ -143,7 +152,7 @@ const Navbar = () => {
                 className={`block text-sm font-medium py-2 ${
                   activeLink === path
                     ? "text-blue-600 after:w-full"
-                    : "text-gray-600 hover:text-gray-900"
+                    : "text-gray-600 dark:text-slate-50 hover:text-gray-900"
                 }`}
               >
                 {label}
