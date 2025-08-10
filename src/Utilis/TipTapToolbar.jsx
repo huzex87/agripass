@@ -24,7 +24,7 @@ const TipTapToolbar = ({ editor }) => {
   };
   return (
     <>
-      <div className="border border-gray-300 border-b-0 rounded-t-lg p-3 flex flex-wrap gap-2 bg-gray-50">
+      <div className="border border-gray-300 border-b-0 rounded-t-lg p-3 flex flex-wrap gap-2 bg-gray-50 dark:bg-gray-800">
         {/* Headers */}
         <select
           onChange={onChange1}

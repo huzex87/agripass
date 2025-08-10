@@ -63,8 +63,7 @@ const CreateNewProject = () => {
     },
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[200px] p-4",
+        class: "prose prose-sm max-w-none focus:outline-none min-h-[200px] p-4",
       },
     },
   });
@@ -176,7 +175,7 @@ const CreateNewProject = () => {
   return (
     <>
       <div className="container mx-auto">
-        <h1 className="text-2xl mt-10 mx-2 md:mx-10">
+        <h1 className="text-2xl mt-10 mx-2 md:mx-10 font-bold">
           Create A New Project Disbursement
         </h1>
         <div className="flex flex-1 items-center justify-center">
