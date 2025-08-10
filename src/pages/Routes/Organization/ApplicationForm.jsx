@@ -162,7 +162,7 @@ const ApplicationForm = () => {
       await api.put(`/disbursify/project/${projectId}/form`, formData);
       toast.success("Application form saved successfully!");
       navigate(-2);
-    } catch (error) {
+    } catch (error) { 
       console.error("Error saving form:", error);
       toast.error("Failed to save form");
     } finally {
@@ -266,6 +266,7 @@ const ApplicationForm = () => {
           <div className="mb-6">
             <h1 className="text-3xl font-bold mb-2">Build Application Form</h1>
             <p className="text-gray-600">Project: {project.name}</p>
+            
           </div>
 
           {/* Form Settings */}

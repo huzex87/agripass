@@ -1,10 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { newProjectSchema } from "../../../Utilis/NewProjectSchema";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import api from "../../../Utilis/Api";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
+import TipTapToolbar from "../../../Utilis/TipTapToolbar";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import { TextStyle } from "@tiptap/extension-text-style";
+import Color from "@tiptap/extension-color";
+import Highlight from "@tiptap/extension-highlight";
 
 const CreateNewProject = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -20,7 +29,53 @@ const CreateNewProject = () => {
     formState: { errors },
     setError,
     clearErrors,
-  } = useForm({ resolver: yupResolver(newProjectSchema) });
+    control,
+    setValue,
+    watch,
+  } = useForm({
+    resolver: yupResolver(newProjectSchema),
+    defaultValues: {
+      description: "",
+    },
+  });
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+      TextStyle,
+      Color,
+      Highlight,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: "text-blue-600 underline hover:text-blue-800",
+        },
+      }),
+    ],
+    content: "",
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      setValue("description", html);
+    },
+    editorProps: {
+      attributes: {
+        class:
+          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[200px] p-4",
+      },
+    },
+  });
+
+  useEffect(() => {
+    if (editor && !editor.getHTML().includes("<p>")) {
+      editor.commands.setContent(
+        "<p>Provide detailed information about your project, requirements, eligibility criteria, application process, and any other relevant details...</p>"
+      );
+    }
+  }, [editor]);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -62,6 +117,17 @@ const CreateNewProject = () => {
     try {
       setLoading(true);
       clearErrors("image");
+
+      // Validate that description has actual content
+      const textContent = editor?.getText() || "";
+      if (textContent.trim().length === 0) {
+        setError("description", {
+          type: "manual",
+          message: "Please provide a meaningful project description.",
+        });
+        setLoading(false);
+        return;
+      }
 
       const formData = new FormData();
       formData.append("name", data.name);
@@ -141,16 +207,32 @@ const CreateNewProject = () => {
                     Project Description
                     <span className="text-red-600 text-lg">*</span>
                   </legend>
-                  <textarea
-                    className="textarea h-24 w-full"
-                    placeholder="Your project description here"
-                    {...register("description")}
-                  ></textarea>
+                  <Controller
+                    name="description"
+                    control={control}
+                    render={({ field }) => (
+                      <div className="border border-gray-300 rounded-lg">
+                        <TipTapToolbar editor={editor} />
+                        <div className="border border-gray-300 border-t-0 rounded-b-lg min-h-[250px]">
+                          <EditorContent
+                            editor={editor}
+                            className="prose max-w-none p-4 focus-within:outline-none rounded-b-lg"
+                            {...field}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  />
                   {errors.description && (
                     <p className="text-sm text-red-500">
                       {errors.description.message}
                     </p>
                   )}
+                  <p className="text-sm text-gray-500 mt-2">
+                    Use the toolbar above to format your text, create lists, add
+                    links, and organize your content like a professional job
+                    posting.
+                  </p>
                 </fieldset>
 
                 {/* PROJECT IMAGE */}
@@ -194,6 +276,7 @@ const CreateNewProject = () => {
                       className="select w-full"
                       {...register("type")}
                     >
+                      <option value="">Select Project Type</option>
                       <option value="loan">Loan</option>
                       <option value="grant">Grant</option>
                       <option value="subsidy">Subsidy</option>

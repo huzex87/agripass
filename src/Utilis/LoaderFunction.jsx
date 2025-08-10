@@ -1,5 +1,6 @@
 // import stat from "daisyui/components/stat";
 import api from "../Utilis/Api";
+import { queryOptions } from "@tanstack/react-query";
 
 export async function dashboardLoader({ params }) {
   try {
@@ -45,12 +46,16 @@ export async function activeprojects() {
   }
 }
 
-// export async function projectLoader() {
-//   try {
-//   } catch (error) {
-//     return {
-//       status: "error",
-//       error: error.response?.data?.error || "Failed to load project data",
-//     };
-//   }
-// }
+export function dashboardLoaderFunction() {
+  return queryOptions({
+    queryKey: ["dashboard"],
+    queryFn: fetchResources,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+}
+
+const fetchResources = async () => {
+  const response = await api.get("/disbursify/resources");
+  return response.data;
+};

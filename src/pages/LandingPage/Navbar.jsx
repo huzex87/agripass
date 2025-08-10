@@ -35,7 +35,7 @@ const Navbar = () => {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true }}
-      className="fixed top-0 left-0 right-0 bg-slate-100/90 dark:bg-gray-900/90 backdrop-blur-sm z-50 border-b border-slate-100 shadow-sm"
+      className="fixed top-0 left-0 right-0 bg-blue-950/90 dark:bg-gray-900/90 backdrop-blur-sm z-50 border-b border-slate-100 shadow-sm"
     >
       <div className="w-full flex justify-between items-center container mx-auto px-4 sm:px-6 lg:px-8 md:h-20 h-16">
         <motion.div
@@ -72,10 +72,10 @@ const Navbar = () => {
               variants={fadeIn("down", 0.1 * (index + 1))}
               to={path}
               onClick={() => setActiveLink(path)}
-              className={`text-sm font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-blue-600 after:transition-all ${
+              className={`text-sm font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-blue-600 after:transition-all text-slate-100 ${
                 activeLink === path
-                  ? "text-blue-600 after:w-full"
-                  : " hover:text-gray-900 dark:hover:text-white"
+                  ? "text-slate-100 after:w-full"
+                  : " hover:text-slate-50 dark:hover:text-white"
               }`}
             >
               {label}

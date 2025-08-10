@@ -7,7 +7,7 @@ import biometric from "../../assets/biometric.png";
 
 const Section2 = () => {
   return (
-    <section className="w-full py-16 px-4 md:px-8">
+    <section className="w-full py-16 px-4 md:px-8 bg-gray-200 dark:bg-gray-900">
       <div className="max-w-6xl mx-auto">
         <motion.div
           variants={fadeIn("right", 0.2)}

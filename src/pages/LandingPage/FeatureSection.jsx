@@ -71,7 +71,7 @@ const FeatureSection = () => {
     },
   ];
   return (
-    <section className=" dark:bg-gray-800">
+    <section className="bg-gray-100 dark:bg-gray-800">
       <motion.div
         variants={fadeIn("up", 0.2)}
         initial="hidden"

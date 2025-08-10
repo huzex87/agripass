@@ -4,6 +4,14 @@ import api from "../../../Utilis/Api";
 import { toast } from "sonner";
 import { getStatusBadge } from "../../../Utilis/Status";
 import { MoveLeft, CircleEllipsis, Ellipsis } from "lucide-react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import { TextStyle } from "@tiptap/extension-text-style";
+import Color from "@tiptap/extension-color";
+import DOMPurify from "dompurify";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +41,41 @@ const ProjectDetails = () => {
 
   const { projectId } = useParams();
   const navigate = useNavigate();
+
+  // Create a read-only editor for displaying the description
+  const descriptionEditor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+      TextStyle,
+      Color,
+      Highlight,
+      Link.configure({
+        openOnClick: true, // Allow links to be clicked in read-only mode
+        HTMLAttributes: {
+          class: "text-blue-600 underline hover:text-blue-800",
+        },
+      }),
+    ],
+    content: project?.description || "",
+    editable: false, // Make it read-only
+    editorProps: {
+      attributes: {
+        class:
+          "prose prose-sm sm:prose lg:prose-lg mx-auto focus:outline-none p-4",
+      },
+    },
+  });
+
+  // Update editor content when project data loads
+  useEffect(() => {
+    if (descriptionEditor && project?.description) {
+      descriptionEditor.commands.setContent(project.description);
+    }
+  }, [descriptionEditor, project?.description]);
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -216,7 +259,12 @@ const ProjectDetails = () => {
               <span>Project Status:</span> {getStatusBadge(projectStatus)}
             </div>
           </div>
-          <p className="mb-4">{project.description}</p>
+          <div
+            className="mb-4 prose prose-sm max-w-none dark:prose-invert prose-ul:list-disc prose-ol:list-decimal prose-li:ml-0"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(project.description),
+            }}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

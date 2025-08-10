@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useLoaderData, useNavigation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { useLoaderData, useNavigation, useParams } from "react-router-dom";
 import { Users, Loader2, CircleCheck, SquarePen } from "lucide-react";
 import cn from "../../../Utilis/cn";
 import {
@@ -13,27 +14,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getStatusBadge } from "../../../Utilis/Status";
+import { dashboardLoaderFunction } from "../../../Utilis/LoaderFunction";
 
 const Organization = () => {
-  const { projects, disbursements, status, error, subdomain, beneficiaries } =
-    useLoaderData();
+  const { data, status, error, isPending } = useQuery(
+    dashboardLoaderFunction()
+  );
 
-  const navigation = useNavigation();
-  const isLoading = navigation.state === "loading";
-  const isError = status === "error";
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="animate-spin h-10 w-10 text-blue-500" />
+        <span className="ml-2 text-lg text-gray-700">Loading...</span>
+      </div>
+    );
+  }
 
-  const [initialLoading, setInitialLoading] = useState(true);
-
-  useEffect(() => {
-    if (
-      projects !== undefined &&
-      disbursements !== undefined &&
-      beneficiaries !== undefined
-    ) {
-      setInitialLoading(false);
-    }
-  }, [projects, disbursements, beneficiaries]);
-
+  const { subdomain } = useParams();
   const orgName = subdomain || "Administrator";
   const greeting = () => {
     const currentHour = new Date().getHours();
@@ -46,30 +43,6 @@ const Organization = () => {
     }
   };
 
-  if (isLoading || initialLoading) {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <Loader2
-          className="animate-spin text-blue-500 dark:text-white"
-          size={24}
-        />
-        <span className="ml-2 text-blue-500 dark:text-white">
-          Loading dashboard...
-        </span>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <div className="error-message dark:text-white">
-          Error: {error?.message || "Error loading dashboard"}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="space-y-6">
@@ -81,7 +54,7 @@ const Organization = () => {
         </div>
 
         {/* Display your data */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="rounded-lg bg-lime-100 p-6 shadow-md dark:bg-gray-900">
             <div className="flex gap-x-4 items-center mb-4">
               <div className="w-fit rounded-lg bg-lime-200 p-2 text-green-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
@@ -91,9 +64,7 @@ const Organization = () => {
                 Active Projects
               </h2>
             </div>
-            <p className="text-3xl font-bold text-black dark:text-white">
-              {projects.totalActive || 0}
-            </p>
+            <p className="text-3xl font-bold text-black dark:text-white">{0}</p>
           </div>
 
           {/* Total completed projects */}
@@ -106,9 +77,7 @@ const Organization = () => {
                 Completed Projects
               </h2>
             </div>
-            <p className="text-3xl font-bold text-black dark:text-white">
-              {projects.totalCompleted || 0}
-            </p>
+            <p className="text-3xl font-bold text-black dark:text-white">{0}</p>
           </div>
 
           {/* Total draft approved disbursement */}
@@ -121,9 +90,7 @@ const Organization = () => {
                 Approved Disbursement
               </h2>
             </div>
-            <p className="text-3xl font-bold text-black dark:text-white">
-              {disbursements.totalApproved || 0}
-            </p>
+            <p className="text-3xl font-bold text-black dark:text-white">{0}</p>
           </div>
 
           {/* Total completed disbursement */}
@@ -136,9 +103,7 @@ const Organization = () => {
                 Total Disbursed
               </h2>
             </div>
-            <p className="text-3xl font-bold text-black dark:text-white">
-              {disbursements.totalCompleted || 0}
-            </p>
+            <p className="text-3xl font-bold text-black dark:text-white">{0}</p>
           </div>
         </div>
 
@@ -149,7 +114,7 @@ const Organization = () => {
             <h2 className="text-xl font-semibold mb-4 dark:text-white text-black">
               Recent Beneficiaries
             </h2>
-            {beneficiaries && beneficiaries.length > 0 ? (
+            {/* {beneficiaries && beneficiaries.length > 0 ? (
               <Table className="table table-zebra w-full">
                 <TableHeader className={"bg-gray-100 dark:bg-gray-800"}>
                   <TableRow>
@@ -197,7 +162,7 @@ const Organization = () => {
               <p className="text-gray-950 dark:text-gray-400">
                 No recent beneficiaries sign up
               </p>
-            )}
+            )} */}
           </div>
         </div>
       </div>
