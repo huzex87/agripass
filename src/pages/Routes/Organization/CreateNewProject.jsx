@@ -11,8 +11,6 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
-import { TextStyle } from "@tiptap/extension-text-style";
-import Color from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
 
 const CreateNewProject = () => {
@@ -46,8 +44,6 @@ const CreateNewProject = () => {
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
-      TextStyle,
-      Color,
       Highlight,
       Link.configure({
         openOnClick: false,
@@ -229,8 +225,7 @@ const CreateNewProject = () => {
                   )}
                   <p className="text-sm text-gray-500 mt-2">
                     Use the toolbar above to format your text, create lists, add
-                    links, and organize your content like a professional job
-                    posting.
+                    links, and organize your content like a professional.
                   </p>
                 </fieldset>
 

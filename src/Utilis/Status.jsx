@@ -26,3 +26,16 @@ export const getStatus = (status) => {
   };
   return <span className={`${statusMap[status]} status-lg`}></span>;
 };
+
+// AUTHENTICATION TOKEN - IN MEMORY
+let accessToken = null;
+
+export const setAccessToken = (token) => {
+  accessToken = token;
+};
+export const getAccessToken = () => {
+  return accessToken;
+};
+export const clearAccessToken = () => {
+  accessToken = null;
+};

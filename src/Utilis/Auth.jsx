@@ -1,5 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { setAccessToken, clearAccessToken } from "./Status";
+import api from "./Api";
+import axios from "axios";
 
 const AuthContext = createContext(null);
 
@@ -7,58 +10,100 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const checkAuth = () => {
-    const token = localStorage.getItem("token");
-    const subdomain = localStorage.getItem("subdomain");
-
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-
-        if (decodedToken.exp * 1000 < Date.now()) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("subdomain");
-          logout();
-          setUser(null);
-          setLoading(false);
-          return;
-        }
-        setUser({
-          isAuthenticated: true,
-          userId: decodedToken.userId,
-          email: decodedToken.email,
-          subdomain: subdomain,
-          role: decodedToken.role,
-        });
+  const checkAuth = async () => {
+    try {
+      const subdomain = sessionStorage.getItem("subdomain");
+      if (!subdomain) {
+        setUser(null);
         setLoading(false);
-      } catch (error) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("subdomain");
+        return;
+      }
+      const response = await axios.post("/disbursify/refresh");
+      const newAccessToken = response.data?.accessToken;
+      if (!newAccessToken) {
+        throw new Error("No access token returned by refresh endpoint");
+      }
+
+      setAccessToken(newAccessToken);
+
+      const decodedToken = jwtDecode(newAccessToken);
+      if (decodedToken.exp * 1000 < Date.now()) {
+        sessionStorage.removeItem("subdomain");
         logout();
         setUser(null);
         setLoading(false);
         return;
       }
-    } else {
+      setUser({
+        isAuthenticated: true,
+        userId: decodedToken.userId,
+        subdomain: subdomain,
+        role: decodedToken.role,
+      });
+    } catch (error) {
+      clearAccessToken();
+      sessionStorage.clear();
       setUser(null);
+    } finally {
       setLoading(false);
     }
   };
 
-  const login = (token, subdomain) => {
-    localStorage.setItem("token", token);
-    if (subdomain) {
-      localStorage.setItem("subdomain", subdomain);
+  const login = async (subdomain, password) => {
+    try {
+      setLoading(true);
+
+      const response = await api.post(
+        "/disbursify/login",
+        {
+          subdomain,
+          password,
+        },
+        { withCredentials: true }
+      );
+      const {
+        accessToken,
+        organizationName,
+        subdomain: returnedSubdomain,
+      } = response.data;
+
+      const decoded = jwtDecode(accessToken);
+
+      setAccessToken(accessToken);
+      sessionStorage.setItem("subdomain", returnedSubdomain);
+
+      setUser({
+        isAuthenticated: true,
+        organizationName,
+        subdomain: returnedSubdomain,
+        role: decoded.role, // Adjust based on your backend response
+      });
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Login failed",
+      };
+    } finally {
+      setLoading(false);
     }
-    checkAuth();
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("subdomain");
-    localStorage.removeItem("theme");
-    setUser(null);
-    window.location.reload();
+  // Logout function - updated
+  const logout = async () => {
+    try {
+      const res = await api.post("/disbursify/logout");
+      if (res.status === 200) {
+        console.log("✅ Logged out successfully:", res.data.message);
+      }
+    } catch (error) {
+      console.log("Logout error:", error);
+    } finally {
+      clearAccessToken(); // Clear from memory
+      sessionStorage.clear();
+      setUser(null);
+      window.location.replace("/login");
+    }
   };
 
   useEffect(() => {

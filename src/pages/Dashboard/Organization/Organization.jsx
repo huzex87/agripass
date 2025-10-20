@@ -17,7 +17,7 @@ import { getStatusBadge } from "../../../Utilis/Status";
 import { dashboardLoaderFunction } from "../../../Utilis/LoaderFunction";
 
 const Organization = () => {
-  const { data, status, error, isPending } = useQuery(
+  const { data, status, error, isPending, isError } = useQuery(
     dashboardLoaderFunction()
   );
 
@@ -30,8 +30,17 @@ const Organization = () => {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-500">Error: {error.message}</p>
+      </div>
+    );
+  }
+
   const { subdomain } = useParams();
   const orgName = subdomain || "Administrator";
+
   const greeting = () => {
     const currentHour = new Date().getHours();
     if (currentHour < 12) {
@@ -42,6 +51,17 @@ const Organization = () => {
       return "Good Evening!";
     }
   };
+
+  // Safe destructuring
+  const responseData = data?.responseData || {};
+
+  const activeProjects = responseData.activeProjects || [];
+  const completedProjects = responseData.completedProjects || [];
+  const draftProjects = responseData.draftProjects || [];
+
+  const totalActive = responseData.totalActive || 0;
+  const totalCompleted = responseData.totalCompleted || 0;
+  const totalDraft = responseData.totalDraft || 0;
 
   return (
     <>
@@ -54,7 +74,7 @@ const Organization = () => {
         </div>
 
         {/* Display your data */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-4">
           <div className="rounded-lg bg-lime-100 p-6 shadow-md dark:bg-gray-900">
             <div className="flex gap-x-4 items-center mb-4">
               <div className="w-fit rounded-lg bg-lime-200 p-2 text-green-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
@@ -64,9 +84,10 @@ const Organization = () => {
                 Active Projects
               </h2>
             </div>
-            <p className="text-3xl font-bold text-black dark:text-white">{0}</p>
+            <p className="text-3xl font-bold text-black dark:text-white">
+              {totalActive}
+            </p>
           </div>
-
           {/* Total completed projects */}
           <div className="rounded-lg bg-emerald-50 p-6 shadow-md dark:bg-gray-900 dark:text-white">
             <div className="flex gap-x-4 items-center mb-4">
@@ -77,7 +98,61 @@ const Organization = () => {
                 Completed Projects
               </h2>
             </div>
+            <p className="text-3xl font-bold text-black dark:text-white">
+              {totalCompleted}
+            </p>
+          </div>
+          {/* Total draft approved disbursement */}
+          <div className="rounded-lg bg-green-100 p-6 shadow-md dark:bg-gray-900 dark:text-white">
+            <div className="flex gap-x-4 items-center mb-4">
+              <div className="w-fit rounded-lg bg-green-400/20 p-2 text-green-600 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+                <SquarePen />
+              </div>
+              <h2 className="text-lg font-semibold text-black dark:text-white">
+                Approved Disbursement
+              </h2>
+            </div>
             <p className="text-3xl font-bold text-black dark:text-white">{0}</p>
+          </div>
+          {/* Total completed disbursement */}
+          <div className="rounded-lg bg-amber-100 p-6 shadow-md dark:bg-gray-900 dark:text-white">
+            <div className="flex gap-x-4 items-center mb-4">
+              <div className="w-fit rounded-lg bg-amber-300 p-2 text-amber-600 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+                <SquarePen />
+              </div>
+              <h2 className="text-lg font-semibold text-black dark:text-white">
+                Total Disbursed
+              </h2>
+            </div>
+            <p className="text-3xl font-bold text-black dark:text-white">{0}</p>
+          </div>
+          {/* ====== EXTRA DATA DISPLAY ====== */}
+          <div className="rounded-lg bg-lime-100 p-6 shadow-md dark:bg-gray-900">
+            <div className="flex gap-x-4 items-center mb-4">
+              <div className="w-fit rounded-lg bg-lime-200 p-2 text-green-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+                <Users />
+              </div>
+              <h2 className="text-lg font-semibold text-black dark:text-white">
+                Active Projects
+              </h2>
+            </div>
+            <p className="text-3xl font-bold text-black dark:text-white">
+              {totalActive}
+            </p>
+          </div>
+          {/* Total completed projects */}
+          <div className="rounded-lg bg-emerald-50 p-6 shadow-md dark:bg-gray-900 dark:text-white">
+            <div className="flex gap-x-4 items-center mb-4">
+              <div className="w-fit rounded-lg bg-emerald-300/20 p-2 text-emerald-400 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+                <CircleCheck />
+              </div>
+              <h2 className="text-lg font-semibold text-black dark:text-white">
+                Completed Projects
+              </h2>
+            </div>
+            <p className="text-3xl font-bold text-black dark:text-white">
+              {totalCompleted}
+            </p>
           </div>
 
           {/* Total draft approved disbursement */}
@@ -92,7 +167,6 @@ const Organization = () => {
             </div>
             <p className="text-3xl font-bold text-black dark:text-white">{0}</p>
           </div>
-
           {/* Total completed disbursement */}
           <div className="rounded-lg bg-amber-100 p-6 shadow-md dark:bg-gray-900 dark:text-white">
             <div className="flex gap-x-4 items-center mb-4">

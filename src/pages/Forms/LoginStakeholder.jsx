@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -32,32 +32,35 @@ const LoginStakeholder = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const { login, baseDomain } = useAuthentication();
+  const { login } = useAuthentication();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = await axios.post(
-        "/disbursify/login",
-        { subdomain: data.subdomain, password: data.password },
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      toast.success("Login Successful", {
-        description: `Welcome back to ${data.subdomain}`,
-      });
-      login(response.data.token, data.subdomain);
-      navigate(`/${data.subdomain}/dashboard`);
-    } catch (error) {
-      console.log(error);
-      let errorMessage = "Something went wrong, server not responding";
-      if (error && error.response?.data?.error) {
-        errorMessage = error.response.data.error;
+      const result = await login(data.subdomain, data.password);
+      if (result.success) {
+        toast.success("Login Successful", {
+          description: `Welcome back to ${data.subdomain}`,
+        });
+        if (from) {
+          navigate(from, { replace: true });
+        } else {
+          navigate(`/${data.subdomain}/dashboard`);
+        }
+        // navigate(`/${data.subdomain}/dashboard`);
+      } else {
+        toast.error("Login Failed", {
+          description: result.error,
+        });
       }
-      // Error toast
+    } catch (error) {
+      // Handle unexpected errors
+      console.error("Login error:", error);
       toast.error("Login Failed", {
-        description: errorMessage,
+        description: "Something went wrong, please try again",
       });
     } finally {
       setLoading(false);

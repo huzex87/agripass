@@ -162,14 +162,14 @@ const TipTapToolbar = ({ editor }) => {
         )}
 
         {/* Color Picker */}
-        <input
+        {/* <input
           type="color"
           onChange={(e) =>
             editor.chain().focus().setColor(e.target.value).run()
           }
           className="w-10 h-8 border rounded cursor-pointer"
           title="Text Color"
-        />
+        /> */}
 
         {/* Highlight */}
         <button

@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/disbursify": {
-        target: "https://disbursify.vercel.app",
+        target: "http://localhost:3001",
         changeOrigin: true,
         secure: false,
       },

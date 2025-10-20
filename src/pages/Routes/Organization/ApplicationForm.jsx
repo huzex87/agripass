@@ -12,10 +12,10 @@ const ApplicationForm = () => {
   const [formDescription, setFormDescription] = useState(
     "Please fill out this form to apply for this project."
   );
+
+  //FIELDS CONFIGURATION STATES
   const [fields, setFields] = useState([]);
   const [showAddField, setShowAddField] = useState(false);
-
-  // New field state
   const [newField, setNewField] = useState({
     type: "text",
     label: "",
@@ -69,6 +69,21 @@ const ApplicationForm = () => {
   const addField = () => {
     if (!newField.label.trim()) {
       toast.error("Please enter a field label");
+      return;
+    }
+
+    // Add validation for options
+    if (["select", "radio", "checkbox"].includes(newField.type)) {
+      const validOptions = newField.options.filter((opt) => opt.trim() !== "");
+      if (validOptions.length === 0) {
+        toast.error("Please add at least one option");
+        return;
+      }
+    }
+
+    // Check for duplicate email fields
+    if (newField.type === "email" && fields.some((f) => f.type === "email")) {
+      toast.error("You can only have one email field");
       return;
     }
 
@@ -162,7 +177,7 @@ const ApplicationForm = () => {
       await api.put(`/disbursify/project/${projectId}/form`, formData);
       toast.success("Application form saved successfully!");
       navigate(-2);
-    } catch (error) { 
+    } catch (error) {
       console.error("Error saving form:", error);
       toast.error("Failed to save form");
     } finally {
@@ -266,7 +281,6 @@ const ApplicationForm = () => {
           <div className="mb-6">
             <h1 className="text-3xl font-bold mb-2">Build Application Form</h1>
             <p className="text-gray-600">Project: {project.name}</p>
-            
           </div>
 
           {/* Form Settings */}

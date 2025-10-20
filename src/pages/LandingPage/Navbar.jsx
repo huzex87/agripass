@@ -27,6 +27,7 @@ const Navbar = () => {
     { path: "#about", label: "About Us" },
     { path: "#services", label: "Our Service" },
     { path: "#testimonials", label: "Testimonials" },
+    { path: "projects", label: "Available Projects" },
   ];
 
   return (

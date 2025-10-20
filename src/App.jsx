@@ -18,7 +18,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import CreateProject from "./pages/Routes/Organization/CreateProject";
 import Projects from "./pages/Routes/Organization/Projects";
 import BeneficiaryLogin from "./pages/Forms/BeneficiaryLogin";
-import Beneficiary from "./pages/Dashboard/Beneficiary/Header";
+import Beneficiary from "./pages/Dashboard/Beneficiary/Beneficiary";
 import ProtectedRoutesII from "./Utilis/ProtectedRoutesII";
 import ProjectDetails from "./pages/Routes/Organization/ProjectDetails";
 import CreateNewProject from "./pages/Routes/Organization/CreateNewProject";
@@ -47,19 +47,23 @@ function App() {
     {
       path: "/signup/beneficiary",
     },
+    {
+      path: "/projects",
+      element: <Beneficiary />,
+    },
   ];
 
   const protectedRoutes = [
-    {
-      path: "/beneficiary",
-      element: <ProtectedRoutesII />,
-      children: [
-        {
-          path: "dashboard",
-          element: <Beneficiary />,
-        },
-      ],
-    },
+    // {
+    //   path: "/beneficiary",
+    //   element: <ProtectedRoutesII />,
+    //   children: [
+    //     {
+    //       path: "dashboard",
+    //       element: <Beneficiary />,
+    //     },
+    //   ],
+    // },
 
     {
       path: "/:subdomain",
@@ -72,7 +76,7 @@ function App() {
             {
               path: "dashboard",
               element: <Organization />,
-              loader: dashboardLoader,
+              // loader: dashboardLoader,
             },
             // {
             //   path: "project",
@@ -95,7 +99,7 @@ function App() {
               path: "applications",
               element: <Applications />,
             },
-            { 
+            {
               path: "projects/:projectId/application-form",
               element: <ApplicationForm />,
             },

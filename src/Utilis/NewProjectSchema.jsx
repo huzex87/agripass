@@ -28,7 +28,7 @@ export const newProjectSchema = yup.object().shape({
     .positive("Budget must be a positive number")
     .nullable()
     .optional(),
-  startDate: yup.date().required("Project Start Date is required"),
-  endDate: yup.date().required("Project End Date is required"),
+  startDate: yup.required("Project Start Date is required"),
+  endDate: yup.required("Project End Date is required"),
   // projectManager removed for now
 });

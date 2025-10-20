@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { formatDate } from "../../../Utilis/DateFormatter";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Plus } from "lucide-react";
+import DOMPurify from "dompurify";
 
 const Projects = () => {
   const [loading, setLoading] = useState(false);
@@ -239,9 +240,16 @@ const Projects = () => {
                         </h2>
                         {/* {getStatusBadge(project.status)} */}
                       </div>
-                      <p className="line-clamp-2">
-                        {project.description || "No description available"}
-                      </p>
+                      <div className="line-clamp-3" />
+
+                      <div
+                        className="line-clamp-3"
+                        dangerouslySetInnerHTML={{
+                          __html: project.description
+                            ? DOMPurify.sanitize(project.description)
+                            : "No description available",
+                        }}
+                      />
                       <div className="mt-3 flex gap-2 ">
                         <span className="font-medium">Created On:</span>{" "}
                         <h4> {formatDate(project.createdAt)}</h4>
