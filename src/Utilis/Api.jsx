@@ -4,8 +4,8 @@ import { toast } from "sonner";
 import { get } from "react-hook-form";
 
 const api = axios.create({
-  // baseURL: "https://disbursify.vercel.app",
-  baseURL: "/",
+  baseURL: "https://disbursify.vercel.app",
+  // baseURL: "/",
   withCredentials: true,
 });
 
@@ -81,7 +81,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          "http://localhost:3001/disbursify/refresh",
+          "https://disbursify.vercel.app/disbursify/refresh",
           {},
           {
             withCredentials: true,
@@ -98,7 +98,6 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (error) {
-        console.error("Token refresh failed:", refreshError.response?.data);
         processQueue(error, null);
         clearAccessToken();
         sessionStorage.clear();

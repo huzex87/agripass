@@ -2,8 +2,6 @@ import React, { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/LandingPage/HomePage";
-import ForgotPasswordPage from "./pages/ForgotPassword";
-import OtpPage from "./pages/OtpPage";
 import SignupStakeholder from "./pages/Forms/SignupStakeholder";
 import "./App.css";
 import AuthProvider from "./Utilis/Auth";
