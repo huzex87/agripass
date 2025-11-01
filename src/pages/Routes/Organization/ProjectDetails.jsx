@@ -39,7 +39,7 @@ const ProjectDetails = () => {
   const [projectStatus, setProjectStatus] = useState("");
   const [error, setError] = useState(null);
 
-  const { projectId } = useParams();
+  const { projectId, subdomain } = useParams();
   const navigate = useNavigate();
 
   // Create a read-only editor for displaying the description
@@ -181,6 +181,9 @@ const ProjectDetails = () => {
   const handleOpenActivateModal = () => {
     document.getElementById("activateProjectModal").showModal();
   };
+  const handleEditProject = () => {
+    navigate(`/${subdomain}/projects/${projectId}/edit`);
+  };
 
   return (
     <>
@@ -205,6 +208,12 @@ const ProjectDetails = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className={"bg-white dark:bg-gray-800"}>
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                className={" focus:bg-gray-100 dark:focus:bg-gray-700"}
+                onClick={handleEditProject}
+              >
+                Edit Project
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className={" focus:bg-gray-100 dark:focus:bg-gray-700"}
                 onClick={handleOpenModal}

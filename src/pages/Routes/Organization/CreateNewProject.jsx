@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import { newProjectSchema } from "../../../Utilis/NewProjectSchema";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import api from "../../../Utilis/Api";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
-import TipTapToolbar from "../../../Utilis/TipTapToolbar";
-import { EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
-import TextAlign from "@tiptap/extension-text-align";
-import Underline from "@tiptap/extension-underline";
-import Highlight from "@tiptap/extension-highlight";
+import { Loader2 } from "lucide-react";
+
+const RichTextEditor = lazy(() =>
+  import("../Organization/components/RichTextEditor")
+);
 
 const CreateNewProject = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -36,41 +34,6 @@ const CreateNewProject = () => {
       description: "",
     },
   });
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Underline,
-      TextAlign.configure({
-        types: ["heading", "paragraph"],
-      }),
-      Highlight,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: "text-blue-600 underline hover:text-blue-800",
-        },
-      }),
-    ],
-    content: "",
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      setValue("description", html);
-    },
-    editorProps: {
-      attributes: {
-        class: "prose prose-sm max-w-none focus:outline-none min-h-[200px] p-4",
-      },
-    },
-  });
-
-  useEffect(() => {
-    if (editor && !editor.getHTML().includes("<p>")) {
-      editor.commands.setContent(
-        "<p>Provide detailed information about your project, requirements, eligibility criteria, application process, and any other relevant details...</p>"
-      );
-    }
-  }, [editor]);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -114,8 +77,7 @@ const CreateNewProject = () => {
       clearErrors("image");
 
       // Validate that description has actual content
-      const textContent = editor?.getText() || "";
-      if (textContent.trim().length === 0) {
+      if (!data.description || data.description.trim().length === 0) {
         setError("description", {
           type: "manual",
           message: "Please provide a meaningful project description.",
@@ -206,27 +168,24 @@ const CreateNewProject = () => {
                     name="description"
                     control={control}
                     render={({ field }) => (
-                      <div className="border border-gray-300 rounded-lg">
-                        <TipTapToolbar editor={editor} />
-                        <div className="border border-gray-300 border-t-0 rounded-b-lg min-h-[250px]">
-                          <EditorContent
-                            editor={editor}
-                            className="prose max-w-none p-4 focus-within:outline-none rounded-b-lg"
-                            {...field}
-                          />
-                        </div>
-                      </div>
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-h-[300px] border border-gray-300 rounded-lg">
+                            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                          </div>
+                        }
+                      >
+                        <RichTextEditor
+                          value={field.value}
+                          onChange={(html) => {
+                            field.onChange(html);
+                            setValue("description", html);
+                          }}
+                          error={errors.description?.message}
+                        />
+                      </Suspense>
                     )}
                   />
-                  {errors.description && (
-                    <p className="text-sm text-red-500">
-                      {errors.description.message}
-                    </p>
-                  )}
-                  <p className="text-sm text-gray-500 mt-2">
-                    Use the toolbar above to format your text, create lists, add
-                    links, and organize your content like a professional.
-                  </p>
                 </fieldset>
 
                 {/* PROJECT IMAGE */}

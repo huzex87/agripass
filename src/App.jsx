@@ -1,105 +1,163 @@
-import React, { Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomePage from "./pages/LandingPage/HomePage";
-import SignupStakeholder from "./pages/Forms/SignupStakeholder";
 import "./App.css";
 import AuthProvider from "./Utilis/Auth";
-import LoginStakeholder from "./pages/Forms/LoginStakeholder";
 import ProtectedROutes from "./Utilis/ProtectedROutes";
-import Organization from "./pages/Dashboard/Organization/Organization";
 import { ThemeProvider } from "./context/NewThemeContext";
-import Layout from "./pages/Dashboard/Layout";
-import { dashboardLoader, activeprojects } from "./Utilis/LoaderFunction";
 import { Toaster } from "sonner";
-import NotFoundPage from "./pages/NotFoundPage";
-import CreateProject from "./pages/Routes/Organization/CreateProject";
-import Projects from "./pages/Routes/Organization/Projects";
-import BeneficiaryLogin from "./pages/Forms/BeneficiaryLogin";
-import Beneficiary from "./pages/Dashboard/Beneficiary/Beneficiary";
-import ProtectedRoutesII from "./Utilis/ProtectedRoutesII";
-import ProjectDetails from "./pages/Routes/Organization/ProjectDetails";
-import CreateNewProject from "./pages/Routes/Organization/CreateNewProject";
-import Applications from "./pages/Routes/Organization/Applications";
-import ApplicationForm from "./pages/Routes/Organization/ApplicationForm";
+
+const HomePage = lazy(() => import("./pages/LandingPage/HomePage"));
+const SignupStakeholder = lazy(() => import("./pages/Forms/SignupStakeholder"));
+const Layout = lazy(() => import("./pages/Dashboard/Layout"));
+const Organization = lazy(() =>
+  import("./pages/Dashboard/Organization/Organization")
+);
+const LoginStakeholder = lazy(() => import("./pages/Forms/LoginStakeholder"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const Projects = lazy(() => import("./pages/Routes/Organization/Projects"));
+const BeneficiaryLogin = lazy(() => import("./pages/Forms/BeneficiaryLogin"));
+const BeneficiaryActiveProjectInfo = lazy(() =>
+  import("./pages/Dashboard/Beneficiary/Components/ProjectInfo")
+);
+const Beneficiary = lazy(() =>
+  import("./pages/Dashboard/Beneficiary/Beneficiary")
+);
+const ProjectDetails = lazy(() =>
+  import("./pages/Routes/Organization/ProjectDetails")
+);
+const CreateNewProject = lazy(() =>
+  import("./pages/Routes/Organization/CreateNewProject")
+);
+const Applications = lazy(() =>
+  import("./pages/Routes/Organization/Applications")
+);
+const ApplicationForm = lazy(() =>
+  import("./pages/Routes/Organization/ApplicationForm")
+);
+
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+  </div>
+);
 
 function App() {
   const publicRoutes = [
     {
       index: true,
       path: "/",
-      element: <HomePage />,
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <HomePage />
+        </Suspense>
+      ),
     },
     {
       path: "/create_deployment",
-      element: <SignupStakeholder />,
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <SignupStakeholder />
+        </Suspense>
+      ),
     },
     {
       path: "/signin",
-      element: <LoginStakeholder />,
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <LoginStakeholder />
+        </Suspense>
+      ),
     },
     {
       path: "/login/beneficiary",
-      element: <BeneficiaryLogin />,
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <BeneficiaryLogin />
+        </Suspense>
+      ),
     },
     {
       path: "/signup/beneficiary",
     },
     {
       path: "/projects",
-      element: <Beneficiary />,
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <Beneficiary />
+        </Suspense>
+      ),
+    },
+    {
+      path: "/projects/:projectId",
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <BeneficiaryActiveProjectInfo />
+        </Suspense>
+      ),
     },
   ];
 
   const protectedRoutes = [
-    // {
-    //   path: "/beneficiary",
-    //   element: <ProtectedRoutesII />,
-    //   children: [
-    //     {
-    //       path: "dashboard",
-    //       element: <Beneficiary />,
-    //     },
-    //   ],
-    // },
-
     {
       path: "/:subdomain",
       element: <ProtectedROutes />,
       children: [
         {
           path: "",
-          element: <Layout />,
+          element: (
+            <Suspense fallback={<LoadingFallback />}>
+              <Layout />
+            </Suspense>
+          ),
           children: [
             {
               path: "dashboard",
-              element: <Organization />,
-              // loader: dashboardLoader,
+              element: (
+                <Suspense fallback={<LoadingFallback />}>
+                  <Organization />
+                </Suspense>
+              ),
             },
-            // {
-            //   path: "project",
-            //   element: <Projects />,
-            //   loader: activeprojects,
-            // },
             {
               path: "project/:projectId",
-              element: <ProjectDetails />,
+              element: (
+                <Suspense fallback={<LoadingFallback />}>
+                  <ProjectDetails />
+                </Suspense>
+              ),
             },
             {
               path: "projects",
-              element: <Projects />,
+              element: (
+                <Suspense fallback={<LoadingFallback />}>
+                  <Projects />
+                </Suspense>
+              ),
             },
             {
               path: "newProject",
-              element: <CreateNewProject />,
+              element: (
+                <Suspense fallback={<LoadingFallback />}>
+                  <CreateNewProject />
+                </Suspense>
+              ),
             },
             {
               path: "applications",
-              element: <Applications />,
+              element: (
+                <Suspense fallback={<LoadingFallback />}>
+                  <Applications />
+                </Suspense>
+              ),
             },
             {
               path: "projects/:projectId/application-form",
-              element: <ApplicationForm />,
+              element: (
+                <Suspense fallback={<LoadingFallback />}>
+                  <ApplicationForm />
+                </Suspense>
+              ),
             },
           ],
         },
@@ -112,7 +170,11 @@ function App() {
     ...protectedRoutes,
     {
       path: "*",
-      element: <NotFoundPage />,
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <NotFoundPage />
+        </Suspense>
+      ),
     },
   ]);
 

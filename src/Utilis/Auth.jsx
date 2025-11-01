@@ -76,13 +76,13 @@ const AuthProvider = ({ children }) => {
         isAuthenticated: true,
         organizationName,
         subdomain: returnedSubdomain,
-        role: decoded.role, // Adjust based on your backend response
+        role: decoded.role,
       });
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Login failed",
+        error: error.response?.data?.error || "Login failed. Please try again.",
       };
     } finally {
       setLoading(false);

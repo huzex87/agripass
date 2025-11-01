@@ -66,6 +66,7 @@ const LoginStakeholder = () => {
       setLoading(false);
     }
   };
+
   return (
     <>
       <motion.div

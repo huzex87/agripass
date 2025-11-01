@@ -4,8 +4,8 @@ import { toast } from "sonner";
 import { get } from "react-hook-form";
 
 const api = axios.create({
-  baseURL: "https://disbursify.vercel.app",
-  // baseURL: "/",
+  // baseURL: "https://disbursify.vercel.app",
+  baseURL: "/",
   withCredentials: true,
 });
 
@@ -81,7 +81,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          "https://disbursify.vercel.app/disbursify/refresh",
+          "http://localhost:3001/disbursify/refresh",
           {},
           {
             withCredentials: true,
