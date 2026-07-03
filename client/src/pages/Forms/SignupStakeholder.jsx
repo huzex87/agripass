@@ -174,10 +174,28 @@ const SignupStakeholder = () => {
                   )}
                 </div>
 
+                {/* Terms Agreement Checkbox */}
+                <div className="flex items-start gap-2 py-1">
+                  <input
+                    id="agreeToTerms"
+                    type="checkbox"
+                    {...register("agreeToTerms")}
+                    className="mt-1 h-4 w-4 rounded border-slate-800 bg-slate-950 text-emerald-500 focus:ring-emerald-500 cursor-pointer"
+                  />
+                  <div className="grid gap-1">
+                    <Label htmlFor="agreeToTerms" className="text-xs text-slate-300 font-medium leading-none cursor-pointer">
+                      I agree to the Terms of Service and Privacy Policy
+                    </Label>
+                    {errors.agreeToTerms && (
+                      <p className="text-[10px] text-red-500">{errors.agreeToTerms.message}</p>
+                    )}
+                  </div>
+                </div>
+
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-blue-700 text-white hover:bg-blue-800 cursor-pointer"
+                  className="w-full bg-emerald-600 text-white hover:bg-emerald-700 cursor-pointer rounded-xl font-bold py-2.5 transition-all"
                 >
                   {loading ? (
                     <>

@@ -15,22 +15,18 @@ import image2 from "../../assets/image2.png";
 import { motion } from "framer-motion";
 import { fadeIn, textVariant } from "../../constants/motion";
 
+const loginSchema = yup.object().shape({
+  subdomain: yup.string(),
+  email: yup.string(),
+  password: yup.string().required("Password is required"),
+});
+
 const LoginStakeholder = () => {
   const [loginType, setLoginType] = useState("organization"); // "organization" or "beneficiary"
   const [loading, setLoading] = useState(false);
   const { login } = useAuthentication();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const loginSchema = yup.object().shape({
-    subdomain: loginType === "organization"
-      ? yup.string().required("Please enter a valid subdomain")
-      : yup.string().notRequired(),
-    email: loginType === "beneficiary"
-      ? yup.string().email("Invalid email").required("Email is required")
-      : yup.string().notRequired(),
-    password: yup.string().required("Password is required"),
-  });
 
   const {
     register,
@@ -49,6 +45,14 @@ const LoginStakeholder = () => {
   };
 
   const onSubmit = async (data) => {
+    if (loginType === "organization" && !data.subdomain) {
+      toast.error("Subdomain is required");
+      return;
+    }
+    if (loginType === "beneficiary" && !data.email) {
+      toast.error("Email is required");
+      return;
+    }
     setLoading(true);
     try {
       if (loginType === "organization") {
