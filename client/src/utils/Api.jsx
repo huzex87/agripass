@@ -4,8 +4,7 @@ import { toast } from "sonner";
 import { get } from "react-hook-form";
 
 const api = axios.create({
-  // baseURL: "https://api/v1.vercel.app",
-  baseURL: "/",
+  baseURL: import.meta.env.VITE_API_URL || "/",
   withCredentials: true,
 });
 

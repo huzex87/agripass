@@ -33,7 +33,7 @@ const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       if (isBeneficiary) {
-        const res = await axios.post("/api/v1/beneficiary/login", {
+        const res = await api.post("/api/v1/beneficiary/login", {
           email: subdomainOrEmail,
           password
         });
@@ -53,7 +53,7 @@ const AuthProvider = ({ children }) => {
         const isEmail = subdomainOrEmail.includes("@");
         const payload = isEmail ? { email: subdomainOrEmail, password } : { subdomain: subdomainOrEmail, password };
 
-        const res = await axios.post("/api/v1/login", payload);
+        const res = await api.post("/api/v1/login", payload);
         if (res.data?.message === "Login successful") {
           const resolvedSubdomain = res.data.subdomain;
           setAccessToken(res.data.accessToken);
