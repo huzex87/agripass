@@ -36,7 +36,14 @@ const registerBeneficiary = async (req, res) => {
       "identification.idNumber": idNumber,
     });
     if (isBeneficiaryExist) {
-      return res.status(400).json({ error: "Beneficiary already exist" });
+      return res.status(400).json({ error: "Beneficiary with this ID number already exists" });
+    }
+
+    let isEmailExist = await Beneficiary.findOne({
+      "personalDetails.email": email,
+    });
+    if (isEmailExist) {
+      return res.status(400).json({ error: "Email address is already registered by another beneficiary" });
     }
 
     const beneficiary = new Beneficiary({

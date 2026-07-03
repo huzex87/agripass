@@ -4,14 +4,21 @@ const connectionMap = new Map();
 // Helper to resolve tenant database URI
 const getTenantUri = (subdomain) => {
   const baseUri = process.env.MONGODB_URL || "mongodb://localhost:27017/agripass";
-  const urlParts = baseUri.split("/");
-  // Extract database name (removing query parameters if any)
-  const dbPart = urlParts[urlParts.length - 1];
-  const dbName = dbPart.split("?")[0] || "agripass";
   
-  const tenantDbName = `${dbName}_${subdomain}`;
-  // Replace base DB name with tenant DB name
-  return baseUri.replace(dbName, tenantDbName);
+  // Find query string prefix
+  const qIndex = baseUri.indexOf("?");
+  const uriWithoutQuery = qIndex !== -1 ? baseUri.substring(0, qIndex) : baseUri;
+  const queryString = qIndex !== -1 ? baseUri.substring(qIndex) : "";
+
+  // Split path components by slash
+  const urlParts = uriWithoutQuery.split("/");
+  const dbName = urlParts[urlParts.length - 1] || "";
+  
+  const actualDbName = dbName || "agripass";
+  const tenantDbName = `${actualDbName}_${subdomain}`;
+  
+  urlParts[urlParts.length - 1] = tenantDbName;
+  return urlParts.join("/") + queryString;
 };
 
 // Spawn or retrieve connection handle

@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 const { getTenantModel } = require("../Config/tenantConnection");
+const { Organization } = require("../Database_Models/Models");
 
 // Routine to scan all organization tenants and update past-due repayments to 'overdue'
 const scanAndFlagOverdueInstallments = async () => {
   console.log("[Overdue-Scheduler] Starting daily repayment audit...");
   try {
     // Retrieve all active tenants from main Organization collection
-    const Organization = mongoose.model("Organization");
     const orgs = await Organization.find({});
     
     if (orgs.length === 0) {

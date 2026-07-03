@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import api from "../../utils/Api";
 
-const LocationPicker = ({ value = {}, onChange, error }) => {
+const LocationPicker = ({ value, onChange, error }) => {
+  const val = value || {};
   const [states, setStates] = useState([]);
   const [lgas, setLgas] = useState([]);
   const [wards, setWards] = useState([]);
@@ -34,14 +35,14 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
 
   // Fetch LGAs when state changes
   useEffect(() => {
-    if (!value.state) {
+    if (!val.state) {
       setLgas([]);
       return;
     }
     const fetchLgas = async () => {
       setLoading((prev) => ({ ...prev, lgas: true }));
       try {
-        const res = await api.get(`/api/v1/location/lgas?state=${value.state}`);
+        const res = await api.get(`/api/v1/location/lgas?state=${val.state}`);
         if (res.data?.status === "success") {
           setLgas(res.data.data);
         }
@@ -52,11 +53,11 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
       }
     };
     fetchLgas();
-  }, [value.state]);
+  }, [val.state]);
 
   // Fetch Wards when LGA changes
   useEffect(() => {
-    if (!value.state || !value.lga) {
+    if (!val.state || !val.lga) {
       setWards([]);
       return;
     }
@@ -64,7 +65,7 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
       setLoading((prev) => ({ ...prev, wards: true }));
       try {
         const res = await api.get(
-          `/api/v1/location/wards?state=${value.state}&lga=${value.lga}`
+          `/api/v1/location/wards?state=${val.state}&lga=${val.lga}`
         );
         if (res.data?.status === "success") {
           setWards(res.data.data);
@@ -76,11 +77,11 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
       }
     };
     fetchWards();
-  }, [value.state, value.lga]);
+  }, [val.state, val.lga]);
 
   // Fetch Polling Units when Ward changes
   useEffect(() => {
-    if (!value.state || !value.lga || !value.ward) {
+    if (!val.state || !val.lga || !val.ward) {
       setPollingUnits([]);
       return;
     }
@@ -88,7 +89,7 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
       setLoading((prev) => ({ ...prev, pollingUnits: true }));
       try {
         const res = await api.get(
-          `/api/v1/location/polling-units?state=${value.state}&lga=${value.lga}&ward=${value.ward}`
+          `/api/v1/location/polling-units?state=${val.state}&lga=${val.lga}&ward=${val.ward}`
         );
         if (res.data?.status === "success") {
           setPollingUnits(res.data.data);
@@ -100,10 +101,10 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
       }
     };
     fetchPollingUnits();
-  }, [value.state, value.lga, value.ward]);
+  }, [val.state, val.lga, val.ward]);
 
   const handleSelectChange = (field, selectedValue) => {
-    const updatedValue = { ...value, [field]: selectedValue };
+    const updatedValue = { ...val, [field]: selectedValue };
     
     // Clear child fields on parent change
     if (field === "state") {
@@ -130,7 +131,7 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
           </label>
           <select
             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            value={value.state || ""}
+            value={val.state || ""}
             onChange={(e) => handleSelectChange("state", e.target.value)}
             disabled={loading.states}
           >
@@ -150,9 +151,9 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
           </label>
           <select
             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50"
-            value={value.lga || ""}
+            value={val.lga || ""}
             onChange={(e) => handleSelectChange("lga", e.target.value)}
-            disabled={!value.state || loading.lgas}
+            disabled={!val.state || loading.lgas}
           >
             <option value="">Select LGA</option>
             {lgas.map((lg) => (
@@ -170,9 +171,9 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
           </label>
           <select
             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50"
-            value={value.ward || ""}
+            value={val.ward || ""}
             onChange={(e) => handleSelectChange("ward", e.target.value)}
-            disabled={!value.lga || loading.wards}
+            disabled={!val.lga || loading.wards}
           >
             <option value="">Select Ward</option>
             {wards.map((wd) => (
@@ -190,9 +191,9 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
           </label>
           <select
             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50"
-            value={value.pollingUnit || ""}
+            value={val.pollingUnit || ""}
             onChange={(e) => handleSelectChange("pollingUnit", e.target.value)}
-            disabled={!value.ward || loading.pollingUnits}
+            disabled={!val.ward || loading.pollingUnits}
           >
             <option value="">Select Polling Unit</option>
             {pollingUnits.map((pu) => (
