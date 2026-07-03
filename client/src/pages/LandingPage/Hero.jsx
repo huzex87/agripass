@@ -2,98 +2,104 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fadeIn, textVariant } from "../../constants/motion";
-import image from "../../assets/image.png";
-import { ArrowBigRight } from "lucide-react";
+import image2 from "../../assets/image2.png";
+import { ArrowRight, User, ShieldCheck, Leaf } from "lucide-react";
 
 const Hero = () => {
   return (
-    <>
-      <div className="bg-gray-100 dark:bg-gray-900">
-        <section className="container mx-auto flex flex-col md:flex-row justify-between items-center px-4 sm:px-6 lg:px-8 pt-44 pb-16 ">
-          {/* Left column */}
-          <div className="w-full md:w-1/2 space-y-8">
-            <motion.div
-              variants={fadeIn("right", 0.2)}
-              initial="hidden"
-              whileInView="show"
-            >
-              {/* Star badge */}
-              <div className="flex items-center bg-blue-800 text-white gap-2 w-fit px-4 py-2 rounded-full transition-colors cursor-pointer group">
-                <span className="text-white group-hover:scale-110 transition-transform">
-                  ★
-                </span>
-                <span className="text-sm font-medium">
-                  Jump start your growth
-                </span>
-              </div>
-            </motion.div>
+    <div className="bg-slate-950 text-white min-h-screen flex items-center pt-24 pb-16 relative overflow-hidden">
+      
+      {/* Decorative gradients */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
 
-            <motion.h1
-              variants={textVariant(0.3)}
-              initial="hidden"
-              whileInView="show"
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
-            >
-              <span className=" text-blue-600">AgriPass</span> <br />
-              is an innovative, comprehensive platform.
-              <span className="inline-block ml-2 animate-pulse">⏰</span>
-            </motion.h1>
+      <section className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10 w-full">
+        
+        {/* Left Column Text details */}
+        <div className="space-y-8 max-w-2xl">
+          <motion.div
+            variants={fadeIn("right", 0.2)}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+          >
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full text-xs font-semibold uppercase tracking-wider">
+              <Leaf size={12} /> Jumpstart Your Growth
+            </div>
+          </motion.div>
 
-            <motion.p
-              variants={fadeIn("up", 0.4)}
-              initial="hidden"
-              whileInView="show"
-              className=" text-lg md:text-xl max-w-xl"
-            >
-              It's designed to streamline data collection, verification, and
-              disbursement of resources for government and non-governmental
-              organisations (NGOs).
-            </motion.p>
+          <motion.h1
+            variants={textVariant(0.3)}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-white"
+          >
+            Streamlined <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
+              Input Distribution
+            </span> <br />
+            & Repayments
+          </motion.h1>
 
-            <motion.div
-              variants={fadeIn("up", 0.5)}
-              initial="hidden"
-              whileInView="show"
-              className="flex gap-3 max-w-md"
-            >
-              {/* <motion.div
+          <motion.p
+            variants={fadeIn("up", 0.4)}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="text-slate-400 text-base md:text-lg leading-relaxed font-medium"
+          >
+            AgriPass bridges the gap between agricultural cooperatives, field agents, and smallholder farmers. Monitor land boundaries, manage input vouchers, and schedule non-interest Shariah repayments dynamically.
+          </motion.p>
+
+          {/* Action buttons */}
+          <motion.div
             variants={fadeIn("up", 0.5)}
             initial="hidden"
             whileInView="show"
-            className="flex items-center gap-2"
+            viewport={{ once: true }}
+            className="flex flex-wrap gap-4 pt-2"
           >
-            <motion.p variants={textVariant(0.3)} className="">
-              As Beneficiary
-            </motion.p>
-            <ArrowBigRight className="text-blue-600" />
-          </motion.div>
-          <motion.button className=" bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100">
-            <Link to="#">Sign up</Link>
-          </motion.button>
-          <motion.button className="outline-blue-700 dark:outline-blue-300 outline-2 px-6 py-2.5 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-500 hover:text-white text-sm font-medium transition-all duration-500 ease-in-out hover:shadow-lg hover:shadow-blue-100 dark:hover:shadow-blue-900">
-            <Link to="/login/beneficiary">Sign in</Link>
-          </motion.button> */}
-            </motion.div>
-          </div>
+            {/* Farmer Access */}
+            <Link
+              to="/login/beneficiary"
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 hover:shadow-xl hover:shadow-emerald-600/30"
+            >
+              <User size={14} /> Farmer Portal
+            </Link>
 
-          {/* Right Column - Images */}
-          <motion.div
-            variants={fadeIn("left", 0.5)}
-            initial="hidden"
-            whileInView="show"
-            className="w-full md:w-1/2 mt-16 md:mt-0 pl-0 md:pl-12"
-          >
-            <div className="relative">
-              <img
-                src={image}
-                alt="Team meeting"
-                className="rounded-lg relative z-10 hover:scale-[1.02] transition-transform duration-300"
-              />
-            </div>
+            {/* Cooperative login */}
+            <Link
+              to="/signin"
+              className="px-6 py-3 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5"
+            >
+              <ShieldCheck size={14} className="text-emerald-400" /> Cooperative Access
+            </Link>
           </motion.div>
-        </section>
-      </div>
-    </>
+
+        </div>
+
+        {/* Right Column - Premium image frame */}
+        <motion.div
+          variants={fadeIn("left", 0.5)}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="relative w-full aspect-video lg:aspect-square max-w-md mx-auto"
+        >
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-500 opacity-20 blur-xl scale-95 pointer-events-none" />
+          <div className="relative rounded-3xl border border-slate-800 overflow-hidden bg-slate-900 shadow-2xl p-2 h-full">
+            <img
+              src={image2}
+              alt="Agricultural monitoring"
+              className="w-full h-full object-cover rounded-2xl"
+            />
+          </div>
+        </motion.div>
+
+      </section>
+
+    </div>
   );
 };
 

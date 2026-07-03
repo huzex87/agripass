@@ -2,164 +2,99 @@ import React from "react";
 import { motion } from "framer-motion";
 import { fadeIn, textVariant } from "../../constants/motion";
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Twitter, Instagram, Linkedin, Leaf } from "lucide-react";
 
 const Footer = () => {
   const motionLink = motion(Link);
 
   const footerLinks = {
-    company: [
-      { name: "About", to: "#" },
-      { name: "Terms of Use", to: "#" },
+    platform: [
+      { name: "Farmer Access", to: "/login/beneficiary" },
+      { name: "Cooperative Log", to: "/signin" },
+      { name: "Terms of Service", to: "#" },
       { name: "Privacy Policy", to: "#" },
-      { name: "How it Works", to: "#" },
-      { name: "Contact Us", to: "#" },
     ],
-    getHelp: [
-      { name: "Support Carrer", to: "#" },
-      { name: "24h Service", to: "#" },
-      { name: "Quick Chat", to: "#" },
+    features: [
+      { name: "Interactive Mapping", to: "#features" },
+      { name: "Voucher Desk", to: "#features" },
+      { name: "KYC Biometrics", to: "#features" },
     ],
     support: [
-      { name: "FAQ", to: "#" },
-      { name: "Policy", to: "#" },
-      { name: "Business", to: "#" },
-    ],
-    contact: [
-      { name: "WhatsApp", to: "#" },
-      { name: "Support 24", to: "#" },
+      { name: "Help Desk", to: "#" },
+      { name: "System Status", to: "#" },
+      { name: "Documentation", to: "#" },
     ],
   };
+
   return (
     <motion.footer
       variants={fadeIn("up", 0.2)}
       initial="hidden"
       whileInView="show"
-      className=" bg-gray-100 dark:bg-gray-950"
+      viewport={{ once: true }}
+      className="bg-slate-950 border-t border-slate-900"
     >
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <motion.div
-          variants={fadeIn("up", 0.3)}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12"
-        >
-          {/* Brand Column */}
-          <motion.div variants={fadeIn("right", 0.4)} className="lg:col-span-4">
-            <motion.div
-              variants={fadeIn("down", 0.5)}
-              className="flex items-center gap-1 mb-6"
-            >
-              <img src="" alt="Company Logo" />
-              <motion.h1
-                variants={textVariant(0.2)}
-                className="text-2xl font-bold text-gray-800 dark:text-white"
-              >
-                AgriPass
-              </motion.h1>
-            </motion.div>
-            <motion.p
-              variants={fadeIn("up", 0.6)}
-              className="text-gray-600 dark:text-gray-300"
-            >
-              An innovative, comprehensive platform designed to streamline data
-              collection, verification, and disbursement of resources for
-              government and non-governmental organisations (NGOs).
-            </motion.p>
-            <motion.div
-              variants={fadeIn("up", 0.7)}
-              className="flex gap-4 mt-4"
-            >
-              <motion.a
-                whileHover={{ scale: 1.1 }}
-                href="#"
-                className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-blue-600 hover:text-white transition-colors"
-              >
-                <Facebook className="w-5 h-5" />
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.1 }}
-                href="#"
-                className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-pink-600 hover:text-white transition-colors"
-              >
-                <Instagram className="w-5 h-5" />
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.1 }}
-                href="#"
-                className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-blue-400 hover:text-white transition-colors"
-              >
-                <Twitter className="w-5 h-5" />
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.1 }}
-                href="#"
-                className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-blue-600 hover:text-white transition-colors"
-              >
-                <Linkedin className="w-5 h-5" />
-              </motion.a>
-            </motion.div>
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          
+          {/* Brand Info Column */}
+          <motion.div variants={fadeIn("right", 0.4)} className="lg:col-span-5 space-y-4">
+            <div className="flex items-center gap-2 text-white">
+              <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400 border border-emerald-500/20">
+                <Leaf size={16} />
+              </div>
+              <span className="font-extrabold text-lg uppercase tracking-wider">AgriPass</span>
+            </div>
+            
+            <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
+              Connecting agricultural cooperatives, smallholder farms, and verification warehouses in one single ledger.
+            </p>
+
+            {/* Social Icons */}
+            <div className="flex gap-3.5 pt-2">
+              <a href="#" className="p-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors">
+                <Facebook size={16} />
+              </a>
+              <a href="#" className="p-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors">
+                <Instagram size={16} />
+              </a>
+              <a href="#" className="p-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors">
+                <Twitter size={16} />
+              </a>
+              <a href="#" className="p-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors">
+                <Linkedin size={16} />
+              </a>
+            </div>
           </motion.div>
 
           {/* Links Column */}
-          <motion.div variants={fadeIn("left", 0.4)} className="lg:col-span-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {Object.entries(footerLinks).map(
-                ([category, categoryLinks], index) => (
-                  <motion.div
-                    key={category}
-                    variants={fadeIn("up", 0.3 * (index + 1))}
-                  >
-                    <motion.h3
-                      variants={textVariant(0.2)}
-                      className="font-semibold text-gray-800 dark:text-white mb-4"
-                    >
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </motion.h3>
-                    <motion.ul className="mt-4 space-y-2">
-                      {categoryLinks.map((item, index) => (
-                        <motion.li
-                          key={index}
-                          variants={fadeIn("up", 0.1 * (index + 1))}
-                        >
-                          <motionLink
-                            to={item.to}
-                            className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors"
-                          >
-                            {item.name}
-                          </motionLink>
-                        </motion.li>
-                      ))}
-                    </motion.ul>
-                  </motion.div>
-                )
-              )}
-            </div>
-          </motion.div>
-        </motion.div>
+          <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-8">
+            {Object.entries(footerLinks).map(([category, links], idx) => (
+              <div key={category} className="space-y-4">
+                <h4 className="text-xs font-extrabold text-white uppercase tracking-widest">
+                  {category}
+                </h4>
+                <ul className="space-y-2">
+                  {links.map((link, linkIdx) => (
+                    <li key={linkIdx}>
+                      <Link to={link.to} className="text-slate-400 hover:text-white text-xs transition-colors">
+                        {link.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
 
-        {/* Copyright */}
-        <motion.div
-          variants={fadeIn("up", 0.8)}
-          className="border-t border-gray-200 dark:border-gray-700 mt-12 pt-8"
-        >
-          <motion.div
-            variants={fadeIn("up", 0.9)}
-            className="flex flex-col md:flex-row justify-between items-center gap-4"
-          >
-            <motion.p
-              variants={fadeIn("right", 1.0)}
-              className="text-gray-600 dark:text-gray-300 text-sm"
-            >
-              Copyright © {new Date().getFullYear()} agripass.com.ng
-            </motion.p>
-            <motion.p
-              variants={fadeIn("left", 1.0)}
-              className="text-gray-600 dark:text-gray-300 text-sm"
-            >
-              <span className="font-semibold">Powered By</span> Kirkira
-              Innovation Hub
-            </motion.p>
-          </motion.div>
-        </motion.div>
+        </div>
+
+        {/* Divider & Copyright */}
+        <div className="border-t border-slate-900 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-[10px] uppercase tracking-wider font-semibold">
+          <p>© {new Date().getFullYear()} agripass.com.ng. All rights reserved.</p>
+          <p>Powered by Kirkira Innovation Hub</p>
+        </div>
+
       </div>
     </motion.footer>
   );
