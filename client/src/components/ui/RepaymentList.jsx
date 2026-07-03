@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/Api";
 import { toast } from "sonner";
 import { Loader2, Calendar, CreditCard, CheckCircle2 } from "lucide-react";
 import { formatDate } from "../../utils/dateFormatter";
@@ -12,7 +12,7 @@ const RepaymentList = ({ onRepaymentSuccess }) => {
   const fetchRepayments = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/v1/farmer/repayments");
+      const res = await api.get("/api/v1/farmer/repayments");
       if (res.data?.status === "success") {
         setRepayments(res.data.data);
       }
@@ -31,7 +31,7 @@ const RepaymentList = ({ onRepaymentSuccess }) => {
   const handleRepay = async (disbursementId, installmentId) => {
     setPayingId(installmentId);
     try {
-      const res = await axios.post("/api/v1/farmer/repay", {
+      const res = await api.post("/api/v1/farmer/repay", {
         disbursementId,
         installmentId,
       });

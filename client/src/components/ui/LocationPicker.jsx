@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/Api";
 
 const LocationPicker = ({ value = {}, onChange, error }) => {
   const [states, setStates] = useState([]);
@@ -19,7 +19,7 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
     const fetchStates = async () => {
       setLoading((prev) => ({ ...prev, states: true }));
       try {
-        const res = await axios.get("/api/v1/location/states");
+        const res = await api.get("/api/v1/location/states");
         if (res.data?.status === "success") {
           setStates(res.data.data);
         }
@@ -41,7 +41,7 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
     const fetchLgas = async () => {
       setLoading((prev) => ({ ...prev, lgas: true }));
       try {
-        const res = await axios.get(`/api/v1/location/lgas?state=${value.state}`);
+        const res = await api.get(`/api/v1/location/lgas?state=${value.state}`);
         if (res.data?.status === "success") {
           setLgas(res.data.data);
         }
@@ -63,7 +63,7 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
     const fetchWards = async () => {
       setLoading((prev) => ({ ...prev, wards: true }));
       try {
-        const res = await axios.get(
+        const res = await api.get(
           `/api/v1/location/wards?state=${value.state}&lga=${value.lga}`
         );
         if (res.data?.status === "success") {
@@ -87,7 +87,7 @@ const LocationPicker = ({ value = {}, onChange, error }) => {
     const fetchPollingUnits = async () => {
       setLoading((prev) => ({ ...prev, pollingUnits: true }));
       try {
-        const res = await axios.get(
+        const res = await api.get(
           `/api/v1/location/polling-units?state=${value.state}&lga=${value.lga}&ward=${value.ward}`
         );
         if (res.data?.status === "success") {

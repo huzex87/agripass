@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../../utils/Api";
 import Header from "./Components/Header";
 import Hero from "./Components/Hero";
 import Projects from "./Components/Projects";
@@ -15,7 +15,7 @@ const Beneficiary = () => {
 
   const fetchWallet = async () => {
     try {
-      const res = await axios.get("/api/v1/farmer/wallet");
+      const res = await api.get("/api/v1/farmer/wallet");
       if (res.data?.status === "success") {
         setBalance(res.data.data.balance);
       }
@@ -28,7 +28,7 @@ const Beneficiary = () => {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get("/api/v1/farmer/profile");
+      const res = await api.get("/api/v1/farmer/profile");
       if (res.data?.status === "success") {
         setFarmerInfo(res.data.data);
       }

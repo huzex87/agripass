@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/Api";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signupSchema } from "../../utils/schemas/validationSchema";
@@ -31,7 +31,7 @@ const SignupStakeholder = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         "/api/v1/create",
         {
           orgName: data.orgName,

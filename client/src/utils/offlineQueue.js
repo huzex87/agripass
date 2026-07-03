@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "./Api";
 import { toast } from "sonner";
 
 const DB_NAME = "agripass-offline";
@@ -122,7 +122,7 @@ export const syncOfflineRegistrations = async () => {
 
   for (const record of queued) {
     try {
-      const response = await axios.post(`/api/v1/submit/${record.projectId}`, record.data);
+      const response = await api.post(`/api/v1/submit/${record.projectId}`, record.data);
       if (response.data?.success || response.status === 200 || response.status === 201) {
         await removeOfflineRegistration(record.id);
         successCount++;

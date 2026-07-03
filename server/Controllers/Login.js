@@ -2,6 +2,7 @@ const {
   Beneficiary,
   Organization,
   Admin,
+  User,
 } = require("../Database_Models/Models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -68,25 +69,47 @@ const loginBeneficiary = async (req, res) => {
   }
 };
 
-//Login an organization
+//Login an organization or cooperative admin user
 const loginOrganization = async (req, res) => {
-  const { subdomain, password } = req.body;
+  const { subdomain, email, password } = req.body;
 
-  if (!subdomain || !password) {
-    return res.status(400).json({ error: "All fields are required" });
+  if ((!subdomain && !email) || !password) {
+    return res.status(400).json({ error: "Credentials and password are required" });
   }
 
   try {
-    const organization = await Organization.findOne({ subdomain });
-    if (!organization) {
-      return res
-        .status(400)
-        .json({ error: "No account found with this subdomain" });
-    }
+    let organization;
+    let userRecord;
 
-    const isMatch = await bcrypt.compare(password, organization.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: "Invalid password or credentials" });
+    if (email) {
+      // Find the cooperative user account
+      userRecord = await User.findOne({ email });
+      if (!userRecord) {
+        return res.status(400).json({ error: "No account found with this email" });
+      }
+      
+      const isMatch = await bcrypt.compare(password, userRecord.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: "Invalid credentials" });
+      }
+
+      organization = await Organization.findById(userRecord.organizationId);
+      if (!organization) {
+        return res.status(400).json({ error: "Associated cooperative organization not found" });
+      }
+    } else {
+      // Fallback to subdomain lookups
+      organization = await Organization.findOne({ subdomain });
+      if (!organization) {
+        return res
+          .status(400)
+          .json({ error: "No account found with this subdomain" });
+      }
+
+      const isMatch = await bcrypt.compare(password, organization.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: "Invalid password or credentials" });
+      }
     }
 
     const payload = {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../../../utils/Api";
 import { useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { Loader2, Calendar, AlertCircle, CheckCircle } from "lucide-react";
@@ -81,7 +81,7 @@ const ProjectInfo = () => {
     }
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/v1/submit/${projectId}`,
         applicationData
       );

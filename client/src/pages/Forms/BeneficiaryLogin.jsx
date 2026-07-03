@@ -34,19 +34,17 @@ const BeneficiaryLogin = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      toast.success("Login Successful", {
-        description: `Welcome back ${data.email}`,
-      });
-
-      const mockUser = {
-        isAuthenticated: true,
-        email: data.email,
-        role: "beneficiary",
-      };
-      sessionStorage.setItem("subdomain", "beneficiary");
-      sessionStorage.setItem("mock_user", JSON.stringify(mockUser));
-
-      navigate("/projects");
+      const result = await login(data.email, data.password, true);
+      if (result.success) {
+        toast.success("Login Successful", {
+          description: "Welcome back to your AgriPass Farmer Portal",
+        });
+        navigate("/projects");
+      } else {
+        toast.error("Login Failed", {
+          description: result.error,
+        });
+      }
     } catch (error) {
       console.error("Error during login:", error);
       toast.error("Login failed", {

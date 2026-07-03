@@ -147,10 +147,10 @@ router.delete("/admin/delete_project/:projectId", adminAuthMiddleware, deletePro
 router.post("/admin/create_report", adminAuthMiddleware, createProjectReport); //Create project report
 
 // LOCATION REFERENCE ROUTES (INEC Geography Picker)
-router.get("/location/states", checkSubdomain, getStates);
-router.get("/location/lgas", checkSubdomain, getLgas);
-router.get("/location/wards", checkSubdomain, getWards);
-router.get("/location/polling-units", checkSubdomain, getPollingUnits);
+router.get("/location/states", getStates);
+router.get("/location/lgas", getLgas);
+router.get("/location/wards", getWards);
+router.get("/location/polling-units", getPollingUnits);
 
 // REPAYMENT LEDGER ROUTES (Murabaha/Salam Financing)
 router.get("/farmer/repayments", checkSubdomain, authMiddleware, getFarmerRepayments);

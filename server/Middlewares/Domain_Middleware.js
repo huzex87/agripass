@@ -19,12 +19,27 @@ const checkSubdomain = async (req, res, next) => {
       return res.status(404).json({ error: "Organization not found" });
     }
 
-    if (organization._id.toString() !== decoded.id) {
-      return res.status(400).json({ error: "Organization-token mismatch" });
+    if (decoded.role === "beneficiary") {
+      const Beneficiary = req.getTenantModel("Beneficiary");
+      const beneficiary = await Beneficiary.findById(decoded.id);
+      if (!beneficiary) {
+        return res.status(401).json({ error: "Farmer beneficiary not found" });
+      }
+      if (beneficiary.organizationId.toString() !== organization._id.toString()) {
+        return res.status(400).json({ error: "Farmer does not belong to this cooperative" });
+      }
+      req.user = decoded;
+      req.beneficiary = beneficiary;
+    } else if (decoded.role === "organization") {
+      if (organization._id.toString() !== decoded.id) {
+        return res.status(400).json({ error: "Organization-token mismatch" });
+      }
+      req.user = decoded;
+    } else {
+      return res.status(400).json({ error: "Invalid role access" });
     }
 
     req.organization = organization;
-    req.user = decoded;
     next();
   } catch (error) {
     console.log(error);

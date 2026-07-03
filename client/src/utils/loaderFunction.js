@@ -38,12 +38,12 @@ const fetchResources = async () => {
 };
 
 const fetchActiveProjects = async () => {
-  const response = await axios.get("api/v1/beneficiary/projects");
+  const response = await api.get("/api/v1/beneficiary/projects");
   return response.data;
 };
 
 export const fetchActiveProjectInfo = async (projectId) => {
-  const response = await axios.get(
+  const response = await api.get(
     `/api/v1/beneficiary/project/${projectId}`
   );
   return response.data;
