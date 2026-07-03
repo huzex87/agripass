@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Leaf } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "sonner";
@@ -60,11 +60,18 @@ const BeneficiaryLogin = () => {
       <div className="grid min-h-svh lg:grid-cols-2">
         {/* Login Form */}
         <div className="flex flex-col gap-4 p-6 md:p-10">
-          <div className="flex justify-center md:justify-start gap-2">
-            <img src="" alt="" />
-            agripass
+          <div className="flex justify-center md:justify-start">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="p-1.5 bg-emerald-500/20 rounded-lg text-emerald-400 border border-emerald-500/30">
+                <Leaf size={16} />
+              </div>
+              <div>
+                <span className="font-extrabold text-sm text-white tracking-wider uppercase">AgriPass</span>
+                <span className="block text-[6px] uppercase tracking-widest text-emerald-400">Agricultural Ledger</span>
+              </div>
+            </Link>
           </div>
-          <div className=" flex flex-1 items-center justify-center">
+          <div className="flex flex-1 items-center justify-center">
             <div className="w-full max-w-xs">
               <form
                 action=""

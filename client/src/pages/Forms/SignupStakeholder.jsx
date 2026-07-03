@@ -8,10 +8,9 @@ import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Leaf } from "lucide-react";
 import Modal from "../Elements/Modal";
 import image3 from "../../assets/image3.png";
-import logo from "../../assets/logo.png";
 
 const SignupStakeholder = () => {
   const {
@@ -48,12 +47,10 @@ const SignupStakeholder = () => {
     } catch (error) {
       console.error("Error during signup:", error);
       let errorMessage = "An error occurred. Please try again later.";
-      if (error && error.response?.data?.error) {
+      if (error.response && error.response.data && error.response.data.error) {
         errorMessage = error.response.data.error;
       }
-      toast.error("Signup failed", {
-        description: errorMessage,
-      });
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -67,12 +64,15 @@ const SignupStakeholder = () => {
       {/* form */}
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md text-primary-foreground">
-              <img src={logo} alt="" className="" />
+          <Link to="/" className="flex items-center gap-2">
+            <div className="p-1.5 bg-emerald-500/20 rounded-lg text-emerald-400 border border-emerald-500/30">
+              <Leaf size={16} />
             </div>
-            AgriPass
-          </a>
+            <div>
+              <span className="font-extrabold text-sm text-white tracking-wider uppercase">AgriPass</span>
+              <span className="block text-[6px] uppercase tracking-widest text-emerald-400">Agricultural Ledger</span>
+            </div>
+          </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
