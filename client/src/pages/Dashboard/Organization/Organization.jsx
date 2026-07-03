@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLoaderData, useNavigation, useParams } from "react-router-dom";
 import { Users, Loader2, CircleCheck, SquarePen } from "lucide-react";
 import cn from "../../../utils/cn";
+import api from "../../../utils/Api";
 import {
   Table,
   TableBody,
@@ -17,11 +18,31 @@ import { getStatusBadge } from "../../../utils/Status";
 import { dashboardLoaderFunction } from "../../../utils/loaderFunction";
 
 const Organization = () => {
-  const { data, status, error, isPending, isError } = useQuery(
+  const { data: resourcesData, isPending: resourcesPending, isError: resourcesError, error: resourcesErr } = useQuery(
     dashboardLoaderFunction()
   );
 
-  if (isPending) {
+  const { data: disbursementsData } = useQuery({
+    queryKey: ["disbursements"],
+    queryFn: async () => {
+      const response = await api.get("/api/v1/disbursements");
+      return response.data;
+    },
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+  const { data: beneficiariesData } = useQuery({
+    queryKey: ["recentBeneficiaries"],
+    queryFn: async () => {
+      const response = await api.get("/api/v1/beneficiaries");
+      return response.data;
+    },
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+  if (resourcesPending) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="animate-spin h-10 w-10 text-blue-500" />
@@ -30,10 +51,10 @@ const Organization = () => {
     );
   }
 
-  if (isError) {
+  if (resourcesError) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-red-500">Error: {error.message}</p>
+        <p className="text-red-500">Error: {resourcesErr.message}</p>
       </div>
     );
   }
@@ -53,7 +74,7 @@ const Organization = () => {
   };
 
   // Safe destructuring
-  const responseData = data?.responseData || {};
+  const responseData = resourcesData?.responseData || {};
 
   const activeProjects = responseData.activeProjects || [];
   const completedProjects = responseData.completedProjects || [];
@@ -62,6 +83,10 @@ const Organization = () => {
   const totalActive = responseData.totalActive || 0;
   const totalCompleted = responseData.totalCompleted || 0;
   const totalDraft = responseData.totalDraft || 0;
+
+  const totalApproved = disbursementsData?.responseData?.totalApproved || 0;
+  const totalDisbursed = disbursementsData?.responseData?.totalCompleted || 0;
+  const beneficiaries = Array.isArray(beneficiariesData) ? beneficiariesData : [];
 
   return (
     <>
@@ -112,7 +137,7 @@ const Organization = () => {
                 Approved Disbursement
               </h2>
             </div>
-            <p className="text-3xl font-bold text-black dark:text-white">{0}</p>
+            <p className="text-3xl font-bold text-black dark:text-white">{totalApproved}</p>
           </div>
           {/* Total completed disbursement */}
           <div className="rounded-lg bg-amber-100 p-6 shadow-md dark:bg-gray-900 dark:text-white">
@@ -124,7 +149,7 @@ const Organization = () => {
                 Total Disbursed
               </h2>
             </div>
-            <p className="text-3xl font-bold text-black dark:text-white">{0}</p>
+            <p className="text-3xl font-bold text-black dark:text-white">{totalDisbursed}</p>
           </div>
 
         </div>
@@ -132,40 +157,40 @@ const Organization = () => {
         {/* Beneficiary */}
         <div className="grid grid-cols-1 lg:grid-cols-7 rounded-lg bg-blue-50 p-6 shadow-md dark:bg-gray-900 dark:text-white">
           {/* Table */}
-          <div className="col-span-1 lg:col-span-4">
+          <div className="col-span-1 lg:col-span-7">
             <h2 className="text-xl font-semibold mb-4 dark:text-white text-black">
-              Recent Beneficiaries
+              Recent Applications
             </h2>
-            {/* {beneficiaries && beneficiaries.length > 0 ? (
+            {beneficiaries && beneficiaries.length > 0 ? (
               <Table className="table table-zebra w-full">
                 <TableHeader className={"bg-gray-100 dark:bg-gray-800"}>
                   <TableRow>
                     <TableHead>First Name</TableHead>
                     <TableHead>Last Name</TableHead>
-                    <TableHead> Gender</TableHead>
-                    <TableHead> Email Address</TableHead>
-                    <TableHead> Date</TableHead>
-                    <TableHead> Status</TableHead>
+                    <TableHead>Gender</TableHead>
+                    <TableHead>Email Address</TableHead>
+                    <TableHead>Project</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {beneficiaries.map((beneficiary) => (
                     <TableRow key={beneficiary._id}>
                       <TableCell>
-                        {beneficiary.beneficiaryId.personalDetails.firstName ||
-                          "N/A"}{" "}
+                        {beneficiary.beneficiaryId?.personalDetails?.firstName || "N/A"}
                       </TableCell>
                       <TableCell>
-                        {beneficiary.beneficiaryId.personalDetails.lastName ||
-                          "N/A"}{" "}
+                        {beneficiary.beneficiaryId?.personalDetails?.lastName || "N/A"}
                       </TableCell>
                       <TableCell>
-                        {beneficiary.beneficiaryId.personalDetails.gender ||
-                          "N/A"}{" "}
+                        {beneficiary.beneficiaryId?.personalDetails?.gender || "N/A"}
                       </TableCell>
                       <TableCell>
-                        {beneficiary.beneficiaryId.personalDetails.email ||
-                          "N/A"}{" "}
+                        {beneficiary.beneficiaryId?.personalDetails?.email || "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        {beneficiary.projectId?.name || "N/A"}
                       </TableCell>
                       <TableCell>
                         {beneficiary.createdAt
@@ -173,18 +198,17 @@ const Organization = () => {
                           : "N/A"}
                       </TableCell>
                       <TableCell>
-                        {getStatusBadge(beneficiary.beneficiaryId.status) ||
-                          "N/A"}{" "}
+                        {getStatusBadge(beneficiary.status) || "N/A"}
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             ) : (
-              <p className="text-gray-950 dark:text-gray-400">
-                No recent beneficiaries sign up
+              <p className="text-gray-900 dark:text-gray-400">
+                No recent applications found
               </p>
-            )} */}
+            )}
           </div>
         </div>
       </div>

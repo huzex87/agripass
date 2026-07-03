@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../../../utils/Api";
 import { toast } from "sonner";
 import { Loader2, CheckCircle2, ShieldAlert, Scale, User, BookOpen, Weight } from "lucide-react";
@@ -12,11 +12,35 @@ const CropRecovery = () => {
   const [recoveryData, setRecoveryData] = useState(null);
   const [error, setError] = useState("");
 
+  const [projects, setProjects] = useState([]);
+  const [applications, setApplications] = useState([]);
+  const [selectorsLoading, setSelectorsLoading] = useState(false);
+
   const valuationRates = {
     wheat: 450,
     rice: 400,
     maize: 350
   };
+
+  useEffect(() => {
+    const loadSelectors = async () => {
+      setSelectorsLoading(true);
+      try {
+        const [projRes, appRes] = await Promise.all([
+          api.get("/api/v1/projects?limit=100"),
+          api.get("/api/v1/applications?limit=200")
+        ]);
+        setProjects(projRes.data.projects || []);
+        setApplications(appRes.data.applications || []);
+      } catch (err) {
+        console.error("Failed to load select options:", err);
+        toast.error("Failed to load projects/beneficiaries lists.");
+      } finally {
+        setSelectorsLoading(false);
+      }
+    };
+    loadSelectors();
+  }, []);
 
   const currentRate = valuationRates[cropType] || 300;
   const estimatedCredit = weight ? parseFloat(weight) * currentRate : 0;
@@ -61,6 +85,10 @@ const CropRecovery = () => {
     setError("");
   };
 
+  const filteredApplications = applications.filter(
+    (app) => app.projectId?._id === projectId
+  );
+
   return (
     <div className="max-w-xl mx-auto px-4 py-12">
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden">
@@ -72,37 +100,57 @@ const CropRecovery = () => {
         </div>
 
         <div className="p-8">
-          {!recoveryData ? (
+          {selectorsLoading ? (
+            <div className="flex flex-col items-center justify-center py-12 space-y-3">
+              <Loader2 className="animate-spin text-emerald-600 h-8 w-8" />
+              <p className="text-sm text-slate-500">Loading projects and farmer registries...</p>
+            </div>
+          ) : !recoveryData ? (
             <form onSubmit={handleRegisterDelivery} className="space-y-6">
               
-              {/* Farmer ID */}
+              {/* Project ID Dropdown */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
-                  <User size={15} /> Farmer / Beneficiary ID
+                  <BookOpen size={15} /> Project Intervention
                 </label>
-                <input
-                  type="text"
-                  placeholder="Enter Mongoose Beneficiary ObjectId"
-                  value={farmerId}
-                  onChange={(e) => setFarmerId(e.target.value)}
+                <select
+                  value={projectId}
+                  onChange={(e) => {
+                    setProjectId(e.target.value);
+                    setFarmerId(""); // Reset selected farmer when project changes
+                  }}
                   disabled={loading}
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all text-sm text-slate-800 dark:text-white"
-                />
+                >
+                  <option value="">Select Project</option>
+                  {projects.map((proj) => (
+                    <option key={proj._id} value={proj._id}>
+                      {proj.name} ({proj.type})
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              {/* Project ID */}
+              {/* Farmer ID Dropdown */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
-                  <BookOpen size={15} /> Project Intervention ID
+                  <User size={15} /> Farmer / Beneficiary
                 </label>
-                <input
-                  type="text"
-                  placeholder="Enter Mongoose Project ObjectId"
-                  value={projectId}
-                  onChange={(e) => setProjectId(e.target.value)}
-                  disabled={loading}
+                <select
+                  value={farmerId}
+                  onChange={(e) => setFarmerId(e.target.value)}
+                  disabled={loading || !projectId}
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all text-sm text-slate-800 dark:text-white"
-                />
+                >
+                  <option value="">
+                    {projectId ? "Select Farmer" : "Choose a project first"}
+                  </option>
+                  {filteredApplications.map((app) => (
+                    <option key={app.beneficiaryId?._id} value={app.beneficiaryId?._id}>
+                      {app.beneficiaryId?.personalDetails?.firstName} {app.beneficiaryId?.personalDetails?.lastName} ({app.beneficiaryId?.farmerIdNumber || app.beneficiaryId?.personalDetails?.email})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Crop Type & Weight Grid */}

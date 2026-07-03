@@ -144,6 +144,14 @@ const beneficiaryApplication = new mongoose.Schema(
       type: String,
       default: "beneficiary",
     },
+    customFormResponses: [
+      {
+        fieldId: { type: String, required: true },
+        type: { type: String, required: true },
+        label: { type: String, required: true },
+        value: { type: mongoose.Schema.Types.Mixed }
+      }
+    ]
   },
   { timestamps: true }
 );

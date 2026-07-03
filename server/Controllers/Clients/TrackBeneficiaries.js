@@ -19,7 +19,7 @@ const recentBeneficaryApplications = async (req, res) => {
       .lean();
 
     if (!recentApplication || recentApplication.length === 0) {
-      return res.status(200).json({ error: "No recent applications found" });
+      return res.status(200).json([]);
     }
 
     res.status(200).json(recentApplication);

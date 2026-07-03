@@ -18,6 +18,66 @@ const ApplicationModal = ({
   const [generatedToken, setGeneratedToken] = useState(null);
   const [copied, setCopied] = useState(false);
 
+  const renderResponseValue = (resp) => {
+    const val = resp.value;
+    if (val === undefined || val === null) {
+      return <span className="text-gray-400 italic">No response provided</span>;
+    }
+
+    if (resp.type === "checkbox") {
+      return val ? "✓ Yes" : "✗ No";
+    }
+
+    if (["boundary", "plots", "farmPlot"].includes(resp.type)) {
+      return (
+        <div className="space-y-1">
+          <p>📍 Type: {val.type || "Polygon"}</p>
+          <p>📐 Hectarage: <span className="font-bold">{val.hectarage || "N/A"} hectares</span></p>
+          {val.coordinates && (
+            <details className="text-xs text-gray-500 mt-1 cursor-pointer">
+              <summary className="hover:underline">View GPS Coordinates</summary>
+              <pre className="p-1.5 bg-gray-100 dark:bg-gray-800 rounded font-mono text-[10px] mt-1 overflow-x-auto">
+                {JSON.stringify(val.coordinates, null, 2)}
+              </pre>
+            </details>
+          )}
+        </div>
+      );
+    }
+
+    if (resp.type === "biometrics") {
+      return (
+        <div className="flex flex-col sm:flex-row gap-4 items-center mt-1">
+          {val.profilePhoto && (
+            <div className="avatar">
+              <div className="w-16 rounded-full border border-gray-300">
+                <img src={val.profilePhoto} alt="Captured Face" />
+              </div>
+            </div>
+          )}
+          {val.fingerprintHash && (
+            <div className="text-xs">
+              <p className="text-gray-500 font-bold">Fingerprint SHA-256 Hash:</p>
+              <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded font-mono text-[11px]">
+                {val.fingerprintHash}
+              </code>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (typeof val === "object") {
+      return (
+        <pre className="p-1 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-x-auto">
+          {JSON.stringify(val, null, 2)}
+        </pre>
+      );
+    }
+
+    return <span>{String(val)}</span>;
+  };
+
   if (!applicationInfo) {
     return null;
   }
@@ -203,6 +263,23 @@ const ApplicationModal = ({
               {applicationInfo.projectId.name}{" "}
             </p>
           </div>
+
+          {/* Custom Form Responses */}
+          {applicationInfo.customFormResponses && applicationInfo.customFormResponses.length > 0 && (
+            <div className="mt-6 border-t pt-4">
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-3">Custom Form Responses</h3>
+              <div className="space-y-4">
+                {applicationInfo.customFormResponses.map((resp, idx) => (
+                  <div key={resp._id || idx} className="bg-gray-50 dark:bg-gray-900/30 p-3 rounded-xl border border-gray-200 dark:border-gray-800">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{resp.label}</p>
+                    <div className="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {renderResponseValue(resp)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Token Section - Only show if approved */}
           {applicationInfo.status === "approved" && (

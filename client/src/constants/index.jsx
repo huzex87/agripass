@@ -68,17 +68,17 @@ export const navbarLinks = [
     ],
   },
   {
-    title: "Track Resources",
+    title: "Agro Operations",
     links: [
       {
-        label: "Funds Disbursed",
+        label: "Voucher Verification",
         icon: Package,
-        path: "/products",
+        path: "voucher-verify",
       },
       {
-        label: "Goods Disbursed",
+        label: "Crop Recovery Ledger",
         icon: PackagePlus,
-        path: "/new-product",
+        path: "crop-recovery",
       },
     ],
   },
@@ -88,7 +88,7 @@ export const navbarLinks = [
       {
         label: "Settings",
         icon: Settings,
-        path: "/settings",
+        path: "settings",
       },
     ],
   },

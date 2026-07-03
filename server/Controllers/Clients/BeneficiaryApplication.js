@@ -2,6 +2,7 @@ const {
   BeneficiaryApplication,
   Project,
   Disbursement,
+  Beneficiary,
 } = require("../../Database_Models/Models");
 const { generateUniqueToken } = require("../Utils/tokenUtils");
 
@@ -34,14 +35,75 @@ const submitApplication = async (req, res) => {
 
     const organzationId = isProjectExist.organizationId;
 
+    // Build custom form responses
+    let customFormResponses = [];
+    if (isProjectExist.hasCustomForm && isProjectExist.customForm && isProjectExist.customForm.fields) {
+      for (const field of isProjectExist.customForm.fields) {
+        const val = req.body[field.id];
+        if (field.required && (val === undefined || val === null || val === "")) {
+          return res.status(400).json({ error: `Field '${field.label}' is required` });
+        }
+        customFormResponses.push({
+          fieldId: field.id,
+          type: field.type,
+          label: field.label,
+          value: val
+        });
+      }
+    }
+
     const newApplication = new BeneficiaryApplication({
       beneficiaryId,
       projectId,
       organizationId: organzationId,
       status: "pending",
+      customFormResponses,
     });
     await newApplication.save();
+
+    // Update beneficiary profile if boundary or biometrics are supplied in custom form responses
+    let beneficiaryUpdate = {};
+    let plotsToPush = [];
+    
+    if (customFormResponses.length > 0) {
+      for (const resp of customFormResponses) {
+        if (resp.type === "biometrics" && resp.value) {
+          if (resp.value.profilePhoto) {
+            beneficiaryUpdate["personalDetails.profilePhoto"] = resp.value.profilePhoto;
+          }
+          if (resp.value.fingerprintHash) {
+            beneficiaryUpdate["personalDetails.fingerprintHash"] = resp.value.fingerprintHash;
+          }
+        }
+        if (["boundary", "plots", "farmPlot"].includes(resp.type) && resp.value) {
+          if (resp.value.coordinates) {
+            plotsToPush.push({
+              polygon: {
+                type: "Polygon",
+                coordinates: resp.value.coordinates
+              },
+              hectarage: resp.value.hectarage || 0.5,
+              tenureStatus: "owned"
+            });
+          }
+        }
+      }
+    }
+    
+    if (Object.keys(beneficiaryUpdate).length > 0 || plotsToPush.length > 0) {
+      const updateQuery = {};
+      if (Object.keys(beneficiaryUpdate).length > 0) {
+        updateQuery.$set = beneficiaryUpdate;
+      }
+      if (plotsToPush.length > 0) {
+        updateQuery.$push = { "agriculturalProfile.plots": { $each: plotsToPush } };
+      }
+      
+      await Beneficiary.findByIdAndUpdate(beneficiaryId, updateQuery);
+    }
+
     res.status(200).json({
+      success: true,
       message: "Beneficiary application submitted successfully",
       newApplication,
     });
