@@ -81,7 +81,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          "http://localhost:3001/api/v1/refresh",
+          "/api/v1/refresh",
           {},
           {
             withCredentials: true,
