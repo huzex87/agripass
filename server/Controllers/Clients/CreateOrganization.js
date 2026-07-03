@@ -39,7 +39,7 @@ const registerOrganization = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Server Error" });
+    res.status(400).json({ error: error.message || "Server Error" });
   }
 };
 
