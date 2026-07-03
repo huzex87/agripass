@@ -29,25 +29,54 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (subdomain, password) => {
+  const login = async (subdomainOrEmail, password, isBeneficiary = false) => {
     setLoading(true);
     try {
-      const mockUser = {
-        isAuthenticated: true,
-        organizationName: subdomain.charAt(0).toUpperCase() + subdomain.slice(1) + " Organization",
-        subdomain: subdomain,
-        role: "organization",
-      };
+      if (isBeneficiary) {
+        const res = await axios.post("/api/v1/beneficiary/login", {
+          email: subdomainOrEmail,
+          password
+        });
+        if (res.data?.token) {
+          setAccessToken(res.data.token);
+          const mockUser = {
+            isAuthenticated: true,
+            email: subdomainOrEmail,
+            role: "beneficiary",
+          };
+          sessionStorage.setItem("subdomain", "beneficiary");
+          sessionStorage.setItem("mock_user", JSON.stringify(mockUser));
+          setUser(mockUser);
+          return { success: true, role: "beneficiary" };
+        }
+      } else {
+        const isEmail = subdomainOrEmail.includes("@");
+        const payload = isEmail ? { email: subdomainOrEmail, password } : { subdomain: subdomainOrEmail, password };
 
-      sessionStorage.setItem("subdomain", subdomain);
-      sessionStorage.setItem("mock_user", JSON.stringify(mockUser));
+        const res = await axios.post("/api/v1/login", payload);
+        if (res.data?.message === "Login successful") {
+          const resolvedSubdomain = res.data.subdomain;
+          setAccessToken(res.data.accessToken);
 
-      setUser(mockUser);
-      return { success: true };
+          const mockUser = {
+            isAuthenticated: true,
+            organizationName: res.data.organizationName,
+            subdomain: resolvedSubdomain,
+            role: "organization",
+          };
+
+          sessionStorage.setItem("subdomain", resolvedSubdomain);
+          sessionStorage.setItem("mock_user", JSON.stringify(mockUser));
+
+          setUser(mockUser);
+          return { success: true, subdomain: resolvedSubdomain, role: "organization" };
+        }
+      }
+      return { success: false, error: "Authentication failed" };
     } catch (error) {
       return {
         success: false,
-        error: "Login failed. Please try again.",
+        error: error.response?.data?.error || "Login failed. Please check your credentials.",
       };
     } finally {
       setLoading(false);

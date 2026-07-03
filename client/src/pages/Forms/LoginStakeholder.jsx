@@ -55,12 +55,12 @@ const LoginStakeholder = () => {
         const result = await login(data.subdomain, data.password);
         if (result.success) {
           toast.success("Login Successful", {
-            description: `Welcome back to ${data.subdomain}`,
+            description: `Welcome back to ${result.subdomain}`,
           });
           if (from && from !== "/dashboard") {
             navigate(from, { replace: true });
           } else {
-            navigate(`/${data.subdomain}/dashboard`);
+            navigate(`/${result.subdomain}/dashboard`);
           }
         } else {
           toast.error("Login Failed", {
@@ -69,20 +69,17 @@ const LoginStakeholder = () => {
         }
       } else {
         // Farmer Beneficiary Login
-        toast.success("Login Successful", {
-          description: `Welcome back Sani Abubakar`,
-        });
-
-        const mockUser = {
-          isAuthenticated: true,
-          email: data.email,
-          role: "beneficiary",
-        };
-        sessionStorage.setItem("subdomain", "beneficiary");
-        sessionStorage.setItem("mock_user", JSON.stringify(mockUser));
-
-        // Use custom window reload/replace or navigation to projects page
-        window.location.replace("/projects");
+        const result = await login(data.email, data.password, true);
+        if (result.success) {
+          toast.success("Login Successful", {
+            description: "Welcome back to your AgriPass Farmer Portal",
+          });
+          window.location.replace("/projects");
+        } else {
+          toast.error("Login Failed", {
+            description: result.error,
+          });
+        }
       }
     } catch (error) {
       console.error("Login error:", error);
