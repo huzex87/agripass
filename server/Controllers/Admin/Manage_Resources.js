@@ -5,9 +5,9 @@ const viewProjects = async (req, res) => {
   try {
     const projects = await Project.find().populate("organizationId");
 
-    const [activeProjects, inactiveProjects] = await Promise.all([
+    const [activeProjects, suspendedProjects] = await Promise.all([
       Project.countDocuments({ status: "active" }),
-      Project.countDocuments({ status: "inactive" }),
+      Project.countDocuments({ status: "suspended" }),
     ]);
 
     //Response Date
@@ -15,7 +15,7 @@ const viewProjects = async (req, res) => {
       projects: projects.length > 0 ? projects : [],
       counts: {
         activeProjects,
-        inactiveProjects,
+        suspendedProjects,
       },
     };
 
@@ -23,7 +23,7 @@ const viewProjects = async (req, res) => {
     const messages = [];
     if (projects.length === 0) messages.push("No projects found");
     if (activeProjects === 0) messages.push("No active projects found");
-    if (inactiveProjects === 0) messages.push("No inactive projects found");
+    if (suspendedProjects === 0) messages.push("No suspended projects found");
 
     if (messages.length > 0) {
       responseData.messages = messages;

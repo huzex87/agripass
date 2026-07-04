@@ -82,20 +82,31 @@ const loginOrganization = async (req, res) => {
     let userRecord;
 
     if (email) {
-      // Find the cooperative user account
+      // Multi-user cooperative staff live in the User collection, while a
+      // self-registered single-account cooperative stores its credentials
+      // directly on the Organization document. Try the staff account first,
+      // then fall back to the organization's own email/password.
       userRecord = await User.findOne({ email });
-      if (!userRecord) {
-        return res.status(400).json({ error: "No account found with this email" });
-      }
-      
-      const isMatch = await bcrypt.compare(password, userRecord.password);
-      if (!isMatch) {
-        return res.status(400).json({ error: "Invalid credentials" });
-      }
+      if (userRecord) {
+        const isMatch = await bcrypt.compare(password, userRecord.password);
+        if (!isMatch) {
+          return res.status(400).json({ error: "Invalid credentials" });
+        }
 
-      organization = await Organization.findById(userRecord.organizationId);
-      if (!organization) {
-        return res.status(400).json({ error: "Associated cooperative organization not found" });
+        organization = await Organization.findById(userRecord.organizationId);
+        if (!organization) {
+          return res.status(400).json({ error: "Associated cooperative organization not found" });
+        }
+      } else {
+        organization = await Organization.findOne({ email });
+        if (!organization) {
+          return res.status(400).json({ error: "No account found with this email" });
+        }
+
+        const isMatch = await bcrypt.compare(password, organization.password);
+        if (!isMatch) {
+          return res.status(400).json({ error: "Invalid credentials" });
+        }
       }
     } else {
       // Fallback to subdomain lookups

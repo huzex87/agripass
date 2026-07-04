@@ -205,7 +205,7 @@ const suspendOrganization = async (req, res) => {
     const organization = await Organization.findByIdAndUpdate(
       orgId,
       { status: "suspended", suspendedUntil },
-      { new: true }
+      { new: true, runValidators: true }
     );
     res.status(200).json({
       message: `Organization suspended successfully until ${suspendedUntil.toISOString()}`,

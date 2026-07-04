@@ -17,9 +17,10 @@ const organizationSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["active", "inactive"],
+      enum: ["active", "inactive", "suspended"],
       default: "active",
     },
+    suspendedUntil: { type: Date, default: null },
   },
   { timestamps: true }
 );

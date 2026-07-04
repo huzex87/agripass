@@ -86,7 +86,7 @@ const {
 router.post("/beneficiary/login", loginBeneficiary); // Login Endpoint Beneficiary
 router.post("/register", registerBeneficiary); //Beneficiary Sign up Endpoint
 router.post("/submit", authMiddleware, requireRole("beneficiary"), submitApplication); //Beneficiary Application Endpoint
-router.post("/submit/:projectId", checkSubdomain, requireRole("beneficiary"), authMiddleware, submitApplication);
+router.post("/submit/:projectId", checkSubdomain, requireRole("beneficiary"), submitApplication);
 
 // Marketplace-style browsing for beneficiaries (global accounts, not tied to one cooperative's subdomain)
 router.get("/beneficiary/projects", authMiddleware, requireRole("beneficiary"), getPublicActiveProjects);
