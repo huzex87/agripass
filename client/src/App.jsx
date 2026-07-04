@@ -46,6 +46,9 @@ const OtpPage = lazy(() => import("./pages/OtpPage"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const VoucherVerify = lazy(() => import("./pages/Routes/Organization/VoucherVerify"));
 const CropRecovery = lazy(() => import("./pages/Routes/Organization/CropRecovery"));
+const RedemptionCenters = lazy(() => import("./pages/Routes/Organization/RedemptionCenters"));
+const CenterLogin = lazy(() => import("./pages/Forms/CenterLogin"));
+const Center = lazy(() => import("./pages/Dashboard/Center/Center"));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -138,6 +141,14 @@ function App() {
         </Suspense>
       ),
     },
+    {
+      path: "/center/login",
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <CenterLogin />
+        </Suspense>
+      ),
+    },
   ];
 
   const protectedRoutes = [
@@ -225,6 +236,14 @@ function App() {
                 </Suspense>
               ),
             },
+            {
+              path: "centers",
+              element: (
+                <Suspense fallback={<LoadingFallback />}>
+                  <RedemptionCenters />
+                </Suspense>
+              ),
+            },
           ],
         },
       ],
@@ -271,11 +290,28 @@ function App() {
     },
   ];
 
+  const centerProtectedRoutes = [
+    {
+      element: <ProtectedRoute allowedRoles={["center"]} redirectPath="/center/login" />,
+      children: [
+        {
+          path: "/center/dashboard",
+          element: (
+            <Suspense fallback={<LoadingFallback />}>
+              <Center />
+            </Suspense>
+          ),
+        },
+      ],
+    },
+  ];
+
   const router = createBrowserRouter([
     ...publicRoutes,
     ...protectedRoutes,
     ...beneficiaryProtectedRoutes,
     ...adminProtectedRoutes,
+    ...centerProtectedRoutes,
     {
       path: "*",
       element: (
