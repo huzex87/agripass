@@ -1,94 +1,51 @@
 import {
-  ChartColumn,
-  Home,
-  NotepadText,
-  Package,
-  PackagePlus,
-  Settings,
-  ShoppingBag,
-  UserCheck,
-  UserPlus,
-  Users,
+  LayoutDashboard,
+  FolderKanban,
+  ClipboardList,
+  Ticket,
+  Wheat,
 } from "lucide-react";
 
+// Sidebar navigation for the cooperative dashboard.
+// Paths are RELATIVE to /:subdomain so they resolve inside the dashboard layout.
 export const navbarLinks = [
   {
-    title: "Dashboard",
+    title: "Menu",
     links: [
       {
-        label: "Dashboard",
-        icon: Home,
+        label: "Overview",
+        icon: LayoutDashboard,
         path: "dashboard",
       },
-      // {
-      //   label: "Analytics",
-      //   icon: ChartColumn,
-      //   path: "/analytics",
-      // },
-      // {
-      //   label: "Reports",
-      //   icon: NotepadText,
-      //   path: "/reports",
-      // },
     ],
   },
   {
-    title: "Resource",
+    title: "Programs",
     links: [
       {
         label: "Projects",
-        icon: Users,
+        icon: FolderKanban,
         path: "projects",
       },
-      // {
-      //   label: "Manage Projects",
-      //   icon: UserPlus,
-      //   path: "/new-customer",
-      // },
-      // {
-      //   label: "Verified customers",
-      //   icon: UserCheck,
-      //   path: "/verified-customers",
-      // },
-    ],
-  },
-  {
-    title: "Applications",
-    links: [
-      // {
-      //   label: "Review Applications",
-      //   icon: Package,
-      //   path: "/products",
-      // },
       {
-        label: "Manage Applications",
-        icon: ShoppingBag,
+        label: "Applications",
+        icon: ClipboardList,
         path: "applications",
       },
     ],
   },
   {
-    title: "Agro Operations",
+    title: "Disbursement",
     links: [
       {
-        label: "Voucher Verification",
-        icon: Package,
+        label: "Vouchers",
+        icon: Ticket,
         path: "voucher-verify",
       },
       {
-        label: "Crop Recovery Ledger",
-        icon: PackagePlus,
+        label: "Crop Recovery",
+        icon: Wheat,
         path: "crop-recovery",
-      },
-    ],
-  },
-  {
-    title: "Settings",
-    links: [
-      {
-        label: "Settings",
-        icon: Settings,
-        path: "settings",
       },
     ],
   },

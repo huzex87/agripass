@@ -101,7 +101,20 @@ const beneficiarySchema = new mongoose.Schema(
         hasDisability: { type: Boolean, default: false }
       }
     },
-    farmerIdNumber: { type: String, unique: true, sparse: true }
+    farmerIdNumber: { type: String, unique: true, sparse: true },
+    // The redemption/disbursement center this farmer is routed to (assigned by
+    // matching the farmer's location against a center's coverage area).
+    redemptionCenterId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RedemptionCenter",
+      default: null,
+    },
+    // The data collector / field agent who enrolled this farmer, if any.
+    registeredBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "DataCollector",
+      default: null,
+    },
   },
   { timestamps: true }
 );
@@ -397,6 +410,73 @@ const locationReferenceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// A redemption/disbursement center where farmers collect inputs. Owned by a
+// cooperative, has its own login, and covers one or more locations. Farmers are
+// routed to the center whose coverage matches their registered location.
+const redemptionCenterSchema = new mongoose.Schema(
+  {
+    organizationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
+      required: true,
+      index: true,
+    },
+    name: { type: String, required: true },
+    code: { type: String, required: true, unique: true, index: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    contactPhone: { type: String },
+    // Areas this center serves; a farmer is assigned when their location matches.
+    coverage: [
+      {
+        state: { type: String },
+        lga: { type: String },
+        ward: { type: String },
+      },
+    ],
+    status: {
+      type: String,
+      enum: ["active", "inactive", "suspended"],
+      default: "active",
+    },
+  },
+  { timestamps: true }
+);
+
+// A data collector / field agent registered by a cooperative admin to enroll
+// farmers (and apply on their behalf) within their assigned locations.
+const dataCollectorSchema = new mongoose.Schema(
+  {
+    organizationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
+      required: true,
+      index: true,
+    },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    phone: { type: String },
+    // Locations this collector is authorized to register farmers in.
+    assignedLocations: [
+      {
+        state: { type: String },
+        lga: { type: String },
+        ward: { type: String },
+        pollingUnit: { type: String },
+      },
+    ],
+    status: {
+      type: String,
+      enum: ["active", "inactive", "suspended"],
+      default: "active",
+    },
+    lastLogin: { type: Date },
+  },
+  { timestamps: true }
+);
+
 const Admin = mongoose.model("Admin", adminSchema);
 const Organization = mongoose.model("Organization", organizationSchema);
 const User = mongoose.model("User", userSchema);
@@ -432,6 +512,8 @@ const BeneficiaryApplication = mongoose.model(
 const Report = mongoose.model("Report", reportSchema);
 const LocationReference = mongoose.model("LocationReference", locationReferenceSchema);
 const Voucher = mongoose.model("Voucher", voucherSchema);
+const RedemptionCenter = mongoose.model("RedemptionCenter", redemptionCenterSchema);
+const DataCollector = mongoose.model("DataCollector", dataCollectorSchema);
 
 const schemas = {
   Admin: adminSchema,
@@ -446,7 +528,9 @@ const schemas = {
   BeneficiaryApplication: beneficiaryApplication,
   Report: reportSchema,
   LocationReference: locationReferenceSchema,
-  Voucher: voucherSchema
+  Voucher: voucherSchema,
+  RedemptionCenter: redemptionCenterSchema,
+  DataCollector: dataCollectorSchema,
 };
 
 module.exports = {
@@ -463,5 +547,7 @@ module.exports = {
   Report,
   LocationReference,
   Voucher,
+  RedemptionCenter,
+  DataCollector,
   schemas,
 };

@@ -1,92 +1,95 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTheme } from "../../context/NewThemeContext";
-import { Bell, ChevronsLeft, Moon, Search, Sun, LogOut } from "lucide-react";
+import { Menu, Moon, Sun, LogOut, ChevronDown } from "lucide-react";
 import PropTypes from "prop-types";
 import { useAuthentication } from "../../utils/Auth";
+import { useClickOutside } from "../../hooks/useClickOutside";
 import Dialogue from "../Elements/Dialogue";
+
+const getInitials = (name = "") => {
+  const parts = name.trim().split(/[\s-]+/).filter(Boolean);
+  if (parts.length === 0) return "AP";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+};
 
 export const Header = ({ collapsed, setCollapsed }) => {
   const { theme, toggleTheme } = useTheme();
+  const { logout, user, subdomain } = useAuthentication();
   const [isOpen, setIsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
-  const { logout } = useAuthentication();
+  useClickOutside([menuRef], () => setMenuOpen(false));
 
-  const handleOpenModal = () => {
-    setIsOpen(true);
-  };
-  const handleCloseModal = () => {
-    setIsOpen(false);
-  };
-  const handleLogout = () => {
-    logout();
-  };
+  const displayName = user?.organizationName || subdomain || "Cooperative";
+  const initials = getInitials(displayName);
 
   return (
-    <header className="relative z-10 flex h-[60px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900">
+    <header className="sticky top-0 z-10 flex h-[60px] items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur transition-colors dark:border-slate-800 dark:bg-slate-900/90">
       <div className="flex items-center gap-x-3">
         <button
-          className="btn-ghost size-10"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
           onClick={() => setCollapsed(!collapsed)}
+          aria-label="Toggle sidebar"
         >
-          <ChevronsLeft className={`${collapsed ? "rotate-180" : ""}`} />
+          <Menu size={20} />
         </button>
-        <div className="input">
-          <Search size={20} className="text-slate-300" />
-          <input
-            type="text"
-            name="search"
-            id="search"
-            placeholder="Search..."
-            className="w-full bg-transparent text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
-          />
+        <div className="hidden sm:block">
+          <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+            {displayName}
+          </p>
+          <p className="text-[11px] text-slate-400 dark:text-slate-500">
+            {subdomain ? `${subdomain}.agripass` : "Cooperative Portal"}
+          </p>
         </div>
       </div>
-      {/* Toggle theme button */}
-      <div className="flex items-center gap-x-3">
-        <button className="btn-ghost size-10" onClick={toggleTheme}>
+
+      <div className="flex items-center gap-x-2">
+        <button
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+          onClick={toggleTheme}
+          aria-label="Toggle theme"
+        >
           {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
         </button>
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost rounded-field"
-          >
-            <div className="size-10 overflow-hidden rounded-full">
-              <img
-                // src={profileImg}
-                alt="profile image"
-                className="size-full object-cover"
-              />
-            </div>
-          </div>
-          <ul
-            tabIndex={0}
-            className="menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 shadow-sm"
-          >
-            <li>
-              <a>Item 2</a>
-            </li>
 
-            <li>
-              <div className="flex items-center gap-2">
-                <LogOut
-                  size={15}
-                  className=" flex-shrink-0 text-red-600 cursor-pointer"
-                  onClick={handleOpenModal}
-                />
-                <button
-                  className="text-red-500 dark:text-white cursor-pointer"
-                  onClick={handleOpenModal}
-                >
-                  Log Out
-                </button>
+        {/* Profile menu */}
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            className="flex items-center gap-2 rounded-lg p-1 pr-2 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">
+              {initials}
+            </div>
+            <ChevronDown size={16} className="text-slate-400" />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800">
+              <div className="border-b border-slate-100 px-4 py-3 dark:border-slate-700">
+                <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+                  {displayName}
+                </p>
+                <p className="truncate text-xs text-slate-400">Cooperative Admin</p>
               </div>
-            </li>
-          </ul>
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  setIsOpen(true);
+                }}
+                className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+              >
+                <LogOut size={16} />
+                Log Out
+              </button>
+            </div>
+          )}
         </div>
       </div>
-      <Dialogue isOpen={isOpen} onClose={handleCloseModal} onConfirm={handleLogout} />
+
+      <Dialogue isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={logout} />
     </header>
   );
 };
