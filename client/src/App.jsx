@@ -25,6 +25,7 @@ const BeneficiaryActiveProjectInfo = lazy(() =>
 const Beneficiary = lazy(() =>
   import("./pages/Dashboard/Beneficiary/Beneficiary")
 );
+const Admin = lazy(() => import("./pages/Dashboard/Admin/Admin"));
 const ProjectDetails = lazy(() =>
   import("./pages/Routes/Organization/ProjectDetails")
 );
@@ -42,6 +43,7 @@ const ApplicationForm = lazy(() =>
 );
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const OtpPage = lazy(() => import("./pages/OtpPage"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const VoucherVerify = lazy(() => import("./pages/Routes/Organization/VoucherVerify"));
 const CropRecovery = lazy(() => import("./pages/Routes/Organization/CropRecovery"));
 
@@ -125,6 +127,14 @@ function App() {
       element: (
         <Suspense fallback={<LoadingFallback />}>
           <OtpPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: "/reset-password",
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <ResetPassword />
         </Suspense>
       ),
     },
@@ -245,10 +255,27 @@ function App() {
     },
   ];
 
+  const adminProtectedRoutes = [
+    {
+      element: <ProtectedRoute allowedRoles={["admin"]} redirectPath="/signin" />,
+      children: [
+        {
+          path: "/admin/dashboard",
+          element: (
+            <Suspense fallback={<LoadingFallback />}>
+              <Admin />
+            </Suspense>
+          ),
+        },
+      ],
+    },
+  ];
+
   const router = createBrowserRouter([
     ...publicRoutes,
     ...protectedRoutes,
     ...beneficiaryProtectedRoutes,
+    ...adminProtectedRoutes,
     {
       path: "*",
       element: (

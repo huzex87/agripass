@@ -74,6 +74,11 @@ const {
   getAllApplications,
 } = require("../Controllers/Clients/TrackBeneficiaryApplications");
 const { checkSuspensionStatus } = require("../Controllers/Utils/CheckSuspensionStatus");
+const {
+  requestPasswordReset,
+  verifyResetOtp,
+  resetPassword,
+} = require("../Controllers/PasswordReset");
 
 // router.use(authMiddleware);
 
@@ -86,6 +91,11 @@ router.post("/submit/:projectId", checkSubdomain, requireRole("beneficiary"), au
 // Marketplace-style browsing for beneficiaries (global accounts, not tied to one cooperative's subdomain)
 router.get("/beneficiary/projects", authMiddleware, requireRole("beneficiary"), getPublicActiveProjects);
 router.get("/beneficiary/project/:projectId", authMiddleware, requireRole("beneficiary"), getPublicProjectDetails);
+
+// PASSWORD RESET ROUTES (beneficiary, organization, and admin accounts)
+router.post("/forgot-password", requestPasswordReset);
+router.post("/verify-reset-otp", verifyResetOtp);
+router.post("/reset-password", resetPassword);
 
 //STAKEHOLDERS ROUTES
 router.post("/login", loginOrganization); // Login Endpoint Org

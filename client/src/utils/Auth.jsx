@@ -83,6 +83,34 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginAdmin = async (email, password) => {
+    setLoading(true);
+    try {
+      const res = await api.post("/api/v1/admin/login", { email, password });
+      if (res.data?.token) {
+        setAccessToken(res.data.token);
+        const mockUser = {
+          isAuthenticated: true,
+          email,
+          adminName: res.data.adminName,
+          role: "admin",
+        };
+        sessionStorage.setItem("subdomain", "admin");
+        sessionStorage.setItem("mock_user", JSON.stringify(mockUser));
+        setUser(mockUser);
+        return { success: true, role: "admin" };
+      }
+      return { success: false, error: "Authentication failed" };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || "Login failed. Please check your credentials.",
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Logout function - updated
   const logout = async () => {
     const loginPath = sessionStorage.getItem("subdomain") === "beneficiary" ? "/login/beneficiary" : "/signin";
@@ -108,6 +136,7 @@ const AuthProvider = ({ children }) => {
   const value = {
     user,
     login,
+    loginAdmin,
     logout,
     isAuthenticated: !!user?.isAuthenticated,
     loading,

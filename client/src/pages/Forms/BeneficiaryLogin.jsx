@@ -131,7 +131,7 @@ const BeneficiaryLogin = () => {
                   </Button>
                 </div>
                 <div className="flex flex-col items-center text-center">
-                  <Link className="" to={"/forgot-password"}>
+                  <Link className="" to={"/forgot-password?role=beneficiary"}>
                     Forgot Password
                   </Link>
                 </div>

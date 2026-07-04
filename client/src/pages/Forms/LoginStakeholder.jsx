@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useAuthentication } from "../../utils/Auth";
-import { Loader2, Leaf, Shield, User, Lock, Mail, Globe } from "lucide-react";
+import { Loader2, Leaf, Shield, User, Lock, Mail, Globe, KeyRound } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -22,9 +22,9 @@ const loginSchema = yup.object().shape({
 });
 
 const LoginStakeholder = () => {
-  const [loginType, setLoginType] = useState("organization"); // "organization" or "beneficiary"
+  const [loginType, setLoginType] = useState("organization"); // "organization", "beneficiary", or "admin"
   const [loading, setLoading] = useState(false);
-  const { login } = useAuthentication();
+  const { login, loginAdmin } = useAuthentication();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,7 +49,7 @@ const LoginStakeholder = () => {
       toast.error("Subdomain is required");
       return;
     }
-    if (loginType === "beneficiary" && !data.email) {
+    if ((loginType === "beneficiary" || loginType === "admin") && !data.email) {
       toast.error("Email is required");
       return;
     }
@@ -66,6 +66,18 @@ const LoginStakeholder = () => {
           } else {
             navigate(`/${result.subdomain}/dashboard`);
           }
+        } else {
+          toast.error("Login Failed", {
+            description: result.error,
+          });
+        }
+      } else if (loginType === "admin") {
+        const result = await loginAdmin(data.email, data.password);
+        if (result.success) {
+          toast.success("Login Successful", {
+            description: "Welcome back, Administrator",
+          });
+          navigate("/admin/dashboard");
         } else {
           toast.error("Login Failed", {
             description: result.error,
@@ -151,6 +163,18 @@ const LoginStakeholder = () => {
                       <User size={13} />
                       Farmer Portal
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => handleTypeChange("admin")}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                        loginType === "admin"
+                          ? "bg-emerald-600 text-white shadow"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <KeyRound size={13} />
+                      Admin
+                    </button>
                   </div>
 
                   {/* Conditional inputs */}
@@ -175,7 +199,7 @@ const LoginStakeholder = () => {
                   ) : (
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-xs font-bold text-slate-300 flex items-center gap-1">
-                        <Mail size={13} className="text-emerald-500" /> Registered Email
+                        <Mail size={13} className="text-emerald-500" /> {loginType === "admin" ? "Admin Email" : "Registered Email"}
                       </Label>
                       <Input
                         id="email"
@@ -211,6 +235,14 @@ const LoginStakeholder = () => {
                     {errors.password && (
                       <p className="text-[10px] text-red-500 mt-1">{errors.password.message}</p>
                     )}
+                    <div className="text-right">
+                      <Link
+                        to={`/forgot-password?role=${loginType}`}
+                        className="text-[10px] font-semibold text-emerald-500 hover:text-emerald-400"
+                      >
+                        Forgot Password?
+                      </Link>
+                    </div>
                   </div>
 
                   {/* Submission */}
