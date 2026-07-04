@@ -1,10 +1,23 @@
 import axios from "axios";
 import { setAccessToken, getAccessToken, clearAccessToken } from "./Status";
 import { toast } from "sonner";
-import { get } from "react-hook-form";
+
+// In production this MUST be the HTTPS URL of the deployed backend
+// (e.g. https://<your-server>.vercel.app). If it is missing, requests fall
+// back to same-origin "/", which on the static client deployment resolves to
+// the SPA itself and silently breaks login and every other API call.
+const API_BASE_URL = import.meta.env.VITE_API_URL || "/";
+
+if (!import.meta.env.VITE_API_URL) {
+  // Surfaced in the browser console to make a missing config obvious rather
+  // than presenting it as an "invalid credentials" failure to the user.
+  console.warn(
+    "[AgriPass] VITE_API_URL is not set — API requests default to same-origin '/', which will fail against the deployed backend."
+  );
+}
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/",
+  baseURL: API_BASE_URL,
   withCredentials: true,
 });
 
@@ -26,7 +39,6 @@ api.interceptors.request.use(
   (config) => {
     const token = getAccessToken();
     const subdomain = sessionStorage.getItem("subdomain");
-    const baseDomain = "agripass.vercel.app";
 
     if (token) {
       // config.baseURL = `http://${subdomain}.localhost:3001`;
@@ -80,8 +92,10 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
+        // Use the configured axios instance so the refresh request honors
+        // VITE_API_URL / API_BASE_URL instead of always hitting same-origin.
         const response = await axios.post(
-          "/api/v1/refresh",
+          `${API_BASE_URL.replace(/\/$/, "")}/api/v1/refresh`,
           {},
           {
             withCredentials: true,
