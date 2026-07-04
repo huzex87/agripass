@@ -20,6 +20,8 @@ const Organization = () => {
   const { data, status, error, isPending, isError } = useQuery(
     dashboardLoaderFunction()
   );
+  const { subdomain } = useParams();
+  const orgName = subdomain || "Administrator";
 
   if (isPending) {
     return (
@@ -37,9 +39,6 @@ const Organization = () => {
       </div>
     );
   }
-
-  const { subdomain } = useParams();
-  const orgName = subdomain || "Administrator";
 
   const greeting = () => {
     const currentHour = new Date().getHours();

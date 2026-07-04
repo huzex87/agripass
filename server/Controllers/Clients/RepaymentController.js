@@ -1,10 +1,9 @@
 const AppError = require("../../utils/AppError");
+const { Disbursement, Wallet, Transaction, Project, Beneficiary } = require("../../Database_Models/Models");
 
 // Retrieve repayments for the authenticated farmer beneficiary
 const getFarmerRepayments = async (req, res, next) => {
   try {
-    const Disbursement = req.getTenantModel("Disbursement");
-    
     // Find all disbursements with active schedules for this farmer
     const repayments = await Disbursement.find({
       beneficiaryId: req.user.id
@@ -26,10 +25,6 @@ const submitRepayment = async (req, res, next) => {
     if (!disbursementId || !installmentId) {
       return next(new AppError("Disbursement ID and Installment ID are required", 400));
     }
-
-    const Disbursement = req.getTenantModel("Disbursement");
-    const Wallet = req.getTenantModel("Wallet");
-    const Transaction = req.getTenantModel("Transaction");
 
     // Retrieve active disbursement for farmer
     const disbursement = await Disbursement.findOne({
@@ -99,9 +94,6 @@ const submitRepayment = async (req, res, next) => {
 // Retrieve aggregated repayment statistics for organization dashboard
 const getOrganizationRepayments = async (req, res, next) => {
   try {
-    const Project = req.getTenantModel("Project");
-    const Disbursement = req.getTenantModel("Disbursement");
-
     // Resolve projects matching organization
     const projects = await Project.find({ organizationId: req.user.id });
     const projectIds = projects.map((p) => p._id);
@@ -158,7 +150,6 @@ const getOrganizationRepayments = async (req, res, next) => {
 
 const getFarmerWallet = async (req, res, next) => {
   try {
-    const Wallet = req.getTenantModel("Wallet");
     const wallet = await Wallet.findOne({ beneficiaryId: req.user.id });
     if (!wallet) {
       const newWallet = await Wallet.create({
@@ -177,7 +168,6 @@ const getFarmerWallet = async (req, res, next) => {
 
 const getFarmerProfile = async (req, res, next) => {
   try {
-    const Beneficiary = req.getTenantModel("Beneficiary");
     const farmer = await Beneficiary.findById(req.user.id).select("-personalDetails.password");
     if (!farmer) {
       return next(new AppError("Farmer profile not found", 404));

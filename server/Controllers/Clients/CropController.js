@@ -1,4 +1,5 @@
 const AppError = require("../../utils/AppError");
+const { Disbursement } = require("../../Database_Models/Models");
 
 // Process physical crop deliveries to clear farmer Salam repayments
 const submitCropRecovery = async (req, res, next) => {
@@ -8,8 +9,6 @@ const submitCropRecovery = async (req, res, next) => {
       return next(new AppError("Farmer ID, Project ID, Crop Type, and Weight are required", 400));
     }
 
-    const Disbursement = req.getTenantModel("Disbursement");
-    
     // Find active disbursement for the farmer & project
     const disbursement = await Disbursement.findOne({ beneficiaryId, projectId });
     if (!disbursement) {

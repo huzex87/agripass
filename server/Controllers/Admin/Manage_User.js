@@ -111,7 +111,7 @@ const suspendBeneficiary = async (req, res) => {
   const { beneficiaryId } = req.params;
   const { suspendedDays } = req.body;
 
-  if (!suspendedDays || !suspendedDays <= 0) {
+  if (!suspendedDays || suspendedDays <= 0) {
     return res.status(400).json({
       error: "Valid suspended days is required",
     });
@@ -150,7 +150,7 @@ const verifyBeneficiary = async (req, res) => {
     const beneficiary = await Beneficiary.findByIdAndUpdate(
       beneficiaryId,
       {
-        verified: true,
+        "identification.verified": true,
         status: "approved",
       },
       { new: true }

@@ -18,6 +18,7 @@ const LoginStakeholder = lazy(() => import("./pages/Forms/LoginStakeholder"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const Projects = lazy(() => import("./pages/Routes/Organization/Projects"));
 const BeneficiaryLogin = lazy(() => import("./pages/Forms/BeneficiaryLogin"));
+const BeneficiarySignup = lazy(() => import("./pages/Forms/BeneficiarySIgnup"));
 const BeneficiaryActiveProjectInfo = lazy(() =>
   import("./pages/Dashboard/Beneficiary/Components/ProjectInfo")
 );
@@ -29,6 +30,9 @@ const ProjectDetails = lazy(() =>
 );
 const CreateNewProject = lazy(() =>
   import("./pages/Routes/Organization/CreateNewProject")
+);
+const EditProject = lazy(() =>
+  import("./pages/Routes/Organization/EditProject")
 );
 const Applications = lazy(() =>
   import("./pages/Routes/Organization/Applications")
@@ -102,20 +106,9 @@ function App() {
     },
     {
       path: "/signup/beneficiary",
-    },
-    {
-      path: "/projects",
       element: (
         <Suspense fallback={<LoadingFallback />}>
-          <Beneficiary />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/projects/:projectId",
-      element: (
-        <Suspense fallback={<LoadingFallback />}>
-          <BeneficiaryActiveProjectInfo />
+          <BeneficiarySignup />
         </Suspense>
       ),
     },
@@ -183,6 +176,14 @@ function App() {
               ),
             },
             {
+              path: "projects/:projectId/edit",
+              element: (
+                <Suspense fallback={<LoadingFallback />}>
+                  <EditProject />
+                </Suspense>
+              ),
+            },
+            {
               path: "applications",
               element: (
                 <Suspense fallback={<LoadingFallback />}>
@@ -220,9 +221,34 @@ function App() {
     },
   ];
 
+  const beneficiaryProtectedRoutes = [
+    {
+      element: <ProtectedRoute allowedRoles={["beneficiary"]} />,
+      children: [
+        {
+          path: "/projects",
+          element: (
+            <Suspense fallback={<LoadingFallback />}>
+              <Beneficiary />
+            </Suspense>
+          ),
+        },
+        {
+          path: "/projects/:projectId",
+          element: (
+            <Suspense fallback={<LoadingFallback />}>
+              <BeneficiaryActiveProjectInfo />
+            </Suspense>
+          ),
+        },
+      ],
+    },
+  ];
+
   const router = createBrowserRouter([
     ...publicRoutes,
     ...protectedRoutes,
+    ...beneficiaryProtectedRoutes,
     {
       path: "*",
       element: (

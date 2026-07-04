@@ -85,6 +85,7 @@ const AuthProvider = ({ children }) => {
 
   // Logout function - updated
   const logout = async () => {
+    const loginPath = sessionStorage.getItem("subdomain") === "beneficiary" ? "/login/beneficiary" : "/signin";
     try {
       const res = await api.post("/api/v1/logout");
       if (res.status === 200) {
@@ -96,7 +97,7 @@ const AuthProvider = ({ children }) => {
       clearAccessToken(); // Clear from memory
       sessionStorage.clear();
       setUser(null);
-      window.location.replace("/login");
+      window.location.replace(loginPath);
     }
   };
 

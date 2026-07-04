@@ -156,9 +156,9 @@ const Applications = () => {
                 {applications.map((items, index) => (
                   <tr key={items._id || index}>
                     <td>{(currentPage - 1) * 10 + index + 1}</td>
-                    <td>{items.beneficiaryId.personalDetails.firstName} </td>
-                    <td>{items.beneficiaryId.personalDetails.lastName} </td>
-                    <td>{items.beneficiaryId.personalDetails.email} </td>
+                    <td>{items.beneficiaryId?.personalDetails?.firstName || "Unknown"} </td>
+                    <td>{items.beneficiaryId?.personalDetails?.lastName || "Farmer"} </td>
+                    <td>{items.beneficiaryId?.personalDetails?.email || "N/A"} </td>
                     <td>{items.status} </td>
                     <td>{formatDate(items.createdAt)} </td>
                     <td>

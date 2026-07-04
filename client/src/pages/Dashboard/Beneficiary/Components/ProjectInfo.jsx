@@ -81,10 +81,10 @@ const ProjectInfo = () => {
     }
 
     try {
-      const response = await api.post(
-        `/api/v1/submit/${projectId}`,
-        applicationData
-      );
+      const response = await api.post("/api/v1/submit", {
+        projectId,
+        ...applicationData,
+      });
       if (response.data.success) {
         setSubmitSuccess(true);
         setEmail("");
@@ -368,7 +368,7 @@ const ProjectInfo = () => {
                     </div>
 
                     {/* Dynamic Custom Fields */}
-                    {project.customForm.fields
+                    {[...project.customForm.fields]
                       .sort((a, b) => a.order - b.order)
                       .map((field) => renderFormField(field))}
 

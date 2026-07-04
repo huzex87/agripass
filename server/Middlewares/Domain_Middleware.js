@@ -1,4 +1,4 @@
-const { Organization } = require("../Database_Models/Models");
+const { Organization, Beneficiary } = require("../Database_Models/Models");
 const jwt = require("jsonwebtoken");
 
 const checkSubdomain = async (req, res, next) => {
@@ -11,8 +11,12 @@ const checkSubdomain = async (req, res, next) => {
       return res.status(401).json({ error: "No token provided" });
     }
 
-    const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    let decoded;
+    try {
+      decoded = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET);
+    } catch (jwtError) {
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
 
     const organization = await Organization.findOne({ subdomain });
     if (!organization) {
@@ -20,14 +24,13 @@ const checkSubdomain = async (req, res, next) => {
     }
 
     if (decoded.role === "beneficiary") {
-      const Beneficiary = req.getTenantModel("Beneficiary");
       const beneficiary = await Beneficiary.findById(decoded.id);
       if (!beneficiary) {
         return res.status(401).json({ error: "Farmer beneficiary not found" });
       }
-      if (beneficiary.organizationId.toString() !== organization._id.toString()) {
-        return res.status(400).json({ error: "Farmer does not belong to this cooperative" });
-      }
+      // Beneficiaries are global accounts that can apply to projects across
+      // multiple cooperatives, so they have no single organizationId to
+      // compare against. Org affiliation is tracked per-application instead.
       req.user = decoded;
       req.beneficiary = beneficiary;
     } else if (decoded.role === "organization") {

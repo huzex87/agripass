@@ -5,10 +5,16 @@ const FarmBoundaryPicker = ({ value, onChange }) => {
   const [points, setPoints] = useState([]);
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  // Guards the initial-value parse below so it only ever runs once for a
+  // value supplied by the parent (e.g. loaded asynchronously after mount)
+  // rather than re-firing on every click this component reports upward.
+  const initializedRef = useRef(false);
 
   // Parse initial coordinates if provided
   useEffect(() => {
+    if (initializedRef.current) return;
     if (value?.coordinates?.[0]) {
+      initializedRef.current = true;
       // Map back to grid coordinates (assuming canvas scale representation)
       const mapped = value.coordinates[0].map(([lng, lat]) => ({
         x: (lng - 7.5) * 1000 + 200,
@@ -20,7 +26,7 @@ const FarmBoundaryPicker = ({ value, onChange }) => {
       }
       setPoints(mapped);
     }
-  }, []);
+  }, [value]);
 
   const drawGrid = (ctx, width, height) => {
     ctx.clearRect(0, 0, width, height);

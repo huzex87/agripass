@@ -43,7 +43,7 @@ const Projects = () => {
         AVAILABLE PROJECTS
       </div>
       <div className="mt-5 mb-5 px-4">
-        {data.activeProjects.length > 0 ? (
+        {(data?.activeProjects || []).length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {data.activeProjects.map((project) => (
               <Card

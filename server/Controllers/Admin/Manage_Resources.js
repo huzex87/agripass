@@ -46,8 +46,8 @@ const deactivateProject = async (req, res) => {
   try {
     const project = await Project.findOneAndUpdate(
       { _id: projectId },
-      { status: "inactive" },
-      { new: true }
+      { status: "suspended" },
+      { new: true, runValidators: true }
     );
     if (!project) {
       return res.status(404).json({ error: "Project not found" });

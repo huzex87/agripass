@@ -100,7 +100,7 @@ const getAllApplications = async (req, res) => {
     let filter = { organizationId: _id };
 
     if (status && !validStatuses.includes(status)) {
-      res.status(400).json({ error: "Invalid Status" });
+      return res.status(400).json({ error: "Invalid Status" });
     }
 
     if (status) {
@@ -114,7 +114,7 @@ const getAllApplications = async (req, res) => {
             "personalDetails.firstName": { $regex: searchTerm, $options: "i" },
           },
           {
-            "personalDetails.LastName": { $regex: searchTerm, $options: "i" },
+            "personalDetails.lastName": { $regex: searchTerm, $options: "i" },
           },
           {
             "personalDetails.email": { $regex: searchTerm, $options: "i" },

@@ -1,6 +1,7 @@
 const { Project } = require("../../Database_Models/Models");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
+const AppError = require("../../utils/AppError");
 
 // Configure Cloudinary
 cloudinary.config({
@@ -18,7 +19,7 @@ const upload = multer({
     const allowedTypes = /jpeg|jpg|png|gif/;
     const extname = allowedTypes.test(file.mimetype);
     if (!extname || !file.mimetype.startsWith("image/")) {
-      cb("Error file type not supported. Only image files are allowed");
+      return cb(new AppError("File type not supported. Only image files are allowed", 400));
     }
     cb(null, true);
   },
@@ -61,7 +62,7 @@ const createProject = async (req, res) => {
       type,
       budget:
         amount !== undefined && amount !== null
-          ? { amount: amount, currency: "NGN " }
+          ? { amount: amount, currency: "NGN" }
           : undefined,
       startDate,
       endDate,
@@ -87,6 +88,53 @@ const createProject = async (req, res) => {
       projectId: project._id, // Add projectId for frontend redirect
       hasCustomForm: project.hasCustomForm,
       imageURL,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
+
+// Update a project's core details (name/description/type/budget/dates/image)
+const updateProject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { name, description, type, amount, startDate, endDate } = req.body;
+    if (!req.organization) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
+
+    const project = await Project.findOne({
+      _id: projectId,
+      organizationId: req.organization._id,
+    });
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    if (name !== undefined) project.name = name;
+    if (description !== undefined) project.description = description;
+    if (type !== undefined) project.type = type;
+    if (startDate !== undefined) project.startDate = startDate;
+    if (endDate !== undefined) project.endDate = endDate;
+    if (amount !== undefined && amount !== null && amount !== "") {
+      project.budget = { amount, currency: project.budget?.currency || "NGN" };
+    }
+
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(
+        `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`,
+        { folder: `projects/${req.organization.id}` }
+      );
+      project.imageURL = result.secure_url;
+      project.imagePublicId = result.public_id;
+    }
+
+    await project.save();
+
+    res.status(200).json({
+      message: "Project updated successfully",
+      project,
     });
   } catch (error) {
     console.log(error);
@@ -145,7 +193,7 @@ const updateForm = async (req, res) => {
         ...field,
         order: index, // Ensure correct order
       })),
-      isActive: isActive || true,
+      isActive: isActive !== undefined ? isActive : true,
     };
 
     await project.save();
@@ -195,6 +243,57 @@ const getActiveProjects = async (req, res) => {
   }
 };
 
+// GET ACTIVE PROJECTS ACROSS ALL ORGANIZATIONS (farmer marketplace browsing)
+// Beneficiaries are global accounts not tied to a single cooperative's
+// subdomain, so this deliberately skips the organizationId scoping used by
+// getActiveProjects (the organization-dashboard equivalent).
+const getPublicActiveProjects = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const filter = { status: "active" };
+
+    const activeProjects = await Project.find(filter)
+      .populate("organizationId", "name subdomain")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await Project.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      activeProjects,
+      currentPage: Number(page),
+      totalPage: Math.ceil(total / limit),
+      total: Number(total),
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
+
+// GET A SINGLE PROJECT'S DETAILS FOR FARMER BROWSING (no subdomain context)
+const getPublicProjectDetails = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    if (!projectId) {
+      return res.status(400).json({ error: "Project ID is required" });
+    }
+
+    const project = await Project.findById(projectId).populate("organizationId", "name subdomain");
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    res.status(200).json({ success: true, project });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
+
 //Deactivate project
 const markAsCompleted = async (req, res) => {
   try {
@@ -206,7 +305,10 @@ const markAsCompleted = async (req, res) => {
     if (!req.organization) {
       return res.status(401).json({ error: "Unauthorized Access" });
     }
-    const existingProject = await Project.findById(projectId);
+    const existingProject = await Project.findOne({
+      _id: projectId,
+      organizationId: req.organization._id,
+    });
     if (!existingProject) {
       return res.status(404).json({ error: "Project not found" });
     }
@@ -215,7 +317,7 @@ const markAsCompleted = async (req, res) => {
     }
 
     const project = await Project.findOneAndUpdate(
-      { _id: projectId },
+      { _id: projectId, organizationId: req.organization._id },
       { status: "completed" },
       { new: true }
     );
@@ -239,7 +341,10 @@ const activateProject = async (req, res) => {
     if (!req.organization) {
       return res.status(401).json({ error: "Unauthorized Access" });
     }
-    const existingProject = await Project.findById(projectId);
+    const existingProject = await Project.findOne({
+      _id: projectId,
+      organizationId: req.organization._id,
+    });
     if (!existingProject) {
       return res.status(404).json({ error: "Project not found" });
     }
@@ -248,7 +353,7 @@ const activateProject = async (req, res) => {
     }
 
     const project = await Project.findOneAndUpdate(
-      { _id: projectId },
+      { _id: projectId, organizationId: req.organization._id },
       { status: "active" },
       { new: true }
     );
@@ -273,7 +378,10 @@ const suspendProject = async (req, res) => {
       return res.status(401).json({ error: "Unauthorized Access" });
     }
 
-    const existingProject = await Project.findById(projectId);
+    const existingProject = await Project.findOne({
+      _id: projectId,
+      organizationId: req.organization._id,
+    });
     if (!existingProject) {
       return res.status(404).json({ error: "Project not found" });
     }
@@ -282,7 +390,7 @@ const suspendProject = async (req, res) => {
     }
 
     const project = await Project.findOneAndUpdate(
-      { _id: projectId },
+      { _id: projectId, organizationId: req.organization._id },
       { status: "suspended" },
       { new: true }
     );
@@ -303,8 +411,14 @@ const deleteResource = async (req, res) => {
     if (!projectId) {
       return res.status(400).json({ error: "Project ID is required" });
     }
+    if (!req.organization) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
 
-    const project = await Project.findByIdAndDelete(projectId);
+    const project = await Project.findOneAndDelete({
+      _id: projectId,
+      organizationId: req.organization._id,
+    });
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
@@ -323,8 +437,14 @@ const getProjectDetails = async (req, res) => {
     if (!projectId) {
       return res.status(400).json({ error: "Project ID is required" });
     }
+    if (!req.organization) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
 
-    const project = await Project.findById(projectId);
+    const project = await Project.findOne({
+      _id: projectId,
+      organizationId: req.organization._id,
+    });
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
@@ -339,11 +459,14 @@ const getProjectDetails = async (req, res) => {
 module.exports = {
   createProject,
   getActiveProjects,
+  getPublicActiveProjects,
+  getPublicProjectDetails,
   markAsCompleted,
   deleteResource,
   getProjectDetails,
   suspendProject,
   activateProject,
   updateForm,
+  updateProject,
   upload,
 };

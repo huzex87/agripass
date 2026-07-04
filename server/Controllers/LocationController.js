@@ -1,9 +1,9 @@
 const AppError = require("../utils/AppError");
+const { LocationReference } = require("../Database_Models/Models");
 
 // Retrieve unique list of states
 const getStates = async (req, res, next) => {
   try {
-    const LocationReference = req.getTenantModel("LocationReference");
     const states = await LocationReference.distinct("state");
     return res.status(200).json({
       status: "success",
@@ -22,7 +22,6 @@ const getLgas = async (req, res, next) => {
       return next(new AppError("State query parameter is required", 400));
     }
 
-    const LocationReference = req.getTenantModel("LocationReference");
     const lgas = await LocationReference.distinct("lga", { state });
     return res.status(200).json({
       status: "success",
@@ -41,7 +40,6 @@ const getWards = async (req, res, next) => {
       return next(new AppError("State and LGA query parameters are required", 400));
     }
 
-    const LocationReference = req.getTenantModel("LocationReference");
     const wards = await LocationReference.distinct("ward", { state, lga });
     return res.status(200).json({
       status: "success",
@@ -60,9 +58,8 @@ const getPollingUnits = async (req, res, next) => {
       return next(new AppError("State, LGA, and Ward query parameters are required", 400));
     }
 
-    const LocationReference = req.getTenantModel("LocationReference");
     const reference = await LocationReference.findOne({ state, lga, ward });
-    
+
     return res.status(200).json({
       status: "success",
       data: reference ? reference.pollingUnits : []

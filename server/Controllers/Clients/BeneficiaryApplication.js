@@ -42,6 +42,7 @@ const submitApplication = async (req, res) => {
     });
     await newApplication.save();
     res.status(200).json({
+      success: true,
       message: "Beneficiary application submitted successfully",
       newApplication,
     });
@@ -58,9 +59,13 @@ const approve_Beneficiary_Application = async (req, res) => {
     if (!application_Id) {
       return res.status(400).json({ error: "Application ID is required" });
     }
+    if (!req.organization) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
 
-    const application = await BeneficiaryApplication.findById({
+    const application = await BeneficiaryApplication.findOne({
       _id: application_Id,
+      organizationId: req.organization._id,
     });
     if (!application) {
       return res
@@ -76,7 +81,7 @@ const approve_Beneficiary_Application = async (req, res) => {
     }
 
     const newApplicationStatus = await BeneficiaryApplication.findOneAndUpdate(
-      { _id: application_Id },
+      { _id: application_Id, organizationId: req.organization._id },
       { status: "approved" },
       { new: true }
     );
@@ -105,9 +110,13 @@ const generateVerificationToken = async (req, res) => {
     if (!beneficiary_id) {
       return res.status(400).json({ error: "Beneficiary ID is required" });
     }
+    if (!req.organization) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
 
     const isapplicationApproved = await BeneficiaryApplication.findOne({
       beneficiaryId: beneficiary_id,
+      organizationId: req.organization._id,
       status: "approved",
     });
     if (!isapplicationApproved) {
@@ -118,6 +127,7 @@ const generateVerificationToken = async (req, res) => {
 
     const disbursement = await Disbursement.findOne({
       beneficiaryId: beneficiary_id,
+      projectId: isapplicationApproved.projectId,
     });
 
     if (!disbursement) {
@@ -135,17 +145,13 @@ const generateVerificationToken = async (req, res) => {
     tokenExpiryDate.setDate(tokenExpiryDate.getDate() + 7);
 
     const updatedDisbursement = await Disbursement.findOneAndUpdate(
-      { beneficiaryId: beneficiary_id },
+      { _id: disbursement._id },
       {
         verificationToken: verificationToken,
         tokenExpiryDate: tokenExpiryDate,
       },
       { new: true }
     );
-
-    // disbursement.verificationToken = verificationToken;
-    // disbursement.tokenExpiryDate = tokenExpiryDate;
-    // await disbursement.save();
 
     res.status(200).json({
       message: "Verification token generated successfully",
@@ -163,6 +169,9 @@ const generateVerificationTokens = async (req, res) => {
   if (!projectIds || !Array.isArray(projectIds)) {
     return res.status(400).json({ error: "Beneficiary IDs are required" });
   }
+  if (!req.organization) {
+    return res.status(401).json({ error: "Unauthorized Access" });
+  }
 
   try {
     const updatedDisbursements = [];
@@ -171,6 +180,7 @@ const generateVerificationTokens = async (req, res) => {
     for (const project_id of projectIds) {
       const isapplicationApproved = await BeneficiaryApplication.findOne({
         projectId: project_id,
+        organizationId: req.organization._id,
         status: "approved",
       });
       if (!isapplicationApproved) {
@@ -225,8 +235,9 @@ const verifyAndCompleteDisbursement = async (req, res) => {
     return res.status(400).json({ error: "Project ID is required" });
   }
 
+  let disbursement;
   try {
-    const disbursement = await Disbursement.findOne({
+    disbursement = await Disbursement.findOne({
       verificationToken: token,
       status: "pending",
     });
@@ -254,11 +265,17 @@ const verifyAndCompleteDisbursement = async (req, res) => {
   } catch (error) {
     console.log(error);
 
-    disbursement.status = "failed";
-    disbursement.tokenUsed = true;
-    disbursement.tokenExpiryDate = null;
-    disbursement.verificationToken = null;
-    await disbursement.save();
+    if (disbursement) {
+      try {
+        disbursement.status = "failed";
+        disbursement.tokenUsed = true;
+        disbursement.tokenExpiryDate = null;
+        disbursement.verificationToken = null;
+        await disbursement.save();
+      } catch (saveError) {
+        console.log(saveError);
+      }
+    }
 
     res.status(500).json({ error: "Server Error" });
   }
@@ -271,8 +288,14 @@ const rejectApplication = async (req, res) => {
     if (!applicationId) {
       return res.status(400).json({ error: "Application ID is required" });
     }
+    if (!req.organization) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
 
-    const application = await BeneficiaryApplication.findById(applicationId);
+    const application = await BeneficiaryApplication.findOne({
+      _id: applicationId,
+      organizationId: req.organization._id,
+    });
     if (!application) {
       return res.status(404).json({ error: "Application not found" });
     }
@@ -285,7 +308,7 @@ const rejectApplication = async (req, res) => {
     }
 
     const updatedApplication = await BeneficiaryApplication.findOneAndUpdate(
-      { _id: applicationId },
+      { _id: applicationId, organizationId: req.organization._id },
       { status: "rejected" },
       { new: true }
     );
@@ -306,9 +329,13 @@ const deleteApplication = async (req, res) => {
     if (!applicationId) {
       return res.status(400).json({ error: "Application ID is required" });
     }
+    if (!req.organization) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
 
-    const application = await BeneficiaryApplication.findByIdAndDelete({
+    const application = await BeneficiaryApplication.findOneAndDelete({
       _id: applicationId,
+      organizationId: req.organization._id,
     });
     if (!application) {
       return res.status(404).json({ error: "Application not found" });
