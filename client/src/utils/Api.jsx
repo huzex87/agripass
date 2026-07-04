@@ -55,10 +55,11 @@ api.interceptors.response.use(
         originalRequest.url?.includes("/api/v1/refresh") ||
         originalRequest.url?.includes("/api/v1/login")
       ) {
+        const loginPath = sessionStorage.getItem("subdomain") === "beneficiary" ? "/login/beneficiary" : "/signin";
         clearAccessToken();
         sessionStorage.clear();
         toast.error("Session expired. Please login again.");
-        window.location.replace("/login");
+        window.location.replace(loginPath);
         return Promise.reject(error);
       }
 
@@ -97,11 +98,12 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (error) {
+        const loginPath = sessionStorage.getItem("subdomain") === "beneficiary" ? "/login/beneficiary" : "/signin";
         processQueue(error, null);
         clearAccessToken();
         sessionStorage.clear();
         toast.error("Session expired. Please login again.");
-        window.location.replace("/login");
+        window.location.replace(loginPath);
         return Promise.reject(error);
       } finally {
         isRefreshing = false;

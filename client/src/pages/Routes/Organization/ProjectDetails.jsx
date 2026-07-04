@@ -11,6 +11,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { TextStyle } from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
+import Highlight from "@tiptap/extension-highlight";
 import DOMPurify from "dompurify";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -38,7 +39,7 @@ const ProjectDetails = () => {
   const { projectId, subdomain } = useParams();
   const navigate = useNavigate();
 
-  const { data: project, isLoading: loading, refetch } = useQuery({
+  const { data: project, isLoading: loading, isError, refetch } = useQuery({
     queryKey: ["projectDetails", projectId],
     queryFn: async () => {
       const response = await api.get(`/api/v1/project_details/${projectId}`);
@@ -89,6 +90,20 @@ const ProjectDetails = () => {
     return (
       <div className="flex justify-center py-8">
         <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  if (isError || !project) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 gap-4 dark:text-gray-200">
+        <p>Failed to load project details.</p>
+        <button
+          onClick={() => refetch()}
+          className="btn px-4 py-2 bg-gray-600 text-white hover:bg-gray-800 cursor-pointer"
+        >
+          Try Again
+        </button>
       </div>
     );
   }

@@ -19,9 +19,14 @@ const generateUniqueToken = async () => {
   return token;
 };
 
+const RESERVED_SUBDOMAINS = ["admin", "www", "localhost", "api"];
+
 // Function to generate a unique subdomain for an organization
 const generateSubdomain = async (name) => {
   const subdomain = name.toLowerCase().replace(/\s+/g, "-");
+  if (RESERVED_SUBDOMAINS.includes(subdomain)) {
+    throw new Error("Organization name resolves to a reserved subdomain. Please choose a different name.");
+  }
   const organization = await Organization.findOne({ subdomain });
   if (organization) {
     throw new Error("Organization already exists");

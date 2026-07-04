@@ -127,6 +127,12 @@ const ApplicationModal = ({
   };
 
   const handleVerificationToken = async () => {
+    if (!applicationInfo.beneficiaryId?._id) {
+      setError("Beneficiary record is unavailable for this application.");
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
+    setTokenLoading(true);
     try {
       const response = await api.put(
         `/api/v1/generate_token/${applicationInfo.beneficiaryId._id}`
@@ -223,17 +229,17 @@ const ApplicationModal = ({
           <div className="flex flex-wrap mt-5 justify-between items-center ">
             <div>
               <p className="text-xl font-semibold mt-5">
-                {applicationInfo.beneficiaryId.personalDetails.firstName}-
-                {applicationInfo.beneficiaryId.personalDetails.lastName}
+                {applicationInfo.beneficiaryId?.personalDetails?.firstName || "Unknown"}-
+                {applicationInfo.beneficiaryId?.personalDetails?.lastName || "Farmer"}
               </p>
               <p className="text-lg  ">
-                {applicationInfo.beneficiaryId.personalDetails.email}{" "}
+                {applicationInfo.beneficiaryId?.personalDetails?.email || "N/A"}{" "}
               </p>
             </div>
             <h2>
               Gender:
               <span className="ml-2 font-medium">
-                {applicationInfo.beneficiaryId.personalDetails.gender}
+                {applicationInfo.beneficiaryId?.personalDetails?.gender || "N/A"}
               </span>
             </h2>
           </div>
@@ -242,7 +248,7 @@ const ApplicationModal = ({
             <p>
               Identification Type:{" "}
               <span className="font-medium">
-                {applicationInfo.beneficiaryId.identification.idType}{" "}
+                {applicationInfo.beneficiaryId?.identification?.idType || "N/A"}{" "}
               </span>
             </p>
           </div>
@@ -260,7 +266,7 @@ const ApplicationModal = ({
             <h3>Project Applied For:</h3>
             <p className="font-medium text-lg">
               {" "}
-              {applicationInfo.projectId.name}{" "}
+              {applicationInfo.projectId?.name || "Unknown Project"}{" "}
             </p>
           </div>
 
@@ -308,10 +314,7 @@ const ApplicationModal = ({
                     <span className="text-sm text-gray-600 dark:text-gray-400">
                       Click to generate a 7-day verification token for
                       <span className="ml-2 font-bold">
-                        {
-                          applicationInfo.beneficiaryId.personalDetails
-                            .firstName
-                        }
+                        {applicationInfo.beneficiaryId?.personalDetails?.firstName || "this farmer"}
                       </span>
                     </span>
                   </div>

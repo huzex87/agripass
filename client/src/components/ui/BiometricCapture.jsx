@@ -1,46 +1,92 @@
-import React, { useState } from "react";
-import { Camera, Fingerprint, RefreshCw, CheckCircle2, User } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Camera, Fingerprint, RefreshCw, CheckCircle2, Loader2 } from "lucide-react";
 
 const BiometricCapture = ({ onChange }) => {
   const [photo, setPhoto] = useState(null);
-  const [fingerprint, setFingerprint] = useState(null);
-  const [scanningPhoto, setScanningPhoto] = useState(false);
-  const [scanningFingerprint, setScanningFingerprint] = useState(false);
+  const [cameraActive, setCameraActive] = useState(false);
+  const [cameraError, setCameraError] = useState(null);
+  const [starting, setStarting] = useState(false);
 
-  const handleCapturePhoto = () => {
-    setScanningPhoto(true);
-    setTimeout(() => {
-      // Set a mock face profile photo URL or representation
-      const mockPhoto = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80";
-      setPhoto(mockPhoto);
-      setScanningPhoto(false);
-      triggerChange(mockPhoto, fingerprint);
-    }, 1500);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const streamRef = useRef(null);
+
+  const stopStream = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
   };
 
-  const handleScanFingerprint = () => {
-    setScanningFingerprint(true);
-    setTimeout(() => {
-      const mockHash = `FP-${Math.floor(100000 + Math.random() * 900000)}-SHA256`;
-      setFingerprint(mockHash);
-      setScanningFingerprint(false);
-      triggerChange(photo, mockHash);
-    }, 1500);
-  };
-
-  const handleReset = () => {
-    setPhoto(null);
-    setFingerprint(null);
-    if (onChange) onChange(null);
-  };
+  // Make sure the camera is always released, even if the user navigates
+  // away or unmounts this component mid-capture.
+  useEffect(() => {
+    return () => stopStream();
+  }, []);
 
   const triggerChange = (img, hash) => {
     if (onChange) {
       onChange({
         profilePhoto: img,
-        fingerprintHash: hash
+        fingerprintHash: hash,
       });
     }
+  };
+
+  const handleStartCamera = async () => {
+    setCameraError(null);
+    setStarting(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" },
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setCameraActive(true);
+    } catch (err) {
+      console.error("Camera access failed:", err);
+      setCameraError(
+        err.name === "NotAllowedError"
+          ? "Camera permission was denied. Please allow camera access to capture a profile photo."
+          : "Unable to access the camera on this device."
+      );
+    } finally {
+      setStarting(false);
+    }
+  };
+
+  const handleCapturePhoto = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+
+    stopStream();
+    setCameraActive(false);
+    setPhoto(dataUrl);
+    triggerChange(dataUrl, null);
+  };
+
+  const handleRetakePhoto = () => {
+    setPhoto(null);
+    triggerChange(null, null);
+  };
+
+  const handleReset = () => {
+    stopStream();
+    setCameraActive(false);
+    setCameraError(null);
+    setPhoto(null);
+    if (onChange) onChange(null);
   };
 
   return (
@@ -50,9 +96,9 @@ const BiometricCapture = ({ onChange }) => {
           <h4 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
             Biometric KYC Enrollment
           </h4>
-          <p className="text-xs text-slate-500">Capture face photo and scan index fingerprint to secure identity</p>
+          <p className="text-xs text-slate-500">Capture a face photo to help verify farmer identity</p>
         </div>
-        {(photo || fingerprint) && (
+        {(photo || cameraActive) && (
           <button
             type="button"
             onClick={handleReset}
@@ -64,19 +110,37 @@ const BiometricCapture = ({ onChange }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Webcam Capture Card */}
+        {/* Live Camera Capture Card */}
         <div className="relative h-44 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-900 overflow-hidden flex flex-col items-center justify-center text-center p-4">
-          {scanningPhoto ? (
-            <div className="space-y-2 text-white">
-              <Loader2 className="animate-spin h-6 w-6 mx-auto text-blue-400" />
-              <p className="text-xs text-slate-300">Aligning face canvas...</p>
-            </div>
+          <video
+            ref={videoRef}
+            className={`absolute inset-0 w-full h-full object-cover ${cameraActive ? "block" : "hidden"}`}
+            muted
+            playsInline
+          />
+          <canvas ref={canvasRef} className="hidden" />
+
+          {cameraActive ? (
+            <button
+              type="button"
+              onClick={handleCapturePhoto}
+              className="relative z-10 mt-auto mb-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors"
+            >
+              Capture Photo
+            </button>
           ) : photo ? (
             <div className="relative">
-              <img src={photo} alt="Farmer snap" className="w-24 h-24 rounded-full border-2 border-green-500 object-cover" />
+              <img src={photo} alt="Farmer profile" className="w-24 h-24 rounded-full border-2 border-green-500 object-cover" />
               <span className="absolute bottom-0 right-0 p-1 bg-green-500 text-white rounded-full">
                 <CheckCircle2 size={12} />
               </span>
+              <button
+                type="button"
+                onClick={handleRetakePhoto}
+                className="mt-3 block mx-auto text-[10px] text-slate-400 hover:text-slate-200 underline"
+              >
+                Retake
+              </button>
             </div>
           ) : (
             <div className="space-y-3">
@@ -85,57 +149,42 @@ const BiometricCapture = ({ onChange }) => {
               </div>
               <button
                 type="button"
-                onClick={handleCapturePhoto}
-                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors"
+                onClick={handleStartCamera}
+                disabled={starting}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors disabled:opacity-50"
               >
-                Scan Profile Face
+                {starting ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Loader2 size={12} className="animate-spin" /> Starting camera...
+                  </span>
+                ) : (
+                  "Enable Camera"
+                )}
               </button>
+              {cameraError && (
+                <p className="text-[10px] text-red-400 max-w-[180px] mx-auto">{cameraError}</p>
+              )}
             </div>
           )}
         </div>
 
-        {/* Fingerprint Capture Card */}
+        {/* Fingerprint - no generic browser API exists for hardware fingerprint
+            scanners, so this is left as an explicit placeholder rather than
+            fabricating a fake hash. */}
         <div className="relative h-44 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-900 overflow-hidden flex flex-col items-center justify-center text-center p-4">
-          {scanningFingerprint ? (
-            <div className="space-y-2 text-white">
-              <div className="w-12 h-1 bg-blue-500 animate-pulse rounded-full mx-auto" />
-              <Fingerprint className="animate-pulse h-8 w-8 text-blue-400 mx-auto" />
-              <p className="text-xs text-slate-300">Scanning ridge structures...</p>
+          <div className="space-y-3">
+            <div className="p-3 bg-white/5 rounded-full text-slate-400 max-w-fit mx-auto">
+              <Fingerprint size={24} />
             </div>
-          ) : fingerprint ? (
-            <div className="space-y-2 text-center text-white">
-              <Fingerprint className="h-10 w-10 text-green-400 mx-auto" />
-              <span className="inline-flex items-center gap-1 text-[10px] text-green-300 bg-green-950/40 px-2 py-0.5 rounded-full border border-green-800/30">
-                <CheckCircle2 size={10} /> Hash Secure
-              </span>
-              <p className="text-[10px] font-mono text-slate-400">{fingerprint.substring(0, 16)}...</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="p-3 bg-white/5 rounded-full text-slate-400 max-w-fit mx-auto">
-                <Fingerprint size={24} />
-              </div>
-              <button
-                type="button"
-                onClick={handleScanFingerprint}
-                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors"
-              >
-                Scan Fingerprint
-              </button>
-            </div>
-          )}
+            <p className="text-[10px] text-slate-400 max-w-[180px] mx-auto">
+              Fingerprint scanning requires a dedicated enrollment device and isn&apos;t available
+              from this browser. This step will be completed by field staff at enrollment.
+            </p>
+          </div>
         </div>
-
       </div>
     </div>
   );
 };
-
-const Loader2 = ({ className }) => (
-  <svg className={`animate-spin ${className}`} fill="none" viewBox="0 0 24 24">
-    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-  </svg>
-);
 
 export default BiometricCapture;

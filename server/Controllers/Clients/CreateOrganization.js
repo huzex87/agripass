@@ -9,7 +9,7 @@ const registerOrganization = async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const isOrganizationExist = await Organization.findOne({ orgName });
+    const isOrganizationExist = await Organization.findOne({ name: orgName });
     if (isOrganizationExist) {
       return res.status(400).json({ error: "Organization already exists" });
     }

@@ -8,12 +8,13 @@ const authMiddleware = async (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded) {
-      return res.status(401).json({ error: "Invalid token" });
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (jwtError) {
+      return res.status(401).json({ error: "Invalid or expired token" });
     }
 
-    // console.log(`Decoded token: ${decoded}`);
     req.user = decoded;
     next();
   } catch (error) {
@@ -29,8 +30,14 @@ const adminAuthMiddleware = async (req, res, next) => {
       return res.status(401).json({ error: "No token provided" });
     }
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded || decoded.role !== "admin") {
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (jwtError) {
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
+
+    if (decoded.role !== "admin") {
       return res.status(403).json({ error: "Access denied" });
     }
     req.user = decoded;
@@ -40,4 +47,13 @@ const adminAuthMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = { authMiddleware, adminAuthMiddleware };
+// Restricts a route to a specific token role (e.g. "organization" or "beneficiary").
+// Must run after checkSubdomain/authMiddleware so req.user is already populated.
+const requireRole = (role) => (req, res, next) => {
+  if (!req.user || req.user.role !== role) {
+    return res.status(403).json({ error: "Access denied" });
+  }
+  next();
+};
+
+module.exports = { authMiddleware, adminAuthMiddleware, requireRole };

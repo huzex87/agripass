@@ -21,6 +21,8 @@ const Organization = () => {
   const { data: resourcesData, isPending: resourcesPending, isError: resourcesError, error: resourcesErr } = useQuery(
     dashboardLoaderFunction()
   );
+  const { subdomain } = useParams();
+  const orgName = subdomain || "Administrator";
 
   const { data: disbursementsData } = useQuery({
     queryKey: ["disbursements"],
@@ -58,9 +60,6 @@ const Organization = () => {
       </div>
     );
   }
-
-  const { subdomain } = useParams();
-  const orgName = subdomain || "Administrator";
 
   const greeting = () => {
     const currentHour = new Date().getHours();

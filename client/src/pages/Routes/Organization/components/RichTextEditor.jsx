@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
@@ -34,14 +34,6 @@ const RichTextEditor = ({ value, onChange, error }) => {
       },
     },
   });
-
-  useEffect(() => {
-    if (editor && !editor.getHTML().includes("<p>")) {
-      editor.commands.setContent(
-        "<p>Provide detailed information about your project, requirements, eligibility criteria, application process, and any other relevant details...</p>"
-      );
-    }
-  }, [editor]);
 
   return (
     <div>

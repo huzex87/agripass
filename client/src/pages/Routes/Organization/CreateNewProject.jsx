@@ -359,6 +359,7 @@ const CreateNewProject = () => {
                   )}{" "}
                 </button>
                 <button
+                  type="button"
                   className="btn w-2xs bg-gray-600 text-white hover:bg-gray-800 cursor-pointer mt-5"
                   onClick={() => navigate(-1)}
                 >

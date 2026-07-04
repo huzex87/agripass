@@ -5,6 +5,8 @@ let isRedisAvailable = false;
 
 const memoryStore = new Map();
 const memorySets = new Map();
+const storeTimers = new Map();
+const setTimers = new Map();
 
 // In-Memory Fallback Client for environments without Redis (like Serverless Vercel)
 const mockRedisClient = {
@@ -15,8 +17,14 @@ const mockRedisClient = {
   },
   setEx: async (key, seconds, value) => {
     memoryStore.set(key, value);
-    // Auto-expiry simulation
-    setTimeout(() => memoryStore.delete(key), seconds * 1000);
+    // Auto-expiry simulation; clear any previous timer so repeated writes
+    // to the same key don't leave an earlier, shorter-lived timer around
+    // to delete a value that was just refreshed.
+    clearTimeout(storeTimers.get(key));
+    storeTimers.set(key, setTimeout(() => {
+      memoryStore.delete(key);
+      storeTimers.delete(key);
+    }, seconds * 1000));
     return "OK";
   },
   sAdd: async (key, value) => {
@@ -27,9 +35,11 @@ const mockRedisClient = {
     return 1;
   },
   expire: async (key, seconds) => {
-    setTimeout(() => {
+    clearTimeout(setTimers.get(key));
+    setTimers.set(key, setTimeout(() => {
       memorySets.delete(key);
-    }, seconds * 1000);
+      setTimers.delete(key);
+    }, seconds * 1000));
     return 1;
   },
   get: async (key) => {
@@ -37,6 +47,8 @@ const mockRedisClient = {
   },
   del: async (key) => {
     memoryStore.delete(key);
+    clearTimeout(storeTimers.get(key));
+    storeTimers.delete(key);
     return 1;
   },
   sRem: async (key, value) => {
@@ -54,6 +66,8 @@ const mockRedisClient = {
     return {
       del: function(key) {
         memoryStore.delete(key);
+        clearTimeout(storeTimers.get(key));
+        storeTimers.delete(key);
         return this;
       },
       sRem: function(key, value) {
@@ -77,6 +91,13 @@ if (process.env.REDIS_URL) {
       console.log("Redis Client Error, switching to memory store:", err.message);
       isRedisAvailable = false;
     });
+    // Flip back to the real client once it (re)establishes a working
+    // connection, so a transient outage doesn't permanently pin the app
+    // to the in-memory fallback for the rest of the process lifetime.
+    client.on("ready", () => {
+      isRedisAvailable = true;
+      console.log("Redis Client ready.");
+    });
   } catch (err) {
     console.log("Failed to create Redis client, falling back to memory:", err.message);
     client = mockRedisClient;
@@ -91,7 +112,7 @@ async function connectRedis() {
   try {
     // Set a timeout of 3 seconds for Redis connection to prevent hanging
     const connectPromise = client.connect();
-    const timeoutPromise = new Promise((_, reject) => 
+    const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error("Redis connection timeout")), 3000)
     );
     await Promise.race([connectPromise, timeoutPromise]);
@@ -99,7 +120,6 @@ async function connectRedis() {
     console.log("Redis Connected successfully!");
   } catch (err) {
     console.log("Redis Connection failed, falling back to In-Memory store:", err.message);
-    client = mockRedisClient;
   }
 }
 
@@ -114,14 +134,14 @@ const clientProxy = new Proxy({}, {
           try {
             await client.connect();
           } catch (e) {
-            client = mockRedisClient;
+            isRedisAvailable = false;
           }
         }
       };
     }
     const activeClient = (isRedisAvailable && client) ? client : mockRedisClient;
-    return typeof activeClient[prop] === 'function' 
-      ? activeClient[prop].bind(activeClient) 
+    return typeof activeClient[prop] === 'function'
+      ? activeClient[prop].bind(activeClient)
       : activeClient[prop];
   }
 });

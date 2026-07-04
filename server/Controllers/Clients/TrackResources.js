@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { Project, Disbursement } = require("../../Database_Models/Models");
 
 const trackResources = async (req, res) => {
@@ -11,7 +12,7 @@ const trackResources = async (req, res) => {
 
   try {
     const aggregationResult = await Project.aggregate([
-      { $match: { organizationId: id } },
+      { $match: { organizationId: new mongoose.Types.ObjectId(id) } },
       {
         $facet: {
           activeProjects: [
@@ -81,8 +82,13 @@ const trackDisbursement = async (req, res) => {
   }
 
   try {
+    const orgProjects = await Project.find({
+      organizationId: new mongoose.Types.ObjectId(id),
+    }).select("_id");
+    const projectIds = orgProjects.map((p) => p._id);
+
     const disbursementData = await Disbursement.aggregate([
-      { $match: { organizationId: id } },
+      { $match: { projectId: { $in: projectIds } } },
       {
         $facet: {
           pendingDisbursement: [

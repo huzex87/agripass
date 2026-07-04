@@ -107,38 +107,51 @@ export const removeOfflineRegistration = async (id) => {
   }
 };
 
+// Guards against overlapping calls (e.g. the "online" event firing while the
+// initial on-mount sync check is still in flight) double-submitting the same
+// queued registration before either call has removed it.
+let syncInProgress = false;
+
 // Synchronize all queued registrations with the backend server
 export const syncOfflineRegistrations = async () => {
-  if (!navigator.onLine) return;
+  if (!navigator.onLine || syncInProgress) return;
+  syncInProgress = true;
 
-  const queued = await getOfflineRegistrations();
-  if (queued.length === 0) return;
+  try {
+    const queued = await getOfflineRegistrations();
+    if (queued.length === 0) return;
 
-  toast.info("Syncing Offline Data", {
-    description: `Uploading ${queued.length} pending registration(s) to server...`
-  });
+    toast.info("Syncing Offline Data", {
+      description: `Uploading ${queued.length} pending registration(s) to server...`
+    });
 
-  let successCount = 0;
+    let successCount = 0;
 
-  for (const record of queued) {
-    try {
-      const response = await api.post(`/api/v1/submit/${record.projectId}`, record.data);
-      if (response.data?.success || response.status === 200 || response.status === 201) {
-        await removeOfflineRegistration(record.id);
-        successCount++;
-      }
-    } catch (err) {
-      console.error(`Sync error for registration ${record.id}:`, err);
-      // If server returns validation error (e.g. 400 Bad Request), discard to prevent blocking the queue
-      if (err.response && err.response.status >= 400 && err.response.status < 500) {
-        await removeOfflineRegistration(record.id);
+    for (const record of queued) {
+      try {
+        const response = await api.post("/api/v1/submit", {
+        projectId: record.projectId,
+        ...record.data,
+      });
+        if (response.data?.success || response.status === 200 || response.status === 201) {
+          await removeOfflineRegistration(record.id);
+          successCount++;
+        }
+      } catch (err) {
+        console.error(`Sync error for registration ${record.id}:`, err);
+        // If server returns validation error (e.g. 400 Bad Request), discard to prevent blocking the queue
+        if (err.response && err.response.status >= 400 && err.response.status < 500) {
+          await removeOfflineRegistration(record.id);
+        }
       }
     }
-  }
 
-  if (successCount > 0) {
-    toast.success("Sync Completed", {
-      description: `${successCount} registration(s) successfully synchronized with server!`
-    });
+    if (successCount > 0) {
+      toast.success("Sync Completed", {
+        description: `${successCount} registration(s) successfully synchronized with server!`
+      });
+    }
+  } finally {
+    syncInProgress = false;
   }
 };

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import api from "../../../utils/Api";
 
 const ApplicationForm = () => {
-  const { projectId } = useParams();
+  const { projectId, subdomain } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [project, setProject] = useState(null);
@@ -176,7 +176,7 @@ const ApplicationForm = () => {
 
       await api.put(`/api/v1/project/${projectId}/form`, formData);
       toast.success("Application form saved successfully!");
-      navigate(-2);
+      navigate(`/${subdomain}/projects`);
     } catch (error) {
       console.error("Error saving form:", error);
       toast.error("Failed to save form");

@@ -4,7 +4,6 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const errorHandler = require("./Middlewares/ErrorHandler");
-const tenantDatabaseMiddleware = require("./Middlewares/TenantDatabase");
 const { initOverdueScheduler } = require("./utils/OverdueScheduler");
 
 const PORT = process.env.PORT || 3002;
@@ -36,7 +35,6 @@ app.use(
 app.use(express.json());
 
 //API Routes
-app.use(tenantDatabaseMiddleware);
 app.use("/api/v1", [require("./API_Routes/Routes")]);
 
 // Centralized Error Handler Middleware

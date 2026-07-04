@@ -1,4 +1,5 @@
 const AppError = require("../../utils/AppError");
+const { Voucher } = require("../../Database_Models/Models");
 
 // Helper to generate a unique random voucher code format (e.g., VP-XXXX-XXXX)
 const generateCode = () => {
@@ -16,7 +17,6 @@ const generateVoucher = async (req, res, next) => {
       return next(new AppError("Beneficiary ID, Project ID and Item Name are required", 400));
     }
 
-    const Voucher = req.getTenantModel("Voucher");
     const code = generateCode();
 
     const voucher = await Voucher.create({
@@ -47,7 +47,6 @@ const redeemVoucher = async (req, res, next) => {
       return next(new AppError("Voucher verification code is required", 400));
     }
 
-    const Voucher = req.getTenantModel("Voucher");
     const voucher = await Voucher.findOne({ code })
       .populate("beneficiaryId", "personalDetails")
       .populate("projectId", "name");
@@ -83,7 +82,6 @@ const redeemVoucher = async (req, res, next) => {
 // Get all active vouchers for a logged-in farmer
 const getFarmerVouchers = async (req, res, next) => {
   try {
-    const Voucher = req.getTenantModel("Voucher");
     const vouchers = await Voucher.find({ beneficiaryId: req.user.id })
       .populate("projectId", "name description imageURL");
 

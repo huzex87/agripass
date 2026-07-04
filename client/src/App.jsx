@@ -18,17 +18,22 @@ const LoginStakeholder = lazy(() => import("./pages/Forms/LoginStakeholder"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const Projects = lazy(() => import("./pages/Routes/Organization/Projects"));
 const BeneficiaryLogin = lazy(() => import("./pages/Forms/BeneficiaryLogin"));
+const BeneficiarySignup = lazy(() => import("./pages/Forms/BeneficiarySIgnup"));
 const BeneficiaryActiveProjectInfo = lazy(() =>
   import("./pages/Dashboard/Beneficiary/Components/ProjectInfo")
 );
 const Beneficiary = lazy(() =>
   import("./pages/Dashboard/Beneficiary/Beneficiary")
 );
+const Admin = lazy(() => import("./pages/Dashboard/Admin/Admin"));
 const ProjectDetails = lazy(() =>
   import("./pages/Routes/Organization/ProjectDetails")
 );
 const CreateNewProject = lazy(() =>
   import("./pages/Routes/Organization/CreateNewProject")
+);
+const EditProject = lazy(() =>
+  import("./pages/Routes/Organization/EditProject")
 );
 const Applications = lazy(() =>
   import("./pages/Routes/Organization/Applications")
@@ -38,6 +43,7 @@ const ApplicationForm = lazy(() =>
 );
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const OtpPage = lazy(() => import("./pages/OtpPage"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const VoucherVerify = lazy(() => import("./pages/Routes/Organization/VoucherVerify"));
 const CropRecovery = lazy(() => import("./pages/Routes/Organization/CropRecovery"));
 
@@ -102,20 +108,9 @@ function App() {
     },
     {
       path: "/signup/beneficiary",
-    },
-    {
-      path: "/projects",
       element: (
         <Suspense fallback={<LoadingFallback />}>
-          <Beneficiary />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/projects/:projectId",
-      element: (
-        <Suspense fallback={<LoadingFallback />}>
-          <BeneficiaryActiveProjectInfo />
+          <BeneficiarySignup />
         </Suspense>
       ),
     },
@@ -132,6 +127,14 @@ function App() {
       element: (
         <Suspense fallback={<LoadingFallback />}>
           <OtpPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: "/reset-password",
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <ResetPassword />
         </Suspense>
       ),
     },
@@ -183,6 +186,14 @@ function App() {
               ),
             },
             {
+              path: "projects/:projectId/edit",
+              element: (
+                <Suspense fallback={<LoadingFallback />}>
+                  <EditProject />
+                </Suspense>
+              ),
+            },
+            {
               path: "applications",
               element: (
                 <Suspense fallback={<LoadingFallback />}>
@@ -220,9 +231,51 @@ function App() {
     },
   ];
 
+  const beneficiaryProtectedRoutes = [
+    {
+      element: <ProtectedRoute allowedRoles={["beneficiary"]} />,
+      children: [
+        {
+          path: "/projects",
+          element: (
+            <Suspense fallback={<LoadingFallback />}>
+              <Beneficiary />
+            </Suspense>
+          ),
+        },
+        {
+          path: "/projects/:projectId",
+          element: (
+            <Suspense fallback={<LoadingFallback />}>
+              <BeneficiaryActiveProjectInfo />
+            </Suspense>
+          ),
+        },
+      ],
+    },
+  ];
+
+  const adminProtectedRoutes = [
+    {
+      element: <ProtectedRoute allowedRoles={["admin"]} redirectPath="/signin" />,
+      children: [
+        {
+          path: "/admin/dashboard",
+          element: (
+            <Suspense fallback={<LoadingFallback />}>
+              <Admin />
+            </Suspense>
+          ),
+        },
+      ],
+    },
+  ];
+
   const router = createBrowserRouter([
     ...publicRoutes,
     ...protectedRoutes,
+    ...beneficiaryProtectedRoutes,
+    ...adminProtectedRoutes,
     {
       path: "*",
       element: (
