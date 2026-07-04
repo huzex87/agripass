@@ -1,7 +1,6 @@
 import { forwardRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { navbarLinks } from "../../constants/index";
-import navlogo from "../../assets/navlogo.jpg";
 import cn from "../../utils/cn";
 import PropTypes from "prop-types";
 
@@ -16,7 +15,6 @@ export const Sidebar = forwardRef(({ collapsed }, ref) => {
           collapsed ? "max-md:-left-full" : "max-md:left-0"
         )}
       >
-        {/* <img src={navlogo} alt="Brand Logo" className=" scale-50" /> */}
         <div className="flex w-full flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-3 [scrollbar-width:_thin]">
           {navbarLinks.map((navbarLink) => (
             <nav

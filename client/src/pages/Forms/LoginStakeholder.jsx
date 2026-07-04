@@ -9,7 +9,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import navLogo from "../../assets/navlogo.jpg";
 import { toast } from "sonner";
 import image2 from "../../assets/image2.png";
 import { motion } from "framer-motion";
@@ -246,7 +245,7 @@ const LoginStakeholder = () => {
               <div className="relative hidden md:flex bg-slate-950 items-center justify-center p-8 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/20 to-teal-950/20 pointer-events-none z-10" />
                 <img
-                  src={navLogo}
+                  src={image2}
                   alt="Branding Logo"
                   className="absolute inset-0 h-full w-full object-cover opacity-20"
                 />
