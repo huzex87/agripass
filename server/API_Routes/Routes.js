@@ -89,6 +89,17 @@ const {
   getCenterDashboard,
   redeemVoucherAtCenter,
 } = require("../Controllers/Clients/CenterController");
+const {
+  createCollector,
+  getCollectors,
+  suspendCollector,
+  activateCollector,
+  loginCollector,
+  getCollectorDashboard,
+  registerFarmerByCollector,
+  applyForFarmer,
+  getCollectorProjects,
+} = require("../Controllers/Clients/CollectorController");
 
 // router.use(authMiddleware);
 
@@ -119,6 +130,20 @@ router.post("/centers/assign-farmers", checkSubdomain, requireRole("organization
 // Center-role dashboard:
 router.get("/center/dashboard", authMiddleware, requireRole("center"), getCenterDashboard);
 router.post("/center/redeem-voucher", authMiddleware, requireRole("center"), redeemVoucherAtCenter);
+
+// DATA COLLECTOR ROUTES
+// Public collector login:
+router.post("/collector/login", loginCollector);
+// Cooperative-admin management of its collectors:
+router.post("/collectors", checkSubdomain, requireRole("organization"), createCollector);
+router.get("/collectors", checkSubdomain, requireRole("organization"), getCollectors);
+router.put("/collectors/:collectorId/suspend", checkSubdomain, requireRole("organization"), suspendCollector);
+router.put("/collectors/:collectorId/activate", checkSubdomain, requireRole("organization"), activateCollector);
+// Collector-role actions:
+router.get("/collector/dashboard", authMiddleware, requireRole("collector"), getCollectorDashboard);
+router.get("/collector/projects", authMiddleware, requireRole("collector"), getCollectorProjects);
+router.post("/collector/register-farmer", authMiddleware, requireRole("collector"), registerFarmerByCollector);
+router.post("/collector/apply", authMiddleware, requireRole("collector"), applyForFarmer);
 
 //STAKEHOLDERS ROUTES
 router.post("/login", loginOrganization); // Login Endpoint Org
