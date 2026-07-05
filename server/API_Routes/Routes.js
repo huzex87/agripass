@@ -79,6 +79,16 @@ const {
   verifyResetOtp,
   resetPassword,
 } = require("../Controllers/PasswordReset");
+const {
+  createCenter,
+  getCenters,
+  suspendCenter,
+  activateCenter,
+  assignFarmersToCenters,
+  loginCenter,
+  getCenterDashboard,
+  redeemVoucherAtCenter,
+} = require("../Controllers/Clients/CenterController");
 
 // router.use(authMiddleware);
 
@@ -96,6 +106,19 @@ router.get("/beneficiary/project/:projectId", authMiddleware, requireRole("benef
 router.post("/forgot-password", requestPasswordReset);
 router.post("/verify-reset-otp", verifyResetOtp);
 router.post("/reset-password", resetPassword);
+
+// REDEMPTION CENTER ROUTES
+// Public center login:
+router.post("/center/login", loginCenter);
+// Cooperative-admin management of its centers:
+router.post("/centers", checkSubdomain, requireRole("organization"), createCenter);
+router.get("/centers", checkSubdomain, requireRole("organization"), getCenters);
+router.put("/centers/:centerId/suspend", checkSubdomain, requireRole("organization"), suspendCenter);
+router.put("/centers/:centerId/activate", checkSubdomain, requireRole("organization"), activateCenter);
+router.post("/centers/assign-farmers", checkSubdomain, requireRole("organization"), assignFarmersToCenters);
+// Center-role dashboard:
+router.get("/center/dashboard", authMiddleware, requireRole("center"), getCenterDashboard);
+router.post("/center/redeem-voucher", authMiddleware, requireRole("center"), redeemVoucherAtCenter);
 
 //STAKEHOLDERS ROUTES
 router.post("/login", loginOrganization); // Login Endpoint Org

@@ -4,6 +4,7 @@ import {
   ClipboardList,
   Ticket,
   Wheat,
+  Warehouse,
 } from "lucide-react";
 
 // Sidebar navigation for the cooperative dashboard.
@@ -46,6 +47,16 @@ export const navbarLinks = [
         label: "Crop Recovery",
         icon: Wheat,
         path: "crop-recovery",
+      },
+    ],
+  },
+  {
+    title: "Network",
+    links: [
+      {
+        label: "Redemption Centers",
+        icon: Warehouse,
+        path: "centers",
       },
     ],
   },

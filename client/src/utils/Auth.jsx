@@ -111,6 +111,35 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginCenter = async (email, password) => {
+    setLoading(true);
+    try {
+      const res = await api.post("/api/v1/center/login", { email, password });
+      if (res.data?.token) {
+        setAccessToken(res.data.token);
+        const mockUser = {
+          isAuthenticated: true,
+          email,
+          centerName: res.data.centerName,
+          centerCode: res.data.centerCode,
+          role: "center",
+        };
+        sessionStorage.setItem("subdomain", "center");
+        sessionStorage.setItem("mock_user", JSON.stringify(mockUser));
+        setUser(mockUser);
+        return { success: true, role: "center" };
+      }
+      return { success: false, error: "Authentication failed" };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || "Login failed. Please check your credentials.",
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Logout function - updated
   const logout = async () => {
     const loginPath = sessionStorage.getItem("subdomain") === "beneficiary" ? "/login/beneficiary" : "/signin";
@@ -137,6 +166,7 @@ const AuthProvider = ({ children }) => {
     user,
     login,
     loginAdmin,
+    loginCenter,
     logout,
     isAuthenticated: !!user?.isAuthenticated,
     loading,

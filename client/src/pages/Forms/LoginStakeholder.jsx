@@ -270,6 +270,13 @@ const LoginStakeholder = () => {
                     </p>
                   )}
 
+                  <p className="text-center text-[11px] text-slate-500">
+                    Redemption center staff?{" "}
+                    <Link to="/center/login" className="text-emerald-500 underline font-semibold">
+                      Center sign in
+                    </Link>
+                  </p>
+
                 </div>
               </form>
 
