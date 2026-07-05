@@ -140,6 +140,34 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginCollector = async (email, password) => {
+    setLoading(true);
+    try {
+      const res = await api.post("/api/v1/collector/login", { email, password });
+      if (res.data?.token) {
+        setAccessToken(res.data.token);
+        const mockUser = {
+          isAuthenticated: true,
+          email,
+          collectorName: res.data.collectorName,
+          role: "collector",
+        };
+        sessionStorage.setItem("subdomain", "collector");
+        sessionStorage.setItem("mock_user", JSON.stringify(mockUser));
+        setUser(mockUser);
+        return { success: true, role: "collector" };
+      }
+      return { success: false, error: "Authentication failed" };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || "Login failed. Please check your credentials.",
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Logout function - updated
   const logout = async () => {
     const loginPath = sessionStorage.getItem("subdomain") === "beneficiary" ? "/login/beneficiary" : "/signin";
@@ -167,6 +195,7 @@ const AuthProvider = ({ children }) => {
     login,
     loginAdmin,
     loginCenter,
+    loginCollector,
     logout,
     isAuthenticated: !!user?.isAuthenticated,
     loading,

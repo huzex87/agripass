@@ -49,6 +49,9 @@ const CropRecovery = lazy(() => import("./pages/Routes/Organization/CropRecovery
 const RedemptionCenters = lazy(() => import("./pages/Routes/Organization/RedemptionCenters"));
 const CenterLogin = lazy(() => import("./pages/Forms/CenterLogin"));
 const Center = lazy(() => import("./pages/Dashboard/Center/Center"));
+const DataCollectors = lazy(() => import("./pages/Routes/Organization/DataCollectors"));
+const CollectorLogin = lazy(() => import("./pages/Forms/CollectorLogin"));
+const Collector = lazy(() => import("./pages/Dashboard/Collector/Collector"));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -149,6 +152,14 @@ function App() {
         </Suspense>
       ),
     },
+    {
+      path: "/collector/login",
+      element: (
+        <Suspense fallback={<LoadingFallback />}>
+          <CollectorLogin />
+        </Suspense>
+      ),
+    },
   ];
 
   const protectedRoutes = [
@@ -244,6 +255,14 @@ function App() {
                 </Suspense>
               ),
             },
+            {
+              path: "collectors",
+              element: (
+                <Suspense fallback={<LoadingFallback />}>
+                  <DataCollectors />
+                </Suspense>
+              ),
+            },
           ],
         },
       ],
@@ -306,12 +325,29 @@ function App() {
     },
   ];
 
+  const collectorProtectedRoutes = [
+    {
+      element: <ProtectedRoute allowedRoles={["collector"]} redirectPath="/collector/login" />,
+      children: [
+        {
+          path: "/collector/dashboard",
+          element: (
+            <Suspense fallback={<LoadingFallback />}>
+              <Collector />
+            </Suspense>
+          ),
+        },
+      ],
+    },
+  ];
+
   const router = createBrowserRouter([
     ...publicRoutes,
     ...protectedRoutes,
     ...beneficiaryProtectedRoutes,
     ...adminProtectedRoutes,
     ...centerProtectedRoutes,
+    ...collectorProtectedRoutes,
     {
       path: "*",
       element: (

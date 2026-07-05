@@ -121,92 +121,56 @@ const LocationPicker = ({ value, onChange, error }) => {
     onChange(updatedValue);
   };
 
+  const inputClass =
+    "w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50";
+
+  // Renders a dropdown when reference options exist; otherwise falls back to a
+  // free-text field so registration is never blocked when the location
+  // reference data is empty (e.g. a fresh deployment / live demo).
+  const renderField = (label, field, options, isLoading, enabled) => {
+    const useText = enabled && !isLoading && options.length === 0;
+    return (
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          {label}
+        </label>
+        {useText ? (
+          <input
+            type="text"
+            className={inputClass}
+            value={val[field] || ""}
+            disabled={!enabled}
+            placeholder={`Enter ${label}`}
+            onChange={(e) => handleSelectChange(field, e.target.value)}
+          />
+        ) : (
+          <select
+            className={inputClass}
+            value={val[field] || ""}
+            disabled={!enabled || isLoading}
+            onChange={(e) => handleSelectChange(field, e.target.value)}
+          >
+            <option value="">{isLoading ? "Loading…" : `Select ${label}`}</option>
+            {options.map((o) => (
+              <option key={o} value={o}>
+                {o}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* State */}
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            State
-          </label>
-          <select
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            value={val.state || ""}
-            onChange={(e) => handleSelectChange("state", e.target.value)}
-            disabled={loading.states}
-          >
-            <option value="">Select State</option>
-            {states.map((st) => (
-              <option key={st} value={st}>
-                {st}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* LGA */}
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            LGA
-          </label>
-          <select
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50"
-            value={val.lga || ""}
-            onChange={(e) => handleSelectChange("lga", e.target.value)}
-            disabled={!val.state || loading.lgas}
-          >
-            <option value="">Select LGA</option>
-            {lgas.map((lg) => (
-              <option key={lg} value={lg}>
-                {lg}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Ward */}
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Ward
-          </label>
-          <select
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50"
-            value={val.ward || ""}
-            onChange={(e) => handleSelectChange("ward", e.target.value)}
-            disabled={!val.lga || loading.wards}
-          >
-            <option value="">Select Ward</option>
-            {wards.map((wd) => (
-              <option key={wd} value={wd}>
-                {wd}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Polling Unit */}
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Polling Unit
-          </label>
-          <select
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50"
-            value={val.pollingUnit || ""}
-            onChange={(e) => handleSelectChange("pollingUnit", e.target.value)}
-            disabled={!val.ward || loading.pollingUnits}
-          >
-            <option value="">Select Polling Unit</option>
-            {pollingUnits.map((pu) => (
-              <option key={pu} value={pu}>
-                {pu}
-              </option>
-            ))}
-          </select>
-        </div>
+        {renderField("State", "state", states, loading.states, true)}
+        {renderField("LGA", "lga", lgas, loading.lgas, !!val.state)}
+        {renderField("Ward", "ward", wards, loading.wards, !!val.lga)}
+        {renderField("Polling Unit", "pollingUnit", pollingUnits, loading.pollingUnits, !!val.ward)}
       </div>
-      {error && (
-        <p className="text-sm text-red-500 mt-1">{error}</p>
-      )}
+      {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
     </div>
   );
 };

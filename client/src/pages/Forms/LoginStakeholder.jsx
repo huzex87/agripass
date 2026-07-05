@@ -277,6 +277,13 @@ const LoginStakeholder = () => {
                     </Link>
                   </p>
 
+                  <p className="text-center text-[11px] text-slate-500">
+                    Field agent / data collector?{" "}
+                    <Link to="/collector/login" className="text-emerald-500 underline font-semibold">
+                      Agent sign in
+                    </Link>
+                  </p>
+
                 </div>
               </form>
 
