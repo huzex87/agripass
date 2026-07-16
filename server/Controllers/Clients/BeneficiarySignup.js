@@ -1,5 +1,6 @@
 const { Beneficiary } = require("../../Database_Models/Models");
 const bcrypt = require("bcrypt");
+const { saveBeneficiaryWithUniqueId } = require("../../utils/saveBeneficiary");
 
 const registerBeneficiary = async (req, res) => {
   const {
@@ -69,7 +70,7 @@ const registerBeneficiary = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     beneficiary.personalDetails.password = await bcrypt.hash(password, salt);
-    await beneficiary.save();
+    await saveBeneficiaryWithUniqueId(beneficiary);
 
     res.status(200).json({
       message: "Beneficiary registered successfully",

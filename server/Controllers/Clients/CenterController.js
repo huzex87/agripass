@@ -170,7 +170,7 @@ const loginCenter = async (req, res) => {
 
     const center = await RedemptionCenter.findOne({ email });
     if (!center) {
-      return res.status(400).json({ error: "No center found with this email" });
+      return res.status(400).json({ error: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, center.password);

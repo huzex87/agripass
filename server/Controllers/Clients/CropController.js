@@ -1,5 +1,5 @@
 const AppError = require("../../utils/AppError");
-const { Disbursement } = require("../../Database_Models/Models");
+const { Disbursement, Project } = require("../../Database_Models/Models");
 
 // Process physical crop deliveries to clear farmer Salam repayments
 const submitCropRecovery = async (req, res, next) => {
@@ -7,6 +7,15 @@ const submitCropRecovery = async (req, res, next) => {
     const { beneficiaryId, projectId, cropType, weight } = req.body;
     if (!beneficiaryId || !projectId || !cropType || !weight) {
       return next(new AppError("Farmer ID, Project ID, Crop Type, and Weight are required", 400));
+    }
+
+    // Tenant scoping: the project must belong to the calling cooperative.
+    const project = await Project.findOne({
+      _id: projectId,
+      organizationId: req.organization._id,
+    });
+    if (!project) {
+      return next(new AppError("Project not found for this cooperative", 404));
     }
 
     // Find active disbursement for the farmer & project

@@ -25,9 +25,7 @@ const loginBeneficiary = async (req, res) => {
   try {
     const user = await Beneficiary.findOne({ "personalDetails.email": email });
     if (!user) {
-      return res
-        .status(400)
-        .json({ error: `No account found with this email ${email}` });
+      return res.status(400).json({ error: "Invalid credentials" });
     }
     const isMatch = await bcrypt.compare(
       password,
@@ -100,7 +98,7 @@ const loginOrganization = async (req, res) => {
       } else {
         organization = await Organization.findOne({ email });
         if (!organization) {
-          return res.status(400).json({ error: "No account found with this email" });
+          return res.status(400).json({ error: "Invalid credentials" });
         }
 
         const isMatch = await bcrypt.compare(password, organization.password);
@@ -112,14 +110,12 @@ const loginOrganization = async (req, res) => {
       // Fallback to subdomain lookups
       organization = await Organization.findOne({ subdomain });
       if (!organization) {
-        return res
-          .status(400)
-          .json({ error: "No account found with this subdomain" });
+        return res.status(400).json({ error: "Invalid credentials" });
       }
 
       const isMatch = await bcrypt.compare(password, organization.password);
       if (!isMatch) {
-        return res.status(400).json({ error: "Invalid password or credentials" });
+        return res.status(400).json({ error: "Invalid credentials" });
       }
     }
 
@@ -167,9 +163,7 @@ const loginAdmin = async (req, res) => {
 
     const admin = await Admin.findOne({ email });
     if (!admin) {
-      return res
-        .status(400)
-        .json({ error: "No account found with this email" });
+      return res.status(400).json({ error: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
