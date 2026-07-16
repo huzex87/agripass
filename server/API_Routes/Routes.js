@@ -102,6 +102,10 @@ const {
 } = require("../Controllers/Clients/CollectorController");
 const { authLimiter } = require("../Middlewares/Security");
 const { runOverdueSweep } = require("../Controllers/CronController");
+const {
+  exportApplications,
+  exportRepayments,
+} = require("../Controllers/Clients/ExportController");
 
 // router.use(authMiddleware);
 
@@ -230,6 +234,10 @@ router.post("/admin/create_report", adminAuthMiddleware, createProjectReport); /
 
 // SCHEDULED JOB ENDPOINT (driven by Vercel Cron on serverless)
 router.get("/cron/overdue", runOverdueSweep);
+
+// CSV EXPORT ROUTES (cooperative reporting)
+router.get("/export/applications", checkSubdomain, requireRole("organization"), exportApplications);
+router.get("/export/repayments", checkSubdomain, requireRole("organization"), exportRepayments);
 
 // LOCATION REFERENCE ROUTES (INEC Geography Picker)
 router.get("/location/states", getStates);

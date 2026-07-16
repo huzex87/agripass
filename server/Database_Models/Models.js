@@ -242,6 +242,16 @@ const projectSchema = new mongoose.Schema(
       description: { type: String },
       isActive: { type: Boolean, default: true },
     },
+    // Salam crop-recovery valuation, set per project by the cooperative rather
+    // than hardcoded in code. ratePerKg is in the project currency (NGN).
+    salamCropRates: [
+      {
+        crop: { type: String, required: true },
+        ratePerKg: { type: Number, required: true },
+      },
+    ],
+    // Fallback ₦/kg used when a delivered crop isn't in salamCropRates.
+    defaultCropRate: { type: Number, default: 300 },
   },
   { timestamps: true }
 );
@@ -262,6 +272,8 @@ const disbursementSchema = new mongoose.Schema(
       index: true,
     },
     currency: { type: String, default: "NGN" },
+    // Principal cash value of the input package disbursed to the farmer.
+    amount: { type: Number, default: 0 },
     status: {
       type: String,
       enum: ["pending", "approved", "disbursed", "failed"],
@@ -276,6 +288,10 @@ const disbursementSchema = new mongoose.Schema(
       {
         dueDate: Date,
         amount: Number,
+        // Amount recovered so far against this installment. The original
+        // `amount` is never mutated, so partial crop/cash payments keep a
+        // clean audit trail.
+        paidAmount: { type: Number, default: 0 },
         status: { type: String, enum: ["pending", "paid", "overdue"], default: "pending" },
         repaymentType: { type: String, enum: ["Murabaha", "Salam"], default: "Murabaha" },
         paidAt: Date
@@ -494,6 +510,9 @@ const voucherSchema = new mongoose.Schema(
     code: { type: String, required: true, unique: true },
     beneficiaryId: { type: mongoose.Schema.Types.ObjectId, ref: "Beneficiary", required: true },
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project", required: true },
+    // Links the physical input voucher back to its financing disbursement,
+    // so redemption and repayment sit on one ledger.
+    disbursementId: { type: mongoose.Schema.Types.ObjectId, ref: "Disbursement", default: null },
     itemDetails: {
       itemName: { type: String, required: true },
       quantity: { type: Number, default: 1 }

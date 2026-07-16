@@ -3,7 +3,10 @@ const {
   Voucher,
   Project,
   BeneficiaryApplication,
+  Disbursement,
+  Beneficiary,
 } = require("../../Database_Models/Models");
+const { notify } = require("../../utils/sms");
 
 // Helper to generate a unique random voucher code format (e.g., VP-XXXX-XXXX)
 const generateCode = () => {
@@ -54,15 +57,29 @@ const generateVoucher = async (req, res, next) => {
       return next(new AppError("This farmer has no approved application for this project", 400));
     }
 
+    // Link the voucher to the farmer's financing disbursement when one exists,
+    // so redemption and repayment share a single ledger.
+    const disbursement = await Disbursement.findOne({ beneficiaryId, projectId }).select("_id");
+
     const voucher = await createVoucherWithUniqueCode({
       beneficiaryId,
       projectId,
+      disbursementId: disbursement?._id || null,
       itemDetails: {
         itemName,
         quantity: quantity || 1,
       },
       status: "unused",
     });
+
+    // Text the farmer their voucher code (no-op if SMS isn't configured).
+    const farmer = await Beneficiary.findById(beneficiaryId).select("personalDetails.phone personalDetails.firstName");
+    if (farmer?.personalDetails?.phone) {
+      notify(
+        farmer.personalDetails.phone,
+        `AgriPass: Your input voucher for "${itemName}" is ${voucher.code}. Present this code at your redemption center.`
+      );
+    }
 
     return res.status(201).json({
       status: "success",
