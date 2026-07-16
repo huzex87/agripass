@@ -11,5 +11,11 @@
       "src": "/(.*)",
       "dest": "server.js"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/v1/cron/overdue",
+      "schedule": "0 2 * * *"
+    }
   ]
 }

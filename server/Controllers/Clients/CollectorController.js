@@ -6,6 +6,7 @@ const {
   Project,
   BeneficiaryApplication,
 } = require("../../Database_Models/Models");
+const { saveBeneficiaryWithUniqueId } = require("../../utils/saveBeneficiary");
 
 // ---------------------------------------------------------------------------
 // Is a farmer's location within a collector's assigned areas?
@@ -106,7 +107,7 @@ const loginCollector = async (req, res) => {
 
     const collector = await DataCollector.findOne({ email });
     if (!collector) {
-      return res.status(400).json({ error: "No collector found with this email" });
+      return res.status(400).json({ error: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, collector.password);
@@ -204,7 +205,7 @@ const registerFarmerByCollector = async (req, res) => {
       registeredBy: collector._id,
       organizationId: collector.organizationId,
     });
-    await beneficiary.save();
+    await saveBeneficiaryWithUniqueId(beneficiary);
 
     res.status(201).json({
       message: "Farmer registered successfully",

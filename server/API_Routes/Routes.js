@@ -100,11 +100,13 @@ const {
   applyForFarmer,
   getCollectorProjects,
 } = require("../Controllers/Clients/CollectorController");
+const { authLimiter } = require("../Middlewares/Security");
+const { runOverdueSweep } = require("../Controllers/CronController");
 
 // router.use(authMiddleware);
 
 //BENEFICIARY ROUTES
-router.post("/beneficiary/login", loginBeneficiary); // Login Endpoint Beneficiary
+router.post("/beneficiary/login", authLimiter, loginBeneficiary); // Login Endpoint Beneficiary
 router.post("/register", registerBeneficiary); //Beneficiary Sign up Endpoint
 router.post("/submit", authMiddleware, requireRole("beneficiary"), submitApplication); //Beneficiary Application Endpoint
 router.post("/submit/:projectId", checkSubdomain, requireRole("beneficiary"), submitApplication);
@@ -114,13 +116,13 @@ router.get("/beneficiary/projects", authMiddleware, requireRole("beneficiary"), 
 router.get("/beneficiary/project/:projectId", authMiddleware, requireRole("beneficiary"), getPublicProjectDetails);
 
 // PASSWORD RESET ROUTES (beneficiary, organization, and admin accounts)
-router.post("/forgot-password", requestPasswordReset);
-router.post("/verify-reset-otp", verifyResetOtp);
-router.post("/reset-password", resetPassword);
+router.post("/forgot-password", authLimiter, requestPasswordReset);
+router.post("/verify-reset-otp", authLimiter, verifyResetOtp);
+router.post("/reset-password", authLimiter, resetPassword);
 
 // REDEMPTION CENTER ROUTES
 // Public center login:
-router.post("/center/login", loginCenter);
+router.post("/center/login", authLimiter, loginCenter);
 // Cooperative-admin management of its centers:
 router.post("/centers", checkSubdomain, requireRole("organization"), createCenter);
 router.get("/centers", checkSubdomain, requireRole("organization"), getCenters);
@@ -133,7 +135,7 @@ router.post("/center/redeem-voucher", authMiddleware, requireRole("center"), red
 
 // DATA COLLECTOR ROUTES
 // Public collector login:
-router.post("/collector/login", loginCollector);
+router.post("/collector/login", authLimiter, loginCollector);
 // Cooperative-admin management of its collectors:
 router.post("/collectors", checkSubdomain, requireRole("organization"), createCollector);
 router.get("/collectors", checkSubdomain, requireRole("organization"), getCollectors);
@@ -146,7 +148,7 @@ router.post("/collector/register-farmer", authMiddleware, requireRole("collector
 router.post("/collector/apply", authMiddleware, requireRole("collector"), applyForFarmer);
 
 //STAKEHOLDERS ROUTES
-router.post("/login", loginOrganization); // Login Endpoint Org
+router.post("/login", authLimiter, loginOrganization); // Login Endpoint Org
 router.post("/refresh", refreshTokenHandler); // Token Refresh Endpoint
 router.post("/logout", logoutHandler);
 router.post("/logout-all", logoutAllHandler);
@@ -213,7 +215,7 @@ router.get("/resources", checkSubdomain, requireRole("organization"), checkSuspe
 router.get("/disbursements", checkSubdomain, requireRole("organization"), checkSuspensionStatus, trackDisbursement); // Track disbursements endpoint
 
 //ADMIN ROUTES
-router.post("/admin/login", loginAdmin); // Admin Login Endpoint
+router.post("/admin/login", authLimiter, loginAdmin); // Admin Login Endpoint
 router.get("/admin/organizations", adminAuthMiddleware, getAllOrganizations); //Get all organizations
 router.post("/admin/create", adminAuthMiddleware, registerOrganization); //Admin create organization
 router.put(
@@ -225,6 +227,9 @@ router.get("/admin/projects", adminAuthMiddleware, viewProjects); //View all pro
 router.put("/admin/deactivate_project/:projectId", adminAuthMiddleware, deactivateProject); //Deactivate a project
 router.delete("/admin/delete_project/:projectId", adminAuthMiddleware, deleteProject); //Delete a project
 router.post("/admin/create_report", adminAuthMiddleware, createProjectReport); //Create project report
+
+// SCHEDULED JOB ENDPOINT (driven by Vercel Cron on serverless)
+router.get("/cron/overdue", runOverdueSweep);
 
 // LOCATION REFERENCE ROUTES (INEC Geography Picker)
 router.get("/location/states", getStates);

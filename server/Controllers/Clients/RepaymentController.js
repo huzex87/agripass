@@ -46,23 +46,38 @@ const submitRepayment = async (req, res, next) => {
       return next(new AppError("This installment has already been paid", 400));
     }
 
-    // Get farmer wallet
-    const wallet = await Wallet.findOne({ beneficiaryId: req.user.id });
+    // Atomic, guarded debit: only succeeds if the balance still covers the
+    // installment at write time, so two concurrent repayments can never
+    // overdraw the wallet (the read-then-write pattern could double-spend).
+    const wallet = await Wallet.findOneAndUpdate(
+      { beneficiaryId: req.user.id, balance: { $gte: installment.amount } },
+      { $inc: { balance: -installment.amount } },
+      { new: true }
+    );
     if (!wallet) {
-      return next(new AppError("Farmer wallet not found", 404));
+      const exists = await Wallet.exists({ beneficiaryId: req.user.id });
+      return next(
+        new AppError(
+          exists
+            ? "Insufficient wallet balance to perform this repayment"
+            : "Farmer wallet not found",
+          exists ? 400 : 404
+        )
+      );
     }
-
-    if (wallet.balance < installment.amount) {
-      return next(new AppError("Insufficient wallet balance to perform this repayment", 400));
-    }
-
-    // Deduct balance and update status (transaction-safe)
-    wallet.balance -= installment.amount;
-    await wallet.save();
 
     installment.status = "paid";
     installment.paidAt = new Date();
-    await disbursement.save();
+    try {
+      await disbursement.save();
+    } catch (saveErr) {
+      // Roll the debit back if we couldn't record the installment as paid.
+      await Wallet.updateOne(
+        { _id: wallet._id },
+        { $inc: { balance: installment.amount } }
+      );
+      throw saveErr;
+    }
 
     // Log the transaction
     const transaction = await Transaction.create({
