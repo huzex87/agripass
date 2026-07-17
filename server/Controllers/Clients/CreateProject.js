@@ -3,6 +3,24 @@ const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 const AppError = require("../../utils/AppError");
 
+// Normalizes a salamCropRates input (array or JSON string from multipart) into
+// a clean list of { crop, ratePerKg } with valid, positive rates.
+const parseCropRates = (input) => {
+  if (!input) return [];
+  let arr = input;
+  if (typeof input === "string") {
+    try {
+      arr = JSON.parse(input);
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(arr)) return [];
+  return arr
+    .map((r) => ({ crop: String(r.crop || "").trim(), ratePerKg: Number(r.ratePerKg) }))
+    .filter((r) => r.crop && Number.isFinite(r.ratePerKg) && r.ratePerKg > 0);
+};
+
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -35,10 +53,16 @@ const createProject = async (req, res) => {
       startDate,
       endDate,
       hasCustomForm,
+      salamCropRates,
+      defaultCropRate,
     } = req.body;
     if (!name || !description || !type || !startDate || !endDate) {
       return res.status(400).json({ error: "All fields are required" });
     }
+
+    // salamCropRates may arrive as a JSON string (multipart form). Parse and
+    // keep only well-formed { crop, ratePerKg } entries.
+    const parsedCropRates = parseCropRates(salamCropRates);
 
     let imageURL = null;
     let imagePublicId = null;
@@ -69,6 +93,11 @@ const createProject = async (req, res) => {
       status: "active",
       imageURL,
       imagePublicId,
+      salamCropRates: parsedCropRates,
+      defaultCropRate:
+        defaultCropRate !== undefined && defaultCropRate !== null && defaultCropRate !== ""
+          ? Number(defaultCropRate)
+          : undefined,
       hasCustomForm: hasCustomForm === "true", // Convert string to boolean
       customForm:
         hasCustomForm === "true"
@@ -99,7 +128,16 @@ const createProject = async (req, res) => {
 const updateProject = async (req, res) => {
   try {
     const { projectId } = req.params;
-    const { name, description, type, amount, startDate, endDate } = req.body;
+    const {
+      name,
+      description,
+      type,
+      amount,
+      startDate,
+      endDate,
+      salamCropRates,
+      defaultCropRate,
+    } = req.body;
     if (!req.organization) {
       return res.status(401).json({ error: "Unauthorized Access" });
     }
@@ -119,6 +157,12 @@ const updateProject = async (req, res) => {
     if (endDate !== undefined) project.endDate = endDate;
     if (amount !== undefined && amount !== null && amount !== "") {
       project.budget = { amount, currency: project.budget?.currency || "NGN" };
+    }
+    if (salamCropRates !== undefined) {
+      project.salamCropRates = parseCropRates(salamCropRates);
+    }
+    if (defaultCropRate !== undefined && defaultCropRate !== null && defaultCropRate !== "") {
+      project.defaultCropRate = Number(defaultCropRate);
     }
 
     if (req.file) {
@@ -469,4 +513,6 @@ module.exports = {
   updateForm,
   updateProject,
   upload,
+  // exported for tests
+  parseCropRates,
 };

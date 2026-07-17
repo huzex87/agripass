@@ -5,6 +5,7 @@ const {
   Beneficiary,
 } = require("../../Database_Models/Models");
 const { generateUniqueToken } = require("../Utils/tokenUtils");
+const { notify } = require("../../utils/sms");
 
 //Beneficiary's applly for a project/resources
 const submitApplication = async (req, res) => {
@@ -153,6 +154,18 @@ const approve_Beneficiary_Application = async (req, res) => {
       status: "pending",
     });
     await newDisbursement.save();
+
+    // Notify the farmer their application was approved (no-op without SMS).
+    const [farmer, project] = await Promise.all([
+      Beneficiary.findById(application.beneficiaryId).select("personalDetails.phone"),
+      Project.findById(application.projectId).select("name"),
+    ]);
+    if (farmer?.personalDetails?.phone) {
+      notify(
+        farmer.personalDetails.phone,
+        `AgriPass: Good news! Your application${project?.name ? ` for "${project.name}"` : ""} has been approved. Your input voucher will follow shortly.`
+      );
+    }
 
     res.status(200).json({
       message: "Beneficiary application approved successfully",

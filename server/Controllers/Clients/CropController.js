@@ -1,5 +1,6 @@
 const AppError = require("../../utils/AppError");
 const { Disbursement, Project } = require("../../Database_Models/Models");
+const { resolveCropRate, applyCropCredit } = require("../../utils/cropRecovery");
 
 // Process physical crop deliveries to clear farmer Salam repayments
 const submitCropRecovery = async (req, res, next) => {
@@ -24,35 +25,20 @@ const submitCropRecovery = async (req, res, next) => {
       return next(new AppError("No active input disbursement schedule found for this farmer", 404));
     }
 
-    // Standard pre-agreed crop valuation rates (Salam contract parameters)
-    const valuationRates = {
-      wheat: 450, // ₦450 per kg of wheat
-      rice: 400,  // ₦400 per kg of rice
-      maize: 350  // ₦350 per kg of maize
-    };
-
-    const rate = valuationRates[cropType.toLowerCase()] || 300; // Fallback rate ₦300
-    let credit = parseFloat(weight) * rate;
-    const initialCredit = credit;
-
-    let clearedInstallmentsCount = 0;
-
-    // Iterate through schedule to apply credit to pending/overdue Salam installments
-    for (const inst of disbursement.repaymentSchedule) {
-      if (inst.repaymentType === "Salam" && inst.status !== "paid") {
-        if (credit >= inst.amount) {
-          credit -= inst.amount;
-          inst.status = "paid";
-          inst.paidAt = new Date();
-          clearedInstallmentsCount++;
-        } else if (credit > 0) {
-          // Partially pay the installment
-          inst.amount -= credit;
-          credit = 0;
-        }
-      }
-      if (credit <= 0) break;
+    const parsedWeight = parseFloat(weight);
+    if (!Number.isFinite(parsedWeight) || parsedWeight <= 0) {
+      return next(new AppError("Weight must be a positive number", 400));
     }
+
+    // Crop valuation is configured per project by the cooperative (Salam
+    // contract parameters), not hardcoded.
+    const rate = resolveCropRate(project, cropType);
+    const initialCredit = parsedWeight * rate;
+
+    const { remainingCredit, clearedInstallmentsCount } = applyCropCredit(
+      disbursement.repaymentSchedule,
+      initialCredit
+    );
 
     await disbursement.save();
 
@@ -61,7 +47,7 @@ const submitCropRecovery = async (req, res, next) => {
       message: "Crop delivery logged successfully",
       data: {
         totalCreditGenerated: initialCredit,
-        remainingCredit: credit,
+        remainingCredit,
         clearedInstallmentsCount,
         ratePerKg: rate
       }

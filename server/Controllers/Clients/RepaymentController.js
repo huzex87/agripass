@@ -67,6 +67,7 @@ const submitRepayment = async (req, res, next) => {
     }
 
     installment.status = "paid";
+    installment.paidAmount = installment.amount;
     installment.paidAt = new Date();
     try {
       await disbursement.save();

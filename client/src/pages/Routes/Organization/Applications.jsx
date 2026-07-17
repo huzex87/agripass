@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Download } from "lucide-react";
 import api from "../../../utils/Api";
 import { formatDate } from "../../../utils/dateFormatter";
+import { downloadCsv } from "../../../utils/download";
 import ApplicationModal from "../../Elements/ApplicationModal";
 import { useQuery } from "@tanstack/react-query";
 
@@ -76,9 +78,34 @@ const Applications = () => {
     }
     return pageNumbers;
   };
+  const [exporting, setExporting] = useState("");
+  const handleExport = async (kind) => {
+    setExporting(kind);
+    await downloadCsv(`/api/v1/export/${kind}`, `${kind}.csv`);
+    setExporting("");
+  };
+
   return (
     <>
-      <div className="text-2xl font-bold mt-5">Beneficiary Applications</div>
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <div className="text-2xl font-bold">Beneficiary Applications</div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleExport("applications")}
+            disabled={!!exporting}
+            className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-500 disabled:opacity-60"
+          >
+            <Download size={16} /> {exporting === "applications" ? "Exporting…" : "Export Applications"}
+          </button>
+          <button
+            onClick={() => handleExport("repayments")}
+            disabled={!!exporting}
+            className="flex items-center gap-2 rounded-xl border border-emerald-300 px-4 py-2 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-50 disabled:opacity-60 dark:border-emerald-500/40 dark:text-emerald-400 dark:hover:bg-emerald-950/30"
+          >
+            <Download size={16} /> {exporting === "repayments" ? "Exporting…" : "Export Repayments"}
+          </button>
+        </div>
+      </div>
       <div className="mb-4 mt-10 flex items-center gap-2 justify-between ">
         <h2>Filter By:</h2>
         <select
